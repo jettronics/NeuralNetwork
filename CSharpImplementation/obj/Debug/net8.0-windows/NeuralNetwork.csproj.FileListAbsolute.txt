@@ -1,0 +1,16 @@
+C:\GitHub\NeuralNetwork\bin\Debug\net8.0-windows\NeuralNetwork.exe
+C:\GitHub\NeuralNetwork\bin\Debug\net8.0-windows\NeuralNetwork.deps.json
+C:\GitHub\NeuralNetwork\bin\Debug\net8.0-windows\NeuralNetwork.runtimeconfig.json
+C:\GitHub\NeuralNetwork\bin\Debug\net8.0-windows\NeuralNetwork.dll
+C:\GitHub\NeuralNetwork\bin\Debug\net8.0-windows\NeuralNetwork.pdb
+C:\GitHub\NeuralNetwork\obj\Debug\net8.0-windows\NeuralNetwork.Form1.resources
+C:\GitHub\NeuralNetwork\obj\Debug\net8.0-windows\NeuralNetwork.csproj.GenerateResource.cache
+C:\GitHub\NeuralNetwork\obj\Debug\net8.0-windows\NeuralNetwork.GeneratedMSBuildEditorConfig.editorconfig
+C:\GitHub\NeuralNetwork\obj\Debug\net8.0-windows\NeuralNetwork.AssemblyInfoInputs.cache
+C:\GitHub\NeuralNetwork\obj\Debug\net8.0-windows\NeuralNetwork.AssemblyInfo.cs
+C:\GitHub\NeuralNetwork\obj\Debug\net8.0-windows\NeuralNetwork.csproj.CoreCompileInputs.cache
+C:\GitHub\NeuralNetwork\obj\Debug\net8.0-windows\NeuralNetwork.dll
+C:\GitHub\NeuralNetwork\obj\Debug\net8.0-windows\refint\NeuralNetwork.dll
+C:\GitHub\NeuralNetwork\obj\Debug\net8.0-windows\NeuralNetwork.pdb
+C:\GitHub\NeuralNetwork\obj\Debug\net8.0-windows\NeuralNetwork.genruntimeconfig.cache
+C:\GitHub\NeuralNetwork\obj\Debug\net8.0-windows\ref\NeuralNetwork.dll
