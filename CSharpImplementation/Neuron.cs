@@ -4,6 +4,8 @@ using System.Runtime.Intrinsics;
 
 public class Neuron
 {
+    public struct Logistic { public const double MinMaxAbs = 1.7; public const double Grad = 0.294;  public const double T = 0.5; };
+
 	public Neuron()
 	{
 	}
@@ -125,24 +127,23 @@ public class Neuron
 
         if (actFctSelect == Net.ActFctType.Logistic)
         {
-            double T = 0.5;
-            ret = (1 / (1 + Math.Exp(-inp / T)));
+            ret = (1.0 / (1.0 + Math.Exp(-inp / Logistic.T)));
         }
         else
         if (actFctSelect == Net.ActFctType.PieceWiseLinear)
         {
-            if (inp >= 1.7)
+            if (inp >= Logistic.MinMaxAbs)
             {
                 ret = 1.0;
             }
             else
-            if (inp <= (-1.7))
+            if (inp <= (-Logistic.MinMaxAbs))
             {
                 ret = 0.0;
             }
             else
             {
-                ret = (0.294 * inp) + 0.5;
+                ret = (Logistic.Grad * inp) + 0.5;
             }
         }
         else
@@ -183,18 +184,18 @@ public class Neuron
         else
         if (actFctSelect == Net.ActFctType.PieceWiseLinear)
         {
-            if (inp >= 1.7)
+            if (inp >= Logistic.MinMaxAbs)
             {
                 ret = 0.0;
             }
             else
-            if (inp <= (-1.7))
+            if (inp <= (-Logistic.MinMaxAbs))
             {
                 ret = 0.0;
             }
             else
             {
-                ret = 0.294;
+                ret = Logistic.Grad;
             }
         }
         else

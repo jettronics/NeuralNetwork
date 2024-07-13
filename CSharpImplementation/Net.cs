@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 using System.Runtime.Intrinsics;
@@ -27,6 +28,7 @@ public class Net
 
         int numLayers = topology.Count;
         List<double> weights = new List<double>();
+        batchData = new List<double>();
 
         StreamWriter linesWrite = new StreamWriter(weightsFileArg);
         StreamReader linesRead = new StreamReader(weightsFileArg);
@@ -108,31 +110,142 @@ public class Net
 
     ~Net()
     {
+        int numLayers = tplgy.Count;
 
+        File.Delete(weightsFileArg);
+
+        StreamWriter linesWrite = new StreamWriter(weightsFileArg);
+
+        int numEntries = 0;
+        for (int layerNum = 0; layerNum < numLayers; layerNum++)
+        {
+            for (int neuronNum = 0; neuronNum < tplgy.ElementAt(layerNum); neuronNum++)
+            {
+                if (layerNum != 0)
+                {
+                    List<double> wghts = new List<double>();
+                    wghts = layers[layerNum].ElementAt(neuronNum).getWeights();
+                    String line;
+                    for (int i = 0; i < wghts.Count; i++)
+                    {
+                        line = wghts.ElementAt(i).ToString();
+                        linesWrite.WriteLine(line);
+                        numEntries++;
+                    }
+                    double bias = layers[layerNum].ElementAt(neuronNum).getBias();
+                    line = bias.ToString();
+                    linesWrite.WriteLine(line);
+                    numEntries++;
+                }
+            }
+        }
+
+        linesWrite.Close();
     }
     
     public void printTopology()
     {
-
+        for (int layerNum = 0; layerNum < layers.Count; layerNum++)
+        {
+            Debug.WriteLine("Layer " + layerNum + "contains " + layers[layerNum].Count + " neurons");
+        }
     }
 
-    public void feedForward(List<double> feedIn)
+    public void feedForward(ref List<double> feedIn)
     {
+        //assign the input values to the input neurons 
+        //neurons acting as knots only
+        for (int i = 0; i < feedIn.Count; i++)
+        {
+            //cout << "feedForward: feedIn " << i << ", val: " << feedIn->at(i) << endl;
+            layers[0][i].setOutput(feedIn.ElementAt(i));
+        }
 
+        for (int i = 1; i < layers.Count; i++)
+        {
+            //cout << "feedForward: layer " << i << endl;
+            for (int n = 0; n < layers[i].Count; n++)
+            {
+                //cout << "feedForward: neuron " << n << endl;
+                layers[i][n].calcOutput(layers[i - 1]);
+            }
+        }
     }
-    public void backProp(List<double> targetOut, double beta)
+    public void backProp(ref List<double> targetOut, double beta)
     {
+        //vector<Neuron> *outputLayer = &layers.back();
+        error = 0.0;
 
+        for (int n = 0; n < layers.Last().Count; n++)
+        {
+            //cout << "Target val: " << targetOut->at(n) << ", Output val: " << layers.back()[n].getOutput() << endl;
+            double delta = targetOut.ElementAt(n) - layers.Last()[n].getOutput();
+            error += (delta * delta);
+        }
+        error = Math.Sqrt(error / ((double)layers.Last().Count));
+
+        //cout << "Back Prop Squared Error: " << error << endl;
+
+        for (int n = 0; n < layers.Last().Count; n++)
+        {
+            layers.Last()[n].calcGradients(targetOut.ElementAt(n));
+        }
+
+        for (int layerNum = layers.Count - 2; layerNum > 0; layerNum--)
+        {
+            List<Neuron> act = layers[layerNum];
+            List<Neuron> right = layers[layerNum + 1];
+
+            //cout << "Layer Gradient calc: " << layerNum << endl;
+            for (int n = 0; n < act.Count; n++)
+            {
+                act.ElementAt(n).calcGradients(right);
+            }
+        }
+
+        for (int layerNum = layers.Count - 1; layerNum > 0; layerNum--)
+        {
+            List<Neuron> act = layers[layerNum];
+            List<Neuron> left = layers[layerNum - 1];
+
+            //cout << "Layer Weights update: " << layerNum << endl;
+            for (int n = 0; n < act.Count; n++)
+            {
+                act.ElementAt(n).updateWeights(left, beta);
+            }
+
+        }
     }
     //function to get result from the neural network
-    public void getResults(List<double> result)
+    public void getResults(ref List<double> result)
+    {
+        result.Clear();
+
+        for (int n = 0; n < layers.Last().Count; n++)
+        {
+            result.Add(layers.Last()[n].getOutput());
+        }
+        return;
+    }
+
+    public void readBatch( String fromFile )
     {
 
+    }
+
+    public void readBatch( List<double> fromList )
+    {
+        batchData = fromList;
+    }
+
+    public void normalize()
+    {
+        
     }
 
     protected List<List<Neuron>> layers; //layers[layerNum][neuronNum]
     protected double error;
     protected List<int> tplgy;
     protected String weightsFileArg;
-    //fstream weightsFile;
+    protected List<double> batchData;
 }
