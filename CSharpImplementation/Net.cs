@@ -6,7 +6,7 @@ using System.Runtime.Intrinsics;
 
 public class Net
 {
-    public enum ActFctType { Logistic = 0, PieceWiseLinear, ReLu, LeakyReLu };
+    public enum ActFctType { Logistic = 0, PieceWiseLinear, ReLu, LeakyReLu, Linear }; // Linear used for last layer in case of linear sum from previous layer
 
     public static double randomWeight()
     {
@@ -28,7 +28,6 @@ public class Net
 
         int numLayers = topology.Count;
         List<double> weights = new List<double>();
-        batchData = new List<double>();
 
         StreamWriter linesWrite = new StreamWriter(weightsFileArg);
         StreamReader linesRead = new StreamReader(weightsFileArg);
@@ -228,24 +227,8 @@ public class Net
         return;
     }
 
-    public void readBatch( String fromFile )
-    {
-
-    }
-
-    public void readBatch( List<double> fromList )
-    {
-        batchData = fromList;
-    }
-
-    public void normalize()
-    {
-        
-    }
-
     protected List<List<Neuron>> layers; //layers[layerNum][neuronNum]
     protected double error;
     protected List<int> tplgy;
     protected String weightsFileArg;
-    protected List<double> batchData;
 }

@@ -170,6 +170,11 @@ public class Neuron
                 ret = inp;
             }
         }
+        else
+        if (actFctSelect == Net.ActFctType.Linear)
+        {
+            ret = inp;
+        }
         //cout << "transferFct: " << in << " -> " << sigmoid << endl;
         return ret;
     }
@@ -204,7 +209,7 @@ public class Neuron
             //ReLU
             if (inp < 0.0)
             {
-                ret = 0.01;
+                ret = 0.0;
             }
             else
             {
@@ -214,6 +219,19 @@ public class Neuron
         else
         if (actFctSelect == Net.ActFctType.LeakyReLu)
         {
+            if (inp < 0.0)
+            {
+                ret = 0.01;
+            }
+            else
+            {
+                ret = 1.0;
+            }
+        }
+        else
+        if (actFctSelect == Net.ActFctType.Linear)
+        {
+            ret = 1.0;
         }
 
         return ret;
