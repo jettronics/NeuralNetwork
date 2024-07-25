@@ -227,6 +227,7 @@ public class Net
         return;
     }
 
+    public List<List<double>> input, output; // input data already being max/min adapted outside of net class
     protected List<List<Neuron>> layers; //layers[layerNum][neuronNum]
     protected double error;
     protected List<int> tplgy;
