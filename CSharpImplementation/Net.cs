@@ -19,7 +19,7 @@ public class Net
     {
     }
 
-    public Net(List<int> topology, String weightsFile, ActFctType actFct)
+    public Net(List<int> topology, String weightsFile, List<ActFctType> actFct)
     {
         error = 0.0;
         weightsFileArg = weightsFile;
@@ -52,7 +52,7 @@ public class Net
 
             for (int neuronNum = 0; neuronNum < topology.ElementAt(layerNum); neuronNum++)
             {
-                Neuron neuron = new Neuron(0, actFct, lastLayer);
+                Neuron neuron = new Neuron(0, actFct.ElementAt(neuronNum), lastLayer);
                 if (layerNum == 0)
                 {
                     layers.Last().Add(neuron);
@@ -142,14 +142,6 @@ public class Net
         linesWrite.Close();
     }
     
-    public void printTopology()
-    {
-        for (int layerNum = 0; layerNum < layers.Count; layerNum++)
-        {
-            Debug.WriteLine("Layer " + layerNum + "contains " + layers[layerNum].Count + " neurons");
-        }
-    }
-
     public void feedForward(ref List<double> feedIn)
     {
         //assign the input values to the input neurons 
@@ -216,7 +208,7 @@ public class Net
         }
     }
     //function to get result from the neural network
-    public void getResults(ref List<double> result)
+    public void getOutput(ref List<double> result)
     {
         result.Clear();
 
