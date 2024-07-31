@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
 
 public class Net
 {
@@ -17,17 +18,37 @@ public class Net
 
     public Net()
     {
+        weightsFileArg = "";
+        tplgy = new List<int>();
+        List<List<Neuron>> layers = new List<List<Neuron>>();
+
+        output = new List<double>();
+        inputMax = new List<double>();
+        inputMin = new List<double>();
+        inputScaled = new List<double>();
+
+        StreamReader linesRead = new StreamReader("");
     }
 
     public Net(List<int> topology, String weightsFile, List<ActFctType> actFct)
     {
-        error = 0.0;
         weightsFileArg = weightsFile;
 
         tplgy = topology;
 
         int numLayers = topology.Count;
+        List<List<Neuron>> layers = new List<List<Neuron>>();
         List<double> weights = new List<double>();
+
+        output = new List<double>();
+        inputMax = new List<double>();
+        inputMin = new List<double>();
+        inputScaled = new List<double>();
+        for (int i = 0; i < topology.ElementAt(0); i++)
+        {
+            inputMax.Add(-1000000.0);
+            inputMin.Add(1000000.0);
+        }
 
         StreamWriter linesWrite = new StreamWriter(weightsFileArg);
         StreamReader linesRead = new StreamReader(weightsFileArg);
@@ -47,7 +68,6 @@ public class Net
                 lastLayer = true;
             }
             List<Neuron> Neurons = new List<Neuron>();
-            List<List<Neuron>> layers = new List<List<Neuron>>();
             layers.Add(Neurons);
 
             for (int neuronNum = 0; neuronNum < topology.ElementAt(layerNum); neuronNum++)
@@ -142,7 +162,7 @@ public class Net
         linesWrite.Close();
     }
     
-    public void feedForward(ref List<double> feedIn)
+    public void feedForward(List<double> feedIn)
     {
         //assign the input values to the input neurons 
         //neurons acting as knots only
@@ -162,19 +182,26 @@ public class Net
             }
         }
     }
-    public void backProp(ref List<double> targetOut, double beta)
+
+    public double loss(List<double> targetOut)
     {
         //vector<Neuron> *outputLayer = &layers.back();
-        error = 0.0;
+        double mse = 0.0;
 
         for (int n = 0; n < layers.Last().Count; n++)
         {
             //cout << "Target val: " << targetOut->at(n) << ", Output val: " << layers.back()[n].getOutput() << endl;
             double delta = targetOut.ElementAt(n) - layers.Last()[n].getOutput();
-            error += (delta * delta);
+            mse += (delta * delta);
         }
-        error = Math.Sqrt(error / ((double)layers.Last().Count));
+        //mse = Math.Sqrt(mse / ((double)layers.Last().Count));
+        mse = mse / ((double)layers.Last().Count);
 
+        return mse;
+    }
+
+    public void backProp(List<double> targetOut, double beta)
+    {
         //cout << "Back Prop Squared Error: " << error << endl;
 
         for (int n = 0; n < layers.Last().Count; n++)
@@ -208,20 +235,55 @@ public class Net
         }
     }
     //function to get result from the neural network
-    public void getOutput(ref List<double> result)
+    public List<double> getOutput()
     {
-        result.Clear();
+        output.Clear();
 
         for (int n = 0; n < layers.Last().Count; n++)
         {
-            result.Add(layers.Last()[n].getOutput());
+            output.Add(layers.Last()[n].getOutput());
+        }
+        return output;
+    }
+
+    public void rangeInput(List<double> input)
+    {
+        if( (input.Count == inputMax.Count) &&
+            (input.Count == inputMin.Count) ) 
+        { 
+            for (int n = 0; n < input.Count; n++) 
+            { 
+                if( input.ElementAt(n) > inputMax.ElementAt(n) ) 
+                {
+                    inputMax[n] = input.ElementAt(n);
+                }
+                
+                if (input.ElementAt(n) < inputMin.ElementAt(n))
+                {
+                    inputMin[n] = input.ElementAt(n);
+                }
+
+            }
         }
         return;
     }
 
-    public List<List<double>> input, output; // input data already being max/min adapted outside of net class
+    public List<double> scaleInput(List<double> input)
+    {
+        inputScaled.Clear();
+
+        for (int n = 0; n < input.Count; n++)
+        {
+            double m = (Neuron.Logistic.MinMaxAbs - (-Neuron.Logistic.MinMaxAbs)) / (inputMax.ElementAt(n) - inputMin.ElementAt(n));
+            double normed = (m * (input.ElementAt(n) - inputMin.ElementAt(n))) + (-Neuron.Logistic.MinMaxAbs);
+            inputScaled.Add(normed);
+        }
+        return inputScaled;
+    }
+
+    protected List<double> inputMax, inputMin, inputScaled;
+    protected List<double> output;
     protected List<List<Neuron>> layers; //layers[layerNum][neuronNum]
-    protected double error;
     protected List<int> tplgy;
     protected String weightsFileArg;
 }

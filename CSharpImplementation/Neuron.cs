@@ -8,7 +8,15 @@ public class Neuron
 
 	public Neuron()
 	{
-	}
+        bias = 0.0;
+        net = 0.0;
+        activation = 0.0;
+        gradient = 0.0;
+        actFctSelect = Net.ActFctType.Linear;
+        lastLayerNeuron = false;
+
+        weights = new List<double>();
+    }
 
     public Neuron(int numConnections, Net.ActFctType actFct, bool lastNeurons)
     {
