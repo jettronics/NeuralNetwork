@@ -20,7 +20,7 @@ public class Net
     {
         weightsFileArg = "";
         tplgy = new List<int>();
-        List<List<Neuron>> layers = new List<List<Neuron>>();
+        layers = new List<List<Neuron>>();
 
         output = new List<double>();
         inputMax = new List<double>();
@@ -37,7 +37,7 @@ public class Net
         tplgy = topology;
 
         int numLayers = topology.Count;
-        List<List<Neuron>> layers = new List<List<Neuron>>();
+        layers = new List<List<Neuron>>();
         List<double> weights = new List<double>();
 
         output = new List<double>();
@@ -91,7 +91,7 @@ public class Net
                         }
                         else
                         {
-                            String line = linesRead.ReadLine();
+                            String? line = linesRead.ReadLine();
                             weight = Convert.ToDouble(line);
                         }
                         weights.Add(weight);
@@ -106,7 +106,7 @@ public class Net
                     }
                     else
                     {
-                        String line = linesRead.ReadLine();
+                        String? line = linesRead.ReadLine();
                         bias = Convert.ToDouble(line);
                     }
                     numEntries++;
@@ -195,7 +195,7 @@ public class Net
             mse += (delta * delta);
         }
         //mse = Math.Sqrt(mse / ((double)layers.Last().Count));
-        mse = mse / ((double)layers.Last().Count);
+        mse /= ((double)layers.Last().Count);
 
         return mse;
     }
