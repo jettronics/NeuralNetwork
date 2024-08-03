@@ -50,13 +50,17 @@ public class Net
             inputMin.Add(1000000.0);
         }
 
-        StreamWriter linesWrite = new StreamWriter(weightsFileArg);
-        StreamReader linesRead = new StreamReader(weightsFileArg);
+        StreamWriter linesWrite = null;
+        StreamReader linesRead = null;
         bool emptyFile = true;
         if ( File.Exists(weightsFileArg) == true )
         {
             emptyFile = false;
-            
+            linesRead = new StreamReader(weightsFileArg);
+        }
+        else
+        {
+            linesWrite = new StreamWriter(weightsFileArg);
         }
         
         int numEntries = 0;
@@ -72,7 +76,7 @@ public class Net
 
             for (int neuronNum = 0; neuronNum < topology.ElementAt(layerNum); neuronNum++)
             {
-                Neuron neuron = new Neuron(0, actFct.ElementAt(neuronNum), lastLayer);
+                Neuron neuron = new Neuron(0, actFct.ElementAt(layerNum), lastLayer);
                 if (layerNum == 0)
                 {
                     layers.Last().Add(neuron);
