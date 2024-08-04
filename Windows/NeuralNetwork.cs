@@ -94,14 +94,39 @@ namespace Windows
             LossChart.Series["Loss"].Points.Add(10.0);
         }
 
-        private void csvFileOpened(object sender, CancelEventArgs e)
+        private void openTrainingDataFile_Click(object sender, EventArgs e)
         {
-            reader = new Reader(openCSVFileDialog.FileName);
+            openTrainingDataCSVFileDialog.ShowDialog(this);
         }
 
-        private void openFile_Click(object sender, EventArgs e)
+        private void csvTrainingDataFileOpened(object sender, CancelEventArgs e)
         {
-            openCSVFileDialog.ShowDialog(this);
+            outputTextBox.AppendText("Training data opened\r\n");
+            reader = new Reader(openTrainingDataCSVFileDialog.FileName);
+            reader.Convert();
+            
+            outputTextBox.AppendText("Number of Input Nodes: " + reader.getNumInputNodes() + "\r\n");
+            outputTextBox.AppendText("Input Names:\r\n");
+            String[] colNames = reader.getColumnNames();
+            for (int i = 0; i < colNames.Length - 1; i++)
+            {
+                outputTextBox.AppendText("   " + colNames[i] + "\r\n");
+
+            }
+            outputTextBox.AppendText("Output Name:\r\n");
+            outputTextBox.AppendText("   " + colNames.Last() + "\r\n");
+            outputTextBox.AppendText("Number of Classifiers: " + reader.getNumClassifiers() + "\r\n");
+            if (reader.getNumClassifiers() > 1)
+            {
+                for (int i = 0; i < reader.getNumClassifiers(); i++)
+                {
+                    outputTextBox.AppendText("   " + reader.getClassifiers()[i] + "\r\n");
+                }
+            }
+            else
+            {
+                outputTextBox.AppendText("   " + "Range 0...1\r\n");
+            }
         }
     }
 }
