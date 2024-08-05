@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
@@ -12,20 +13,24 @@ public class Reader
 {
     protected String inputFile;
     protected List<List<double>> inputData;
+    protected List<double> outputData;
     protected List<String[]> inputString;
     protected int numOutputClassifiers;
     protected int numInputNodes;
-    List<String> classifiers;
+    protected List<String> classifiers;
+
 
     public int getNumClassifiers() { return numOutputClassifiers; }
     public int getNumInputNodes() { return numInputNodes; }
     public String[] getColumnNames() { return inputString.ElementAt(0); }
     public String[] getClassifiers() { return classifiers.ToArray(); }
+    public int getNumTotalData() { return inputString.Count(); }
     
     public Reader()
 	{
         inputFile = null;
-        inputData = new List<List<double>>();   
+        inputData = new List<List<double>>(); 
+        outputData = new List<double>();
         inputString = new List<String[]>();
         numOutputClassifiers = 0;
         numInputNodes = 0;
@@ -36,6 +41,7 @@ public class Reader
     {
         inputFile = dataFile;
         inputData = new List<List<double>>();
+        outputData = new List<double>();
         inputString = new List<String[]>();
         numOutputClassifiers = 0;   
         numInputNodes = 0;
@@ -51,7 +57,8 @@ public class Reader
         csvParser.HasFieldsEnclosedInQuotes = true;
 
         inputString.Clear();
-        classifiers.Clear();
+        inputData.Clear();
+        outputData.Clear();
 
         // Skip the row with the column names
         //csvParser.ReadLine();
@@ -65,34 +72,61 @@ public class Reader
         }
        
         numInputNodes = inputString.ElementAt(1).Count() - 1;
+        int lastColumn = numInputNodes;
 
-        String classifier = inputString.ElementAt(1).Last();
-        double number = 0;
-        bool canConvert = double.TryParse(classifier, out number);
-        if (canConvert == true)
+        // Check columns for String or Number
+        for (int k = 0; k < inputString.ElementAt(1).Count(); k++)
         {
-            numOutputClassifiers = 1;
-        }
-        else
-        {
-            for (int i = 1; i < inputString.Count; i++)
+            List<double> column = new List<double>();
+            classifiers.Clear();
+            // Check line for String or Number 
+            for (int i = 1; i < inputString.Count(); i++)
             {
-                classifier = inputString.ElementAt(i).Last();
-                bool avail = false;
-                for (int j = 0; j < classifiers.Count; j++)
+                //String element = inputString.ElementAt(1).Last();
+                String element = inputString.ElementAt(i).ElementAt(k);
+                double number = 0.0;
+                bool canConvert = Double.TryParse(element, NumberStyles.Any, CultureInfo.InvariantCulture, out number);
+                if (canConvert == true)
                 {
-                    if (classifier == classifiers.ElementAt(j))
+                    column.Add(number);
+                }
+                else
+                {
+                    //element = inputString.ElementAt(i).Last();
+                    //element = inputString.ElementAt(i).ElementAt(k);
+                    bool avail = false;
+                    for (int j = 0; j < classifiers.Count(); j++)
                     {
-                        avail = true;
-                        break;
+                        if (element == classifiers.ElementAt(j))
+                        {
+                            avail = true;
+                            column.Add((double)j);
+                            break;
+                        }
+                    }
+                    if (avail == false)
+                    {
+                        classifiers.Add(element);
+                        column.Add((double)(classifiers.Count()-1));
                     }
                 }
-                if (avail == false)
+            }
+            if (k < lastColumn)
+            {
+                inputData.Add(column);
+            }
+            else
+            {
+                outputData = column;
+                if (classifiers.Count() == 0)
                 {
-                    classifiers.Add(classifier);
+                    numOutputClassifiers = 1;
+                }
+                else
+                {
+                    numOutputClassifiers = classifiers.Count();
                 }
             }
-            numOutputClassifiers = classifiers.Count;
         }
     }
 }

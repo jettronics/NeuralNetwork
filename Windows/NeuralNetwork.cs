@@ -127,6 +127,7 @@ namespace Windows
             {
                 outputTextBox.AppendText("   " + "Range 0...1\r\n");
             }
+            outputTextBox.AppendText("Total Data number: " + reader.getNumTotalData() + "\r\n");    
         }
     }
 }
