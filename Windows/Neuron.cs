@@ -5,7 +5,7 @@ using System.Linq;
 
 public class Neuron
 {
-    public struct Logistic { public const double MinMaxAbs = 1.7; public const double Grad = 0.294;  public const double T = 0.5; };
+    public struct Sigmoid { public const double MinMaxAbs = 1.7; public const double Grad = 0.294;  public const double T = 0.5; };
 
 	public Neuron()
 	{
@@ -134,25 +134,25 @@ public class Neuron
     {
         double ret = 0.0;
 
-        if (actFctSelect == Net.ActFctType.Logistic)
+        if (actFctSelect == Net.ActFctType.Sigmoid)
         {
-            ret = (1.0 / (1.0 + Math.Exp(-inp / Logistic.T)));
+            ret = (1.0 / (1.0 + Math.Exp(-inp / Sigmoid.T)));
         }
         else
         if (actFctSelect == Net.ActFctType.PieceWiseLinear)
         {
-            if (inp >= Logistic.MinMaxAbs)
+            if (inp >= Sigmoid.MinMaxAbs)
             {
                 ret = 1.0;
             }
             else
-            if (inp <= (-Logistic.MinMaxAbs))
+            if (inp <= (-Sigmoid.MinMaxAbs))
             {
                 ret = 0.0;
             }
             else
             {
-                ret = (Logistic.Grad * inp) + 0.5;
+                ret = (Sigmoid.Grad * inp) + 0.5;
             }
         }
         else
@@ -191,25 +191,25 @@ public class Neuron
     {
         double ret = 0.0;
 
-        if (actFctSelect == Net.ActFctType.Logistic)
+        if (actFctSelect == Net.ActFctType.Sigmoid)
         {
             ret = transferFct(inp) * (1 - transferFct(inp));
         }
         else
         if (actFctSelect == Net.ActFctType.PieceWiseLinear)
         {
-            if (inp >= Logistic.MinMaxAbs)
+            if (inp >= Sigmoid.MinMaxAbs)
             {
                 ret = 0.0;
             }
             else
-            if (inp <= (-Logistic.MinMaxAbs))
+            if (inp <= (-Sigmoid.MinMaxAbs))
             {
                 ret = 0.0;
             }
             else
             {
-                ret = Logistic.Grad;
+                ret = Sigmoid.Grad;
             }
         }
         else

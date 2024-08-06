@@ -4,10 +4,12 @@ using System.IO;
 using System.Numerics;
 using System.Collections.Generic;
 using System.Linq;
+using System.Drawing.Drawing2D;
 
 public class Net
 {
-    public enum ActFctType { Logistic = 0, PieceWiseLinear, ReLu, LeakyReLu, Linear }; // Linear used for last layer in case of linear sum from previous layer
+    public enum ActFctType { Sigmoid = 0, PieceWiseLinear, ReLu, LeakyReLu, Linear }; // Linear used for last layer in case of linear sum from previous layer
+    public static readonly String[] ActFctTypeStr = { "Sigmoid", "PieceWiseLinear", "ReLu", "LeakyReLu", "Linear" };
 
     public static double randomWeight()
     {
@@ -26,7 +28,7 @@ public class Net
         inputMax = new List<double>();
         inputMin = new List<double>();
         inputScaled = new List<double>();
-
+ 
         StreamReader linesRead = new StreamReader("");
     }
 
@@ -278,8 +280,8 @@ public class Net
 
         for (int n = 0; n < input.Count; n++)
         {
-            double m = (Neuron.Logistic.MinMaxAbs - (-Neuron.Logistic.MinMaxAbs)) / (inputMax.ElementAt(n) - inputMin.ElementAt(n));
-            double normed = (m * (input.ElementAt(n) - inputMin.ElementAt(n))) + (-Neuron.Logistic.MinMaxAbs);
+            double m = (Neuron.Sigmoid.MinMaxAbs - (-Neuron.Sigmoid.MinMaxAbs)) / (inputMax.ElementAt(n) - inputMin.ElementAt(n));
+            double normed = (m * (input.ElementAt(n) - inputMin.ElementAt(n))) + (-Neuron.Sigmoid.MinMaxAbs);
             inputScaled.Add(normed);
         }
         return inputScaled;

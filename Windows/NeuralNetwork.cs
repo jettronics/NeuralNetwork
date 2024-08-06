@@ -56,16 +56,17 @@ namespace Windows
             Ns = number of samples in training data set.
             α = an arbitrary scaling factor usually 2-10.
 
-            For classification problems using more than 1 neuron a softmax activation function should be preferred
+            For classification problems using more than 1 neuron a softmax activation function should be preferred but 
+            only if the values to be classified are part of one class e.g. not to be used for members which can be part of different courses.
             */
             topology.Add(10);
-            actFct.Add(Net.ActFctType.Logistic);
+            actFct.Add(Net.ActFctType.Sigmoid);
             topology.Add(11);
-            actFct.Add(Net.ActFctType.Logistic);
+            actFct.Add(Net.ActFctType.Sigmoid);
             topology.Add(7);
-            actFct.Add(Net.ActFctType.Logistic);
+            actFct.Add(Net.ActFctType.Sigmoid);
             topology.Add(4);
-            actFct.Add(Net.ActFctType.Logistic); 
+            actFct.Add(Net.ActFctType.Sigmoid); 
             //actFct.Add(Net.ActFctType.SoftMax);
             /* 
             Softmax activation function explained:
