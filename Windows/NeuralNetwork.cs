@@ -11,6 +11,7 @@ using System.IO;
 using static Net;
 using System.Reflection;
 using static System.Net.Mime.MediaTypeNames;
+using System.Runtime.InteropServices;
 
 namespace Windows
 {
@@ -130,11 +131,35 @@ namespace Windows
                 outputTextBox.AppendText("   " + "Range 0...1\r\n");
             }
             outputTextBox.AppendText("Total Data number: " + reader.getNumTotalData() + "\r\n");
-            
-            netPropertyInfoTextBox.AppendText("Define in following text box the inputs, outputs, layers and activation functions of the neural network.\r\n");
-            netPropertyInfoTextBox.AppendText("Syntax: <n>th line number of inputs, <n+1> th line activation function\r\n");
-            netPropertyInfoTextBox.AppendText("Selection of activation functions: " + string.Join(", ", Net.ActFctTypeStr) + "\r\n");
+            outputTextBox.AppendText("----------------------------------------------\r\n");
+            outputTextBox.AppendText("Define in following text box the inputs, outputs, layers and activation functions of the neural network.\r\n");
+            outputTextBox.AppendText("Syntax: n th line number of inputs, n+1 th line activation function\r\n");
+            outputTextBox.AppendText("Selection of activation functions: " + string.Join(", ", Net.ActFctTypeStr) + "\r\n");
         }
 
+        private void generateNeuralNet_Click(object sender, EventArgs e)
+        {
+            String netParams = netPropertyTextBox.Text;
+            String netParamsReplaced = netParams.Replace("\r\n", ",");
+            String[] netParamsSplitted = netParamsReplaced.Split(',');
+            int len = netParamsSplitted.Length % 2;
+            for (int i = 0; i < len; i++)
+            {
+                int topology = Convert.ToUInt16(netParamsSplitted[i * 2]);
+
+                bool found = false;
+                foreach (String netParam in Net.ActFctTypeStr)
+                {
+                    if (netParam == netParamsSplitted[(i * 2) + 1])
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                //topology.Add(Convert.ToUInt16(netParamsSplitted[i*2]));
+                //actFct.Add(Net.ActFctType.Sigmoid);
+            }
+        }
     }
 }
