@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.IO;
 using static Net;
 using System.Reflection;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Windows
 {
@@ -128,7 +129,12 @@ namespace Windows
             {
                 outputTextBox.AppendText("   " + "Range 0...1\r\n");
             }
-            outputTextBox.AppendText("Total Data number: " + reader.getNumTotalData() + "\r\n");    
+            outputTextBox.AppendText("Total Data number: " + reader.getNumTotalData() + "\r\n");
+            
+            netPropertyInfoTextBox.AppendText("Define in following text box the inputs, outputs, layers and activation functions of the neural network.\r\n");
+            netPropertyInfoTextBox.AppendText("Syntax: <n>th line number of inputs, <n+1> th line activation function\r\n");
+            netPropertyInfoTextBox.AppendText("Selection of activation functions: " + string.Join(", ", Net.ActFctTypeStr) + "\r\n");
         }
+
     }
 }
