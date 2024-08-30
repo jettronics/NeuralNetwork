@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Drawing.Drawing2D;
+using System.Drawing;
 
 public class Net
 {
@@ -22,21 +23,26 @@ public class Net
     {
         weightsFileArg = "";
         tplgy = new List<int>();
-        layers = new List<List<Neuron>>();
+        actFct = new List<ActFctType>();
+        
+        //layers = new List<List<Neuron>>();
 
-        output = new List<double>();
-        inputMax = new List<double>();
-        inputMin = new List<double>();
-        inputScaled = new List<double>();
+        //output = new List<double>();
+        //inputMax = new List<double>();
+        //inputMin = new List<double>();
+        //inputScaled = new List<double>();
  
-        StreamReader linesRead = new StreamReader("");
+        //StreamReader linesRead = new StreamReader("");
     }
 
-    public Net(List<int> topology, String weightsFile, List<ActFctType> actFct)
+    ~Net()
     {
-        weightsFileArg = weightsFile;
+    }
 
+    public void createNet(List<int> topology, List<ActFctType> actuatFct)
+    {
         tplgy = topology;
+        actFct = actuatFct;
 
         int numLayers = topology.Count;
         layers = new List<List<Neuron>>();
@@ -52,19 +58,6 @@ public class Net
             inputMin.Add(1000000.0);
         }
 
-        StreamWriter linesWrite = null;
-        StreamReader linesRead = null;
-        bool emptyFile = true;
-        if ( File.Exists(weightsFileArg) == true )
-        {
-            emptyFile = false;
-            linesRead = new StreamReader(weightsFileArg);
-        }
-        else
-        {
-            linesWrite = new StreamWriter(weightsFileArg);
-        }
-        
         int numEntries = 0;
         for (int layerNum = 0; layerNum < numLayers; layerNum++)
         {
@@ -89,32 +82,106 @@ public class Net
                     for (int i = 0; i < topology.ElementAt(layerNum - 1); i++)
                     {
                         double weight = 0.0;
-                        if (emptyFile == true)
-                        {
-                            weight = randomWeight();
-                            String line = weight.ToString();
-                            linesWrite.WriteLine(line);
-                        }
-                        else
-                        {
-                            String line = linesRead.ReadLine();
-                            weight = Convert.ToDouble(line);
-                        }
+                        weight = randomWeight();
                         weights.Add(weight);
                         numEntries++;
                         //cout << "Weight " << numEntries << ": " << weight << endl;
                     }
                     double bias = 0.0;
-                    if (emptyFile == true)
+                    numEntries++;
+                    //cout << "Bias " << numEntries << ": " << bias << endl;
+                    neuron.initWeights(weights);
+                    neuron.initBias(bias);
+                    layers.Last().Add(neuron);
+                }
+            }
+        }
+        
+    }
+
+    //public void loadNet(List<int> topology, String weightsFile, List<ActFctType> actFct)
+    public void loadNet(String weightsFile)
+    {
+        weightsFileArg = weightsFile;
+        tplgy.Clear();
+        actFct.Clear();
+
+        layers = new List<List<Neuron>>();
+        List<double> weights = new List<double>();
+
+        output = new List<double>();
+        inputMax = new List<double>();
+        inputMin = new List<double>();
+        inputScaled = new List<double>();
+        
+        StreamReader linesRead = new StreamReader(weightsFileArg);
+        
+        if ( File.Exists(weightsFileArg) == false )
+        {
+            return;
+        }
+
+        String line = "";
+        while ((line != "\n\r") && (line != "\r\n"))
+        {
+            line = linesRead.ReadLine();
+            int layerInputCnt = Convert.ToUInt16(line);
+            tplgy.Add(layerInputCnt);
+            line = linesRead.ReadLine();
+            bool found = false;
+            Net.ActFctType actFctLoc = ActFctType.Sigmoid;
+            for (int j = 0; j < Net.ActFctTypeStr.Length; j++)
+            {
+                if (Net.ActFctTypeStr.ElementAt(j) == line)
+                {
+                    found = true;
+                    actFctLoc = (Net.ActFctType)j;
+                    break;
+                }
+            }
+            if (found == true)
+            {
+                actFct.Add(actFctLoc);
+            }
+        }
+
+        int numLayers = tplgy.Count;
+
+        int numEntries = 0;
+        for (int layerNum = 0; layerNum < numLayers; layerNum++)
+        {
+            bool lastLayer = false;
+            if (layerNum >= (numLayers - 1))
+            {
+                lastLayer = true;
+            }
+            List<Neuron> Neurons = new List<Neuron>();
+            layers.Add(Neurons);
+
+            for (int neuronNum = 0; neuronNum < tplgy.ElementAt(layerNum); neuronNum++)
+            {
+                Neuron neuron = new Neuron(0, actFct.ElementAt(layerNum), lastLayer);
+                if (layerNum == 0)
+                {
+                    layers.Last().Add(neuron);
+                }
+                else
+                {
+                    weights.Clear();
+                    for (int i = 0; i < tplgy.ElementAt(layerNum - 1); i++)
                     {
-                        String line = bias.ToString();
-                        linesWrite.WriteLine(line);
+                        double weight = 0.0;
+                        line = linesRead.ReadLine();
+                        weight = Convert.ToDouble(line);
+                        
+                        weights.Add(weight);
+                        numEntries++;
+                        //cout << "Weight " << numEntries << ": " << weight << endl;
                     }
-                    else
-                    {
-                        String line = linesRead.ReadLine();
-                        bias = Convert.ToDouble(line);
-                    }
+                    double bias = 0.0;
+                    line = linesRead.ReadLine();
+                    bias = Convert.ToDouble(line);
+                    
                     numEntries++;
                     //cout << "Bias " << numEntries << ": " << bias << endl;
                     neuron.initWeights(weights);
@@ -123,23 +190,31 @@ public class Net
                 }
             }
         }    
-        if( emptyFile == true )
-        {
-            linesWrite.Close();
-        }
-        else
-        {
-            linesRead.Close();
-        }
+        linesRead.Close();
     }
-
-    ~Net()
+ 
+    public void saveNet(String weightsFile)
     {
         int numLayers = tplgy.Count;
+
+        weightsFileArg = weightsFile;
 
         File.Delete(weightsFileArg);
 
         StreamWriter linesWrite = new StreamWriter(weightsFileArg);
+
+        String line;
+
+        for (int i = 0; i < numLayers; i++)
+        {
+            line = tplgy.ElementAt(i).ToString();
+            linesWrite.WriteLine(line);
+            int actInd = (int)actFct.ElementAt(i);
+            line = Net.ActFctTypeStr.ElementAt(actInd);
+            linesWrite.WriteLine(line);
+        }
+
+        linesWrite.WriteLine("\n\r");
 
         int numEntries = 0;
         for (int layerNum = 0; layerNum < numLayers; layerNum++)
@@ -150,7 +225,7 @@ public class Net
                 {
                     List<double> wghts = new List<double>();
                     wghts = layers[layerNum].ElementAt(neuronNum).getWeights();
-                    String line;
+                    
                     for (int i = 0; i < wghts.Count; i++)
                     {
                         line = wghts.ElementAt(i).ToString();
@@ -291,5 +366,6 @@ public class Net
     protected List<double> output;
     protected List<List<Neuron>> layers; //layers[layerNum][neuronNum]
     protected List<int> tplgy;
+    protected List<ActFctType> actFct;
     protected String weightsFileArg;
 }

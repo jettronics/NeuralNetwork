@@ -61,6 +61,7 @@ namespace Windows
             For classification problems using more than 1 neuron a softmax activation function should be preferred but 
             only if the values to be classified are part of one class e.g. not to be used for members which can be part of different courses.
             */
+            /*
             topology.Add(10);
             actFct.Add(Net.ActFctType.Sigmoid);
             topology.Add(11);
@@ -68,16 +69,17 @@ namespace Windows
             topology.Add(7);
             actFct.Add(Net.ActFctType.Sigmoid);
             topology.Add(4);
-            actFct.Add(Net.ActFctType.Sigmoid); 
+            actFct.Add(Net.ActFctType.Sigmoid);
+            */
             //actFct.Add(Net.ActFctType.SoftMax);
             /* 
             Softmax activation function explained:
             https://www.pinecone.io/learn/softmax-activation/
             */
 
-            String weightsFile = Path.GetFullPath("weights.txt");
+            //String weightsFile = Path.GetFullPath("weights.txt");
 
-            network = new Net(topology, weightsFile, actFct);
+            network = new Net();
 
             
         }
@@ -139,27 +141,54 @@ namespace Windows
 
         private void generateNeuralNet_Click(object sender, EventArgs e)
         {
+            topology.Clear();
+            actFct.Clear(); 
             String netParams = netPropertyTextBox.Text;
             String netParamsReplaced = netParams.Replace("\r\n", ",");
             String[] netParamsSplitted = netParamsReplaced.Split(',');
-            int len = netParamsSplitted.Length % 2;
+            int len = netParamsSplitted.Length >> 1;
             for (int i = 0; i < len; i++)
             {
-                int topology = Convert.ToUInt16(netParamsSplitted[i * 2]);
+                int topologyVal = Convert.ToUInt16(netParamsSplitted[i * 2]);
 
                 bool found = false;
-                foreach (String netParam in Net.ActFctTypeStr)
+                Net.ActFctType actFctLoc = ActFctType.Sigmoid;
+                String actFctString = netParamsSplitted[(i * 2) + 1];
+                for ( int j = 0; j < Net.ActFctTypeStr.Length; j++ )
                 {
-                    if (netParam == netParamsSplitted[(i * 2) + 1])
+                    if (Net.ActFctTypeStr.ElementAt(j) == actFctString)
                     {
                         found = true;
+                        actFctLoc = (Net.ActFctType)j;
+                        actFctString = Net.ActFctTypeStr.ElementAt(j);
                         break;
                     }
                 }
 
-                //topology.Add(Convert.ToUInt16(netParamsSplitted[i*2]));
-                //actFct.Add(Net.ActFctType.Sigmoid);
+                if (found == true)
+                {
+                    topology.Add(topologyVal);
+                    actFct.Add(actFctLoc);
+                    network.createNet(topology, actFct);
+                    outputTextBox.AppendText("Layer created with " + topologyVal + " inputs and Activation Function " + actFctString + "\r\n");
+                }
+                else
+                {
+                    outputTextBox.AppendText("Error creating Layer with " + topologyVal + " inputs and Activation Function " + actFctString + "\r\n");
+                }
             }
+        }
+
+        private void openTestDataFile_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void saveNeuralNet_Click(object sender, EventArgs e)
+        {
+            String weightsFile = Path.GetFullPath("weights.txt");
+            network.saveNet(weightsFile);
+            outputTextBox.AppendText("Network saved under: " + weightsFile + "\r\n");
         }
     }
 }
