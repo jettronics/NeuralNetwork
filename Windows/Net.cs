@@ -99,7 +99,6 @@ public class Net
         
     }
 
-    //public void loadNet(List<int> topology, String weightsFile, List<ActFctType> actFct)
     public void loadNet(String weightsFile)
     {
         weightsFileArg = weightsFile;
@@ -326,7 +325,8 @@ public class Net
         }
         return output;
     }
-
+    // function to be called for all training data to get min and max values for all input channels 
+    // Argument takes all input channels for one row of input data
     public void rangeInput(List<double> input)
     {
         if( (input.Count == inputMax.Count) &&
@@ -348,7 +348,8 @@ public class Net
         }
         return;
     }
-
+    // function to be called for every training or test data to scale one row of input data for all input channels 
+    // Argument takes all input channels for one row of input data
     public List<double> scaleInput(List<double> input)
     {
         inputScaled.Clear();

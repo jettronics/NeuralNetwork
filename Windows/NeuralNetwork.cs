@@ -190,5 +190,38 @@ namespace Windows
             network.saveNet(weightsFile);
             outputTextBox.AppendText("Network saved under: " + weightsFile + "\r\n");
         }
+
+        private void calculateMinMaxRange_Click(object sender, EventArgs e)
+        {
+            int inputDataCnt = reader.getInputData()[0].Count;
+            int inputRowCnt = reader.getInputData().Count;
+            List<double> row = new List<double>();
+
+            if (topology.Count == 0 )
+            {
+                outputTextBox.AppendText("Create Network first!\r\n");
+                return;
+            }
+
+            for (int i = 0; i < inputDataCnt; i++)
+            {
+                row.Clear();
+                for(int j = 0; j < inputRowCnt;j++)
+                {
+                    row.Add(reader.getInputData()[j][i]);
+                }
+                network.rangeInput(row);
+            }
+        }
+
+        private void outputTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void netPropertyTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

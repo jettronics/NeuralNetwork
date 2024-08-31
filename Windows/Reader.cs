@@ -25,7 +25,8 @@ public class Reader
     public String[] getColumnNames() { return inputString.ElementAt(0); }
     public String[] getClassifiers() { return classifiers.ToArray(); }
     public int getNumTotalData() { return inputString.Count(); }
-    
+    public ref List<List<double>> getInputData() { return ref inputData; }
+
     public Reader()
 	{
         inputFile = null;
