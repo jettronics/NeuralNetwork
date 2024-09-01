@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title6 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.LossChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.openTrainingDataCSVFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -43,40 +43,42 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.LossChart)).BeginInit();
             this.SuspendLayout();
             // 
             // LossChart
             // 
-            chartArea1.AxisX.MajorGrid.Enabled = false;
-            chartArea1.AxisX2.MajorGrid.Enabled = false;
-            chartArea1.AxisY.MajorGrid.Enabled = false;
-            chartArea1.AxisY2.MajorGrid.Enabled = false;
-            chartArea1.Name = "ChartArea1";
-            this.LossChart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.LossChart.Legends.Add(legend1);
+            chartArea6.AxisX.MajorGrid.Enabled = false;
+            chartArea6.AxisX2.MajorGrid.Enabled = false;
+            chartArea6.AxisY.MajorGrid.Enabled = false;
+            chartArea6.AxisY2.MajorGrid.Enabled = false;
+            chartArea6.Name = "ChartArea1";
+            this.LossChart.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            this.LossChart.Legends.Add(legend6);
             this.LossChart.Location = new System.Drawing.Point(321, 40);
             this.LossChart.Name = "LossChart";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.IsVisibleInLegend = false;
-            series1.Legend = "Legend1";
-            series1.Name = "Loss";
-            series1.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            this.LossChart.Series.Add(series1);
+            series6.ChartArea = "ChartArea1";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series6.IsVisibleInLegend = false;
+            series6.Legend = "Legend1";
+            series6.Name = "Loss";
+            series6.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+            this.LossChart.Series.Add(series6);
             this.LossChart.Size = new System.Drawing.Size(482, 382);
             this.LossChart.TabIndex = 0;
             this.LossChart.Text = "Loss";
-            title1.Name = "Loss";
-            title1.Text = "Loss";
-            this.LossChart.Titles.Add(title1);
+            title6.Name = "Loss";
+            title6.Text = "Loss";
+            this.LossChart.Titles.Add(title6);
             this.LossChart.Click += new System.EventHandler(this.LossChart_Click);
             // 
             // timer1
             // 
             this.timer1.Enabled = true;
-            this.timer1.Interval = 1000;
+            this.timer1.Interval = 10;
             this.timer1.Tick += new System.EventHandler(this.Timer_Loop);
             // 
             // openTrainingDataCSVFileDialog
@@ -90,13 +92,13 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(293, 23);
             this.button1.TabIndex = 1;
-            this.button1.Text = "Training Data CSV File";
+            this.button1.Text = "Analyze Training Data CSV File";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.openTrainingDataFile_Click);
             // 
             // outputTextBox
             // 
-            this.outputTextBox.Location = new System.Drawing.Point(12, 266);
+            this.outputTextBox.Location = new System.Drawing.Point(12, 295);
             this.outputTextBox.Multiline = true;
             this.outputTextBox.Name = "outputTextBox";
             this.outputTextBox.ReadOnly = true;
@@ -126,7 +128,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(12, 208);
+            this.button3.Location = new System.Drawing.Point(12, 237);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(293, 23);
             this.button3.TabIndex = 5;
@@ -136,7 +138,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(12, 237);
+            this.button4.Location = new System.Drawing.Point(12, 266);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(293, 23);
             this.button4.TabIndex = 6;
@@ -150,15 +152,37 @@
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(293, 23);
             this.button5.TabIndex = 7;
-            this.button5.Text = "Calculate Min and Max Ranges";
+            this.button5.Text = "Calculate Min and Max Ranges from Training Data";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.calculateMinMaxRange_Click);
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(12, 208);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(148, 23);
+            this.button6.TabIndex = 8;
+            this.button6.Text = "Train Neural Net";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.trainNeuralNet_Click);
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(167, 209);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(138, 23);
+            this.button7.TabIndex = 9;
+            this.button7.Text = "Stop Training";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.stopTraining_Click);
             // 
             // NeuralNetwork
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(833, 497);
+            this.Controls.Add(this.button7);
+            this.Controls.Add(this.button6);
             this.Controls.Add(this.LossChart);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
@@ -188,6 +212,8 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button7;
     }
 }
 

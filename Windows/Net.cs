@@ -350,7 +350,7 @@ public class Net
     }
     // function to be called for every training or test data to scale one row of input data for all input channels 
     // Argument takes all input channels for one row of input data
-    public List<double> scaleInput(List<double> input)
+    public ref List<double> scaleInput(List<double> input)
     {
         inputScaled.Clear();
 
@@ -360,8 +360,11 @@ public class Net
             double normed = (m * (input.ElementAt(n) - inputMin.ElementAt(n))) + (-Neuron.Sigmoid.MinMaxAbs);
             inputScaled.Add(normed);
         }
-        return inputScaled;
+        return ref inputScaled;
     }
+
+    public List<double> getMaxRanges() { return inputMax; }
+    public List<double> getMinRanges() { return inputMin; }
 
     protected List<double> inputMax, inputMin, inputScaled;
     protected List<double> output;

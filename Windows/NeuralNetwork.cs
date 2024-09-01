@@ -21,12 +21,22 @@ namespace Windows
         protected List<int> topology;
         protected List<ActFctType> actFct;
         protected Reader reader;
+        protected int inputDataCnt;
+        protected int inputRowCnt;
+        protected List<double> row;
+        protected bool training;
+        protected int trainDataIdx;
 
         public NeuralNetwork()
         {
             InitializeComponent();
             topology = new List<int>();
             actFct = new List<ActFctType>();
+            inputDataCnt = 0;
+            inputRowCnt = 0;
+            row = new List<double>();
+            training = false;
+            trainDataIdx = 0;
             /*
             The number of neurons in the input layer is equal to the number of features in the data and in very rare cases, 
             there will be one input layer for bias. Whereas the number of neurons in the output depends on whether the model 
@@ -92,11 +102,6 @@ namespace Windows
         private void LossChart_Load(object sender, EventArgs e)
         {
             
-        }
-
-        private void Timer_Loop(object sender, EventArgs e)
-        {
-            LossChart.Series["Loss"].Points.Add(10.0);
         }
 
         private void openTrainingDataFile_Click(object sender, EventArgs e)
@@ -193,10 +198,9 @@ namespace Windows
 
         private void calculateMinMaxRange_Click(object sender, EventArgs e)
         {
-            int inputDataCnt = reader.getInputData()[0].Count;
-            int inputRowCnt = reader.getInputData().Count;
-            List<double> row = new List<double>();
-
+            inputDataCnt = reader.getInputData()[0].Count;
+            inputRowCnt = reader.getInputData().Count;
+            
             if (topology.Count == 0 )
             {
                 outputTextBox.AppendText("Create Network first!\r\n");
@@ -212,6 +216,12 @@ namespace Windows
                 }
                 network.rangeInput(row);
             }
+            outputTextBox.AppendText("Max and Min Ranges: \r\n");
+            String[] colNames = reader.getColumnNames();
+            for (int i = 0; i < colNames.Length - 1; i++)
+            {
+                outputTextBox.AppendText(colNames[i] + " - Max: " + network.getMaxRanges()[i] + ", Min: " + network.getMinRanges()[i] + "\r\n");
+            }
         }
 
         private void outputTextBox_TextChanged(object sender, EventArgs e)
@@ -222,6 +232,59 @@ namespace Windows
         private void netPropertyTextBox_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void trainNeuralNet_Click(object sender, EventArgs e)
+        {
+            if (topology.Count == 0)
+            {
+                outputTextBox.AppendText("Create Network first!\r\n");
+                return;
+            }
+
+            trainDataIdx = 0;
+            LossChart.Series["Loss"].Points.Clear();
+
+            for (int i = 0; i < inputDataCnt; i++)
+            {
+                row.Clear();
+                for (int j = 0; j < inputRowCnt; j++)
+                {
+                    row.Add(reader.getInputData()[j][i]);
+                }
+                network.scaleInput(row);
+            }
+
+            training = true;
+        }
+
+        private void Timer_Loop(object sender, EventArgs e)
+        {
+            if (training == true)
+            {
+                
+                if( trainDataIdx < inputDataCnt )
+                {
+                    row.Clear();
+                    for (int j = 0; j < inputRowCnt; j++)
+                    {
+                        row.Add(reader.getInputData()[j][trainDataIdx]);
+                    }
+                    List<double> refScaled = network.scaleInput(row);
+                    LossChart.Series["Loss"].Points.Add(refScaled[1]);
+                    trainDataIdx++;
+                }
+                else
+                {
+                    training = false;
+                }
+            }
+
+        }
+
+        private void stopTraining_Click(object sender, EventArgs e)
+        {
+            training = false;
         }
     }
 }
