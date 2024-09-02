@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.LossChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.openTrainingDataCSVFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -44,34 +44,36 @@
             this.button4 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
+            this.learningRateTextBox = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.LossChart)).BeginInit();
             this.SuspendLayout();
             // 
             // LossChart
             // 
-            chartArea2.AxisX.MajorGrid.Enabled = false;
-            chartArea2.AxisX2.MajorGrid.Enabled = false;
-            chartArea2.AxisY.MajorGrid.Enabled = false;
-            chartArea2.AxisY2.MajorGrid.Enabled = false;
-            chartArea2.Name = "ChartArea1";
-            this.LossChart.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.LossChart.Legends.Add(legend2);
+            chartArea1.AxisX.MajorGrid.Enabled = false;
+            chartArea1.AxisX2.MajorGrid.Enabled = false;
+            chartArea1.AxisY.MajorGrid.Enabled = false;
+            chartArea1.AxisY2.MajorGrid.Enabled = false;
+            chartArea1.Name = "ChartArea1";
+            this.LossChart.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.LossChart.Legends.Add(legend1);
             this.LossChart.Location = new System.Drawing.Point(321, 40);
             this.LossChart.Name = "LossChart";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.IsVisibleInLegend = false;
-            series2.Legend = "Legend1";
-            series2.Name = "Loss";
-            series2.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            this.LossChart.Series.Add(series2);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.IsVisibleInLegend = false;
+            series1.Legend = "Legend1";
+            series1.Name = "Loss";
+            series1.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+            this.LossChart.Series.Add(series1);
             this.LossChart.Size = new System.Drawing.Size(482, 382);
             this.LossChart.TabIndex = 0;
             this.LossChart.Text = "Loss";
-            title2.Name = "Loss";
-            title2.Text = "Loss";
-            this.LossChart.Titles.Add(title2);
+            title1.Name = "Loss";
+            title1.Text = "Loss";
+            this.LossChart.Titles.Add(title1);
             this.LossChart.Click += new System.EventHandler(this.LossChart_Click);
             // 
             // timer1
@@ -97,7 +99,7 @@
             // 
             // outputTextBox
             // 
-            this.outputTextBox.Location = new System.Drawing.Point(12, 266);
+            this.outputTextBox.Location = new System.Drawing.Point(12, 321);
             this.outputTextBox.Multiline = true;
             this.outputTextBox.Name = "outputTextBox";
             this.outputTextBox.ReadOnly = true;
@@ -127,7 +129,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(12, 208);
+            this.button3.Location = new System.Drawing.Point(12, 263);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(293, 23);
             this.button3.TabIndex = 5;
@@ -137,7 +139,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(12, 237);
+            this.button4.Location = new System.Drawing.Point(12, 292);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(293, 23);
             this.button4.TabIndex = 6;
@@ -147,9 +149,9 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(12, 179);
+            this.button6.Location = new System.Drawing.Point(12, 205);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(148, 23);
+            this.button6.Size = new System.Drawing.Size(293, 23);
             this.button6.TabIndex = 8;
             this.button6.Text = "Train Neural Net";
             this.button6.UseVisualStyleBackColor = true;
@@ -157,19 +159,39 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(167, 179);
+            this.button7.Location = new System.Drawing.Point(12, 234);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(138, 23);
+            this.button7.Size = new System.Drawing.Size(293, 23);
             this.button7.TabIndex = 9;
             this.button7.Text = "Stop Training";
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.stopTraining_Click);
             // 
+            // learningRateTextBox
+            // 
+            this.learningRateTextBox.Location = new System.Drawing.Point(178, 179);
+            this.learningRateTextBox.Name = "learningRateTextBox";
+            this.learningRateTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.learningRateTextBox.Size = new System.Drawing.Size(127, 20);
+            this.learningRateTextBox.TabIndex = 10;
+            this.learningRateTextBox.Text = "0.001";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(100, 182);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(72, 13);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "Learning rate:";
+            // 
             // NeuralNetwork
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(833, 458);
+            this.ClientSize = new System.Drawing.Size(833, 505);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.learningRateTextBox);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.LossChart);
@@ -201,6 +223,8 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.TextBox learningRateTextBox;
+        private System.Windows.Forms.Label label1;
     }
 }
 

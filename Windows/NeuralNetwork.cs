@@ -12,6 +12,9 @@ using static Net;
 using System.Reflection;
 using static System.Net.Mime.MediaTypeNames;
 using System.Runtime.InteropServices;
+using System.Data.Common;
+using System.Globalization;
+using System.Xml.Linq;
 
 namespace Windows
 {
@@ -26,6 +29,7 @@ namespace Windows
         protected List<double> row;
         protected bool training;
         protected int trainDataIdx;
+        protected double learningRate;
 
         public NeuralNetwork()
         {
@@ -37,6 +41,7 @@ namespace Windows
             row = new List<double>();
             training = false;
             trainDataIdx = 0;
+            learningRate = 0.001;
             /*
             The number of neurons in the input layer is equal to the number of features in the data and in very rare cases, 
             there will be one input layer for bias. Whereas the number of neurons in the output depends on whether the model 
@@ -249,6 +254,9 @@ namespace Windows
                 return;
             }
 
+            Double.TryParse(learningRateTextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out learningRate);
+            outputTextBox.AppendText("Learning rate set to: " + learningRate + "\n\r");
+
             trainDataIdx = 0;
             LossChart.Series["Loss"].Points.Clear();
 
@@ -278,6 +286,15 @@ namespace Windows
                         row.Add(reader.getInputData()[j][trainDataIdx]);
                     }
                     List<double> refScaled = network.scaleInput(row);
+
+                    //network.feedForward(refScaled);
+
+                    /*myNet.backProp(&myTraining.output[line], beta);
+
+                    vector<double> resultsVals;
+                    myNet.getResults(&resultsVals);
+                    */
+
                     LossChart.Series["Loss"].Points.Add(refScaled[1]);
                     trainDataIdx++;
                 }
