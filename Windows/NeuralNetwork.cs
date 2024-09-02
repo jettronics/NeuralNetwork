@@ -152,6 +152,7 @@ namespace Windows
             String netParamsReplaced = netParams.Replace("\r\n", ",");
             String[] netParamsSplitted = netParamsReplaced.Split(',');
             int len = netParamsSplitted.Length >> 1;
+            bool errorOccurred = false;
             for (int i = 0; i < len; i++)
             {
                 int topologyVal = Convert.ToUInt16(netParamsSplitted[i * 2]);
@@ -174,13 +175,19 @@ namespace Windows
                 {
                     topology.Add(topologyVal);
                     actFct.Add(actFctLoc);
-                    network.createNet(topology, actFct);
-                    outputTextBox.AppendText("Layer created with " + topologyVal + " inputs and Activation Function " + actFctString + "\r\n");
+                    outputTextBox.AppendText("Layer added with " + topologyVal + " inputs and Activation Function " + actFctString + "\r\n");
                 }
                 else
                 {
-                    outputTextBox.AppendText("Error creating Layer with " + topologyVal + " inputs and Activation Function " + actFctString + "\r\n");
+                    errorOccurred = true;
+                    outputTextBox.AppendText("Error adding Layer with " + topologyVal + " inputs and Activation Function " + actFctString + "\r\n");
                 }
+            }
+            if (errorOccurred == false)
+            {
+                network.createNet(topology, actFct);
+                calculateMinMaxRange();
+                outputTextBox.AppendText("All layers created successfully and input ranges analyzed\r\n");
             }
         }
 
@@ -196,7 +203,7 @@ namespace Windows
             outputTextBox.AppendText("Network saved under: " + weightsFile + "\r\n");
         }
 
-        private void calculateMinMaxRange_Click(object sender, EventArgs e)
+        private void calculateMinMaxRange()
         {
             inputDataCnt = reader.getInputData()[0].Count;
             inputRowCnt = reader.getInputData().Count;
@@ -279,7 +286,6 @@ namespace Windows
                     training = false;
                 }
             }
-
         }
 
         private void stopTraining_Click(object sender, EventArgs e)
