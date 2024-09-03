@@ -8,6 +8,8 @@ using System.Text;
 using Microsoft.VisualBasic.Devices;
 using Microsoft.VisualBasic.FileIO;
 
+// Important Note: Reader supports one column for output only
+
 
 public class Reader
 {

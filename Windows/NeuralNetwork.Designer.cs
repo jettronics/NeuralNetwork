@@ -74,7 +74,6 @@
             title1.Name = "Loss";
             title1.Text = "Loss";
             this.LossChart.Titles.Add(title1);
-            this.LossChart.Click += new System.EventHandler(this.LossChart_Click);
             // 
             // timer1
             // 

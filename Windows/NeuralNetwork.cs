@@ -30,6 +30,7 @@ namespace Windows
         protected bool training;
         protected int trainDataIdx;
         protected double learningRate;
+        protected int numOutputColumns;
 
         public NeuralNetwork()
         {
@@ -42,6 +43,7 @@ namespace Windows
             training = false;
             trainDataIdx = 0;
             learningRate = 0.001;
+            numOutputColumns = 1;
             /*
             The number of neurons in the input layer is equal to the number of features in the data and in very rare cases, 
             there will be one input layer for bias. Whereas the number of neurons in the output depends on whether the model 
@@ -99,11 +101,6 @@ namespace Windows
             
         }
 
-        private void LossChart_Click(object sender, EventArgs e)
-        {
-            
-        }
-
         private void LossChart_Load(object sender, EventArgs e)
         {
             
@@ -117,6 +114,7 @@ namespace Windows
         private void csvTrainingDataFileOpened(object sender, CancelEventArgs e)
         {
             outputTextBox.AppendText("Training data opened\r\n");
+            numOutputColumns = 1;
             reader = new Reader(openTrainingDataCSVFileDialog.FileName);
             reader.Convert();
             
@@ -254,21 +252,20 @@ namespace Windows
                 return;
             }
 
+            if (numOutputColumns == 1)
+            {
+                if (topology.Last() != reader.getNumClassifiers())
+                {
+                    outputTextBox.AppendText("Net number of outputs doesn't match with the output classifiers!\n\r");
+                    return;
+                }
+            }
+
             Double.TryParse(learningRateTextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out learningRate);
             outputTextBox.AppendText("Learning rate set to: " + learningRate + "\n\r");
 
             trainDataIdx = 0;
             LossChart.Series["Loss"].Points.Clear();
-
-            for (int i = 0; i < inputDataCnt; i++)
-            {
-                row.Clear();
-                for (int j = 0; j < inputRowCnt; j++)
-                {
-                    row.Add(reader.getInputData()[j][i]);
-                }
-                network.scaleInput(row);
-            }
 
             training = true;
         }
