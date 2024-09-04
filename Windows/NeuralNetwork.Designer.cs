@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title3 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.LossChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.openTrainingDataCSVFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -46,39 +46,43 @@
             this.button7 = new System.Windows.Forms.Button();
             this.learningRateTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.epochMaxTextBox = new System.Windows.Forms.TextBox();
+            this.Epochs = new System.Windows.Forms.Label();
+            this.limitTrainDataTextBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.LossChart)).BeginInit();
             this.SuspendLayout();
             // 
             // LossChart
             // 
-            chartArea1.AxisX.MajorGrid.Enabled = false;
-            chartArea1.AxisX2.MajorGrid.Enabled = false;
-            chartArea1.AxisY.MajorGrid.Enabled = false;
-            chartArea1.AxisY2.MajorGrid.Enabled = false;
-            chartArea1.Name = "ChartArea1";
-            this.LossChart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.LossChart.Legends.Add(legend1);
+            chartArea3.AxisX.MajorGrid.Enabled = false;
+            chartArea3.AxisX2.MajorGrid.Enabled = false;
+            chartArea3.AxisY.MajorGrid.Enabled = false;
+            chartArea3.AxisY2.MajorGrid.Enabled = false;
+            chartArea3.Name = "ChartArea1";
+            this.LossChart.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.LossChart.Legends.Add(legend3);
             this.LossChart.Location = new System.Drawing.Point(321, 40);
             this.LossChart.Name = "LossChart";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.IsVisibleInLegend = false;
-            series1.Legend = "Legend1";
-            series1.Name = "Loss";
-            series1.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            this.LossChart.Series.Add(series1);
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.IsVisibleInLegend = false;
+            series3.Legend = "Legend1";
+            series3.Name = "Loss";
+            series3.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+            this.LossChart.Series.Add(series3);
             this.LossChart.Size = new System.Drawing.Size(482, 382);
             this.LossChart.TabIndex = 0;
             this.LossChart.Text = "Loss";
-            title1.Name = "Loss";
-            title1.Text = "Loss";
-            this.LossChart.Titles.Add(title1);
+            title3.Name = "Loss";
+            title3.Text = "Loss";
+            this.LossChart.Titles.Add(title3);
             // 
             // timer1
             // 
             this.timer1.Enabled = true;
-            this.timer1.Interval = 10;
+            this.timer1.Interval = 2;
             this.timer1.Tick += new System.EventHandler(this.Timer_Loop);
             // 
             // openTrainingDataCSVFileDialog
@@ -98,18 +102,18 @@
             // 
             // outputTextBox
             // 
-            this.outputTextBox.Location = new System.Drawing.Point(12, 321);
+            this.outputTextBox.Location = new System.Drawing.Point(12, 440);
             this.outputTextBox.Multiline = true;
             this.outputTextBox.Name = "outputTextBox";
             this.outputTextBox.ReadOnly = true;
             this.outputTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.outputTextBox.Size = new System.Drawing.Size(293, 156);
+            this.outputTextBox.Size = new System.Drawing.Size(791, 132);
             this.outputTextBox.TabIndex = 2;
             this.outputTextBox.TextChanged += new System.EventHandler(this.outputTextBox_TextChanged);
             // 
             // netPropertyTextBox
             // 
-            this.netPropertyTextBox.Location = new System.Drawing.Point(12, 69);
+            this.netPropertyTextBox.Location = new System.Drawing.Point(12, 72);
             this.netPropertyTextBox.Multiline = true;
             this.netPropertyTextBox.Name = "netPropertyTextBox";
             this.netPropertyTextBox.Size = new System.Drawing.Size(160, 104);
@@ -118,7 +122,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(178, 69);
+            this.button2.Location = new System.Drawing.Point(178, 72);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(127, 104);
             this.button2.TabIndex = 4;
@@ -128,7 +132,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(12, 263);
+            this.button3.Location = new System.Drawing.Point(12, 319);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(293, 23);
             this.button3.TabIndex = 5;
@@ -138,7 +142,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(12, 292);
+            this.button4.Location = new System.Drawing.Point(12, 348);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(293, 23);
             this.button4.TabIndex = 6;
@@ -148,7 +152,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(12, 205);
+            this.button6.Location = new System.Drawing.Point(12, 261);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(293, 23);
             this.button6.TabIndex = 8;
@@ -158,7 +162,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(12, 234);
+            this.button7.Location = new System.Drawing.Point(12, 290);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(293, 23);
             this.button7.TabIndex = 9;
@@ -168,7 +172,7 @@
             // 
             // learningRateTextBox
             // 
-            this.learningRateTextBox.Location = new System.Drawing.Point(178, 179);
+            this.learningRateTextBox.Location = new System.Drawing.Point(178, 182);
             this.learningRateTextBox.Name = "learningRateTextBox";
             this.learningRateTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.learningRateTextBox.Size = new System.Drawing.Size(127, 20);
@@ -184,11 +188,51 @@
             this.label1.TabIndex = 11;
             this.label1.Text = "Learning rate:";
             // 
+            // epochMaxTextBox
+            // 
+            this.epochMaxTextBox.Location = new System.Drawing.Point(178, 209);
+            this.epochMaxTextBox.Name = "epochMaxTextBox";
+            this.epochMaxTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.epochMaxTextBox.Size = new System.Drawing.Size(127, 20);
+            this.epochMaxTextBox.TabIndex = 12;
+            this.epochMaxTextBox.Text = "10";
+            // 
+            // Epochs
+            // 
+            this.Epochs.AutoSize = true;
+            this.Epochs.Location = new System.Drawing.Point(74, 209);
+            this.Epochs.Name = "Epochs";
+            this.Epochs.Size = new System.Drawing.Size(98, 13);
+            this.Epochs.TabIndex = 13;
+            this.Epochs.Text = "Number of Epochs:";
+            // 
+            // limitTrainDataTextBox
+            // 
+            this.limitTrainDataTextBox.Location = new System.Drawing.Point(178, 235);
+            this.limitTrainDataTextBox.Name = "limitTrainDataTextBox";
+            this.limitTrainDataTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.limitTrainDataTextBox.Size = new System.Drawing.Size(127, 20);
+            this.limitTrainDataTextBox.TabIndex = 15;
+            this.limitTrainDataTextBox.Text = "25";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(52, 235);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(120, 13);
+            this.label2.TabIndex = 16;
+            this.label2.Text = "Limit Training Data in %:";
+            // 
             // NeuralNetwork
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(833, 505);
+            this.ClientSize = new System.Drawing.Size(833, 584);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.limitTrainDataTextBox);
+            this.Controls.Add(this.Epochs);
+            this.Controls.Add(this.epochMaxTextBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.learningRateTextBox);
             this.Controls.Add(this.button7);
@@ -224,6 +268,10 @@
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.TextBox learningRateTextBox;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox epochMaxTextBox;
+        private System.Windows.Forms.Label Epochs;
+        private System.Windows.Forms.TextBox limitTrainDataTextBox;
+        private System.Windows.Forms.Label label2;
     }
 }
 

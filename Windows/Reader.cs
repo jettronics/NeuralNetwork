@@ -28,6 +28,7 @@ public class Reader
     public String[] getClassifiers() { return classifiers.ToArray(); }
     public int getNumTotalData() { return inputString.Count()-1; }
     public ref List<List<double>> getInputData() { return ref inputData; }
+    public double getOutputData(int index) { return outputData[index]; }
 
     public Reader()
 	{
@@ -130,6 +131,26 @@ public class Reader
                     numOutputClassifiers = classifiers.Count();
                 }
             }
+        }
+    }
+
+    public void LimitData( int percentageLimit )
+    {
+        double toRemovePer = (100.0 - (double)percentageLimit) * 0.01;
+        int toRemoveNum = (int)(toRemovePer * (double)getNumTotalData());
+
+        var random = new Random(Guid.NewGuid().GetHashCode());
+
+        for (int j = 0; j < toRemoveNum; j++)
+        {
+            // Random Index
+            int randIdx = random.Next(outputData.Count);
+            // For all columns
+            for (int i = 0; i < inputData.Count(); i++)
+            {
+                inputData[i].RemoveAt(randIdx);
+            }
+            outputData.RemoveAt(randIdx);
         }
     }
 }

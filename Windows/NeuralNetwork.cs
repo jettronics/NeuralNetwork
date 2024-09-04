@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using System.Data.Common;
 using System.Globalization;
 using System.Xml.Linq;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Windows
 {
@@ -24,26 +25,29 @@ namespace Windows
         protected List<int> topology;
         protected List<ActFctType> actFct;
         protected Reader reader;
-        protected int inputDataCnt;
         protected int inputRowCnt;
         protected List<double> row;
         protected bool training;
         protected int trainDataIdx;
         protected double learningRate;
         protected int numOutputColumns;
+        protected int epochIdx, epochMax;
+        protected List<double> refOutput;
 
         public NeuralNetwork()
         {
             InitializeComponent();
             topology = new List<int>();
             actFct = new List<ActFctType>();
-            inputDataCnt = 0;
             inputRowCnt = 0;
             row = new List<double>();
             training = false;
             trainDataIdx = 0;
             learningRate = 0.001;
             numOutputColumns = 1;
+            epochIdx = 0;
+            epochMax = 10;
+            
             /*
             The number of neurons in the input layer is equal to the number of features in the data and in very rare cases, 
             there will be one input layer for bias. Whereas the number of neurons in the output depends on whether the model 
@@ -208,7 +212,6 @@ namespace Windows
 
         private void calculateMinMaxRange()
         {
-            inputDataCnt = reader.getInputData()[0].Count;
             inputRowCnt = reader.getInputData().Count;
             
             if (topology.Count == 0 )
@@ -217,7 +220,7 @@ namespace Windows
                 return;
             }
 
-            for (int i = 0; i < inputDataCnt; i++)
+            for (int i = 0; i < reader.getInputData()[0].Count; i++)
             {
                 row.Clear();
                 for(int j = 0; j < inputRowCnt;j++)
@@ -256,13 +259,28 @@ namespace Windows
             {
                 if (topology.Last() != reader.getNumClassifiers())
                 {
-                    outputTextBox.AppendText("Net number of outputs doesn't match with the output classifiers!\n\r");
+                    outputTextBox.AppendText("Net number of outputs doesn't match with the output classifiers!\r\n");
                     return;
                 }
             }
 
+            refOutput = new List<double>();
+            for (int i = 0; i < reader.getNumClassifiers(); i++)
+            {
+                refOutput.Add(0.0);
+            }
+
             Double.TryParse(learningRateTextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out learningRate);
-            outputTextBox.AppendText("Learning rate set to: " + learningRate + "\n\r");
+            outputTextBox.AppendText("Learning rate set to: " + learningRate + "\r\n");
+
+            epochMax = Convert.ToUInt16(epochMaxTextBox.Text);
+            outputTextBox.AppendText("Number of Epochs: " + epochMax + "\r\n");
+
+            int limitData = Convert.ToUInt16(limitTrainDataTextBox.Text);
+            outputTextBox.AppendText("Limit Train Data to : " + limitData + "%\r\n");
+
+            reader.LimitData(limitData);
+            outputTextBox.AppendText("Number of taining data limited randomly to: " + reader.getInputData()[0].Count + "\r\n");
 
             trainDataIdx = 0;
             LossChart.Series["Loss"].Points.Clear();
@@ -274,30 +292,48 @@ namespace Windows
         {
             if (training == true)
             {
-                
-                if( trainDataIdx < inputDataCnt )
+                if (epochIdx < epochMax)
                 {
-                    row.Clear();
-                    for (int j = 0; j < inputRowCnt; j++)
+                    if (trainDataIdx < reader.getInputData()[0].Count)
                     {
-                        row.Add(reader.getInputData()[j][trainDataIdx]);
+                        row.Clear();
+                        for (int j = 0; j < inputRowCnt; j++)
+                        {
+                            row.Add(reader.getInputData()[j][trainDataIdx]);
+                        }
+                        List<double> refScaled = network.scaleInput(row);
+                        //network.feedForward(refScaled);
+
+                        for( int i = 0; i < refOutput.Count; i++)
+                        {
+                            if( i == (int)reader.getOutputData(trainDataIdx) ) 
+                            {
+                                refOutput[i] = 1.0;
+                            }
+                            else
+                            {
+                                refOutput[i] = 0.0;
+                            }
+                        }
+
+                        /*myNet.backProp(&myTraining.output[line], beta);
+
+                        vector<double> resultsVals;
+                        myNet.getResults(&resultsVals);
+                        */
+
+                        LossChart.Series["Loss"].Points.Add(refScaled[1]);
+                        trainDataIdx++;
                     }
-                    List<double> refScaled = network.scaleInput(row);
-
-                    //network.feedForward(refScaled);
-
-                    /*myNet.backProp(&myTraining.output[line], beta);
-
-                    vector<double> resultsVals;
-                    myNet.getResults(&resultsVals);
-                    */
-
-                    LossChart.Series["Loss"].Points.Add(refScaled[1]);
-                    trainDataIdx++;
+                    else
+                    {
+                        epochIdx++;
+                        trainDataIdx = 0;
+                    }
                 }
-                else
-                {
-                    training = false;
+                else 
+                { 
+                    training = false; 
                 }
             }
         }
