@@ -304,18 +304,24 @@ namespace Windows
                         List<double> refScaled = network.scaleInput(row);
                         //network.feedForward(refScaled);
 
-                        for( int i = 0; i < refOutput.Count; i++)
+                        if (reader.getNumClassifiers() > 1)
                         {
-                            if( i == (int)reader.getOutputData(trainDataIdx) ) 
+                            for (int i = 0; i < refOutput.Count; i++)
                             {
-                                refOutput[i] = 1.0;
-                            }
-                            else
-                            {
-                                refOutput[i] = 0.0;
+                                if (i == (int)reader.getOutputData(trainDataIdx))
+                                {
+                                    refOutput[i] = 1.0;
+                                }
+                                else
+                                {
+                                    refOutput[i] = 0.0;
+                                }
                             }
                         }
-
+                        else
+                        {
+                            refOutput[0] = reader.getOutputData(trainDataIdx);
+                        }
                         /*myNet.backProp(&myTraining.output[line], beta);
 
                         vector<double> resultsVals;
@@ -333,7 +339,8 @@ namespace Windows
                 }
                 else 
                 { 
-                    training = false; 
+                    training = false;
+                    outputTextBox.AppendText("Training finished\r\n");
                 }
             }
         }
@@ -341,6 +348,7 @@ namespace Windows
         private void stopTraining_Click(object sender, EventArgs e)
         {
             training = false;
+            outputTextBox.AppendText("Training aborted by user\r\n");
         }
     }
 }
