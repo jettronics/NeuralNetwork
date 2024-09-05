@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title3 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.LossChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.openTrainingDataCSVFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -55,34 +55,34 @@
             // 
             // LossChart
             // 
-            chartArea3.AxisX.MajorGrid.Enabled = false;
-            chartArea3.AxisX2.MajorGrid.Enabled = false;
-            chartArea3.AxisY.MajorGrid.Enabled = false;
-            chartArea3.AxisY2.MajorGrid.Enabled = false;
-            chartArea3.Name = "ChartArea1";
-            this.LossChart.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.LossChart.Legends.Add(legend3);
+            chartArea1.AxisX.MajorGrid.Enabled = false;
+            chartArea1.AxisX2.MajorGrid.Enabled = false;
+            chartArea1.AxisY.MajorGrid.Enabled = false;
+            chartArea1.AxisY2.MajorGrid.Enabled = false;
+            chartArea1.Name = "ChartArea1";
+            this.LossChart.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.LossChart.Legends.Add(legend1);
             this.LossChart.Location = new System.Drawing.Point(321, 40);
             this.LossChart.Name = "LossChart";
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series3.IsVisibleInLegend = false;
-            series3.Legend = "Legend1";
-            series3.Name = "Loss";
-            series3.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            this.LossChart.Series.Add(series3);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.IsVisibleInLegend = false;
+            series1.Legend = "Legend1";
+            series1.Name = "Loss";
+            series1.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+            this.LossChart.Series.Add(series1);
             this.LossChart.Size = new System.Drawing.Size(482, 382);
             this.LossChart.TabIndex = 0;
             this.LossChart.Text = "Loss";
-            title3.Name = "Loss";
-            title3.Text = "Loss";
-            this.LossChart.Titles.Add(title3);
+            title1.Name = "Loss";
+            title1.Text = "Loss";
+            this.LossChart.Titles.Add(title1);
             // 
             // timer1
             // 
             this.timer1.Enabled = true;
-            this.timer1.Interval = 2;
+            this.timer1.Interval = 1;
             this.timer1.Tick += new System.EventHandler(this.Timer_Loop);
             // 
             // openTrainingDataCSVFileDialog

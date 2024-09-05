@@ -14,8 +14,8 @@ using Microsoft.VisualBasic.FileIO;
 public class Reader
 {
     protected String inputFile;
-    protected List<List<double>> inputData;
-    protected List<double> outputData;
+    protected List<List<double>> inputData, inputDataLowered;
+    protected List<double> outputData, outputDataLowered;
     protected List<String[]> inputString;
     protected int numOutputClassifiers;
     protected int numInputNodes;
@@ -27,14 +27,16 @@ public class Reader
     public String[] getColumnNames() { return inputString.ElementAt(0); }
     public String[] getClassifiers() { return classifiers.ToArray(); }
     public int getNumTotalData() { return inputString.Count()-1; }
-    public ref List<List<double>> getInputData() { return ref inputData; }
-    public double getOutputData(int index) { return outputData[index]; }
+    public ref List<List<double>> getInputData() { return ref inputDataLowered; }
+    public double getOutputData(int index) { return outputDataLowered[index]; }
 
     public Reader()
 	{
         inputFile = null;
-        inputData = new List<List<double>>(); 
+        inputData = new List<List<double>>();
+        inputDataLowered = new List<List<double>>();
         outputData = new List<double>();
+        outputDataLowered = new List<double>();
         inputString = new List<String[]>();
         numOutputClassifiers = 0;
         numInputNodes = 0;
@@ -45,7 +47,9 @@ public class Reader
     {
         inputFile = dataFile;
         inputData = new List<List<double>>();
+        inputDataLowered = new List<List<double>>();
         outputData = new List<double>();
+        outputDataLowered = new List<double>();
         inputString = new List<String[]>();
         numOutputClassifiers = 0;   
         numInputNodes = 0;
@@ -132,10 +136,36 @@ public class Reader
                 }
             }
         }
+
+        inputDataLowered.Clear();
+        for ( int i = 0; i < inputData.Count; i++ )
+        {
+            List<double> columnLowered = new List<double>();
+            for (int j = 0; j < inputData[i].Count; j++)
+            {
+                columnLowered.Add(inputData[i][j]);
+            }
+            inputDataLowered.Add(columnLowered);
+        }
+        outputDataLowered.Clear();
+        outputDataLowered.AddRange(outputData);
     }
 
     public void LimitData( int percentageLimit )
     {
+        inputDataLowered.Clear();
+        for (int i = 0; i < inputData.Count; i++)
+        {
+            List<double> columnLowered = new List<double>();
+            for (int j = 0; j < inputData[i].Count; j++)
+            {
+                columnLowered.Add(inputData[i][j]);
+            }
+            inputDataLowered.Add(columnLowered);
+        }
+        outputDataLowered.Clear();
+        outputDataLowered.AddRange(outputData);
+
         double toRemovePer = (100.0 - (double)percentageLimit) * 0.01;
         int toRemoveNum = (int)(toRemovePer * (double)getNumTotalData());
 
@@ -144,13 +174,13 @@ public class Reader
         for (int j = 0; j < toRemoveNum; j++)
         {
             // Random Index
-            int randIdx = random.Next(outputData.Count);
+            int randIdx = random.Next(outputDataLowered.Count);
             // For all columns
-            for (int i = 0; i < inputData.Count(); i++)
+            for (int i = 0; i < inputDataLowered.Count(); i++)
             {
-                inputData[i].RemoveAt(randIdx);
+                inputDataLowered[i].RemoveAt(randIdx);
             }
-            outputData.RemoveAt(randIdx);
+            outputDataLowered.RemoveAt(randIdx);
         }
     }
 }

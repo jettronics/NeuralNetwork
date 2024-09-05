@@ -302,7 +302,7 @@ namespace Windows
                             row.Add(reader.getInputData()[j][trainDataIdx]);
                         }
                         List<double> refScaled = network.scaleInput(row);
-                        //network.feedForward(refScaled);
+                        network.feedForward(refScaled);
 
                         if (reader.getNumClassifiers() > 1)
                         {
@@ -322,13 +322,14 @@ namespace Windows
                         {
                             refOutput[0] = reader.getOutputData(trainDataIdx);
                         }
-                        /*myNet.backProp(&myTraining.output[line], beta);
+                        network.backProp(refOutput, learningRate);
+                        double losses = network.loss(refOutput);
 
-                        vector<double> resultsVals;
-                        myNet.getResults(&resultsVals);
-                        */
-
-                        LossChart.Series["Loss"].Points.Add(refScaled[1]);
+                        LossChart.Series["Loss"].Points.Add(losses);
+                        /*if (LossChart.Series["Loss"].Points.Count > 1000)
+                        {
+                            LossChart.Series["Loss"].Points.RemoveAt(0);
+                        }*/
                         trainDataIdx++;
                     }
                     else
