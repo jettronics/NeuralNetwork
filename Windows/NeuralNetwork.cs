@@ -16,6 +16,7 @@ using System.Data.Common;
 using System.Globalization;
 using System.Xml.Linq;
 using System.Diagnostics.Eventing.Reader;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Windows
 {
@@ -33,6 +34,7 @@ namespace Windows
         protected int numOutputColumns;
         protected int epochIdx, epochMax;
         protected List<double> refOutput;
+        protected int scrollBarWheelTurns;
 
         public NeuralNetwork()
         {
@@ -47,7 +49,8 @@ namespace Windows
             numOutputColumns = 1;
             epochIdx = 0;
             epochMax = 10;
-            
+            scrollBarWheelTurns = 0;
+
             /*
             The number of neurons in the input layer is equal to the number of features in the data and in very rare cases, 
             there will be one input layer for bias. Whereas the number of neurons in the output depends on whether the model 
@@ -283,9 +286,41 @@ namespace Windows
             outputTextBox.AppendText("Number of taining data limited randomly to: " + reader.getInputData()[0].Count + "\r\n");
 
             trainDataIdx = 0;
-            LossChart.Series["Loss"].Points.Clear();
 
+            scrollBarWheelTurns = 0;
+            LossChart.Series["Loss"].Points.Clear();
+            LossChart.MouseWheel += LossChart_MouseWheel;
+                        
             training = true;
+        }
+
+        private void LossChart_MouseWheel(object sender, MouseEventArgs e)
+        {
+            var chart = (Chart)sender;
+            var xAxis = chart.ChartAreas[0].AxisX;
+            var yAxis = chart.ChartAreas[0].AxisY;
+
+            scrollBarWheelTurns += e.Delta;
+
+            if (scrollBarWheelTurns <= 0)
+            {
+                xAxis.ScaleView.ZoomReset();
+            }
+            else
+            if (scrollBarWheelTurns > 0)
+            {
+                if (LossChart.Series["Loss"].Points.Count > 10)
+                {
+                    int xMinZoomPos = scrollBarWheelTurns >> 2;
+
+                    if (xMinZoomPos >= LossChart.Series["Loss"].Points.Count)
+                    {
+                        xMinZoomPos = LossChart.Series["Loss"].Points.Count - 10;
+                    }
+                    xAxis.ScaleView.Zoom(xMinZoomPos, LossChart.Series["Loss"].Points.Count);
+                }
+            }
+            
         }
 
         private void Timer_Loop(object sender, EventArgs e)
@@ -326,10 +361,19 @@ namespace Windows
                         double losses = network.loss(refOutput);
 
                         LossChart.Series["Loss"].Points.Add(losses);
-                        /*if (LossChart.Series["Loss"].Points.Count > 1000)
+                        
+                        var chartArea = LossChart.ChartAreas[LossChart.Series["Loss"].ChartArea];
+
+                        /*
+                        if (LossChart.Series["Loss"].Points.Count > 1000)
                         {
-                            LossChart.Series["Loss"].Points.RemoveAt(0);
-                        }*/
+                            chartArea.AxisX.ScaleView.Size = 1000;
+                        }
+                        */
+
+                        chartArea.AxisX.Maximum = LossChart.Series["Loss"].Points.Count;
+                        chartArea.AxisX.ScaleView.Scroll(LossChart.Series["Loss"].Points.Count);
+                        
                         trainDataIdx++;
                     }
                     else
