@@ -29,7 +29,8 @@ namespace Windows
         protected int inputRowCnt;
         protected List<double> row;
         protected bool training;
-        protected int trainDataIdx;
+        protected bool testing;
+        protected int loopDataIdx;
         protected double learningRate;
         protected int numOutputColumns;
         protected int epochIdx, epochMax;
@@ -45,7 +46,8 @@ namespace Windows
             inputRowCnt = 0;
             row = new List<double>();
             training = false;
-            trainDataIdx = 0;
+            testing = false;
+            loopDataIdx = 0;
             learningRate = 0.001;
             numOutputColumns = 1;
             epochIdx = 0;
@@ -106,8 +108,8 @@ namespace Windows
             //String weightsFile = Path.GetFullPath("weights.txt");
 
             network = new Net();
+            LossChart.MouseWheel += LossChart_MouseWheel;
 
-            
         }
 
         private void LossChart_Load(object sender, EventArgs e)
@@ -203,11 +205,6 @@ namespace Windows
             }
         }
 
-        private void openTestDataFile_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void saveNeuralNet_Click(object sender, EventArgs e)
         {
             String weightsFile = Path.GetFullPath("weights.txt");
@@ -285,16 +282,54 @@ namespace Windows
             outputTextBox.AppendText("Limit Train Data to : " + limitData + "%\r\n");
 
             reader.LimitData(limitData);
-            outputTextBox.AppendText("Number of taining data limited randomly to: " + reader.getInputData()[0].Count + "\r\n");
+            outputTextBox.AppendText("Number of taining data limited randomly to: " + reader.getInputTrainData()[0].Count + "\r\n");
 
-            trainDataIdx = 0;
+            loopDataIdx = 0;
 
             scrollBarWheelTurns = 0;
             lossChartMouseClick = false;
             LossChart.Series["Loss"].Points.Clear();
-            LossChart.MouseWheel += LossChart_MouseWheel;
-                                    
+                                                
             training = true;
+            testing = false;
+        }
+        private void testNeuralNet_Click(object sender, EventArgs e)
+        {
+            if (topology.Count == 0)
+            {
+                outputTextBox.AppendText("Create Network first!\r\n");
+                return;
+            }
+
+            if (numOutputColumns == 1)
+            {
+                if (topology.Last() != reader.getNumClassifiers())
+                {
+                    outputTextBox.AppendText("Net number of outputs doesn't match with the output classifiers!\r\n");
+                    return;
+                }
+            }
+
+            refOutput = new List<double>();
+            for (int i = 0; i < reader.getNumClassifiers(); i++)
+            {
+                refOutput.Add(0.0);
+            }
+
+            int limitData = Convert.ToUInt16(limitTrainDataTextBox.Text);
+            outputTextBox.AppendText("Limit Test Data to : " + limitData + "%\r\n");
+
+            reader.TestData(limitData);
+            outputTextBox.AppendText("Number of testing data limited randomly to: " + reader.getInputTestData()[0].Count + "\r\n");
+
+            loopDataIdx = 0;
+
+            scrollBarWheelTurns = 0;
+            lossChartMouseClick = false;
+            LossChart.Series["Loss"].Points.Clear();
+            
+            training = false;
+            testing = true;
         }
 
         private void LossChart_MouseWheel(object sender, MouseEventArgs e)
@@ -344,12 +379,12 @@ namespace Windows
             {
                 if (epochIdx < epochMax)
                 {
-                    if (trainDataIdx < reader.getInputData()[0].Count)
+                    if (loopDataIdx < reader.getInputTrainData()[0].Count)
                     {
                         row.Clear();
                         for (int j = 0; j < inputRowCnt; j++)
                         {
-                            row.Add(reader.getInputData()[j][trainDataIdx]);
+                            row.Add(reader.getInputTrainData()[j][loopDataIdx]);
                         }
                         List<double> refScaled = network.scaleInput(row);
                         network.feedForward(refScaled);
@@ -358,7 +393,7 @@ namespace Windows
                         {
                             for (int i = 0; i < refOutput.Count; i++)
                             {
-                                if (i == (int)reader.getOutputData(trainDataIdx))
+                                if (i == (int)reader.getOutputTrainData(loopDataIdx))
                                 {
                                     refOutput[i] = 1.0;
                                 }
@@ -370,34 +405,27 @@ namespace Windows
                         }
                         else
                         {
-                            refOutput[0] = reader.getOutputData(trainDataIdx);
+                            refOutput[0] = reader.getOutputTrainData(loopDataIdx);
                         }
                         network.backProp(refOutput, learningRate);
+                        
                         double losses = network.loss(refOutput);
-
                         LossChart.Series["Loss"].Points.Add(losses);
                         
                         var chartArea = LossChart.ChartAreas[LossChart.Series["Loss"].ChartArea];
-
-                        /*
-                        if (LossChart.Series["Loss"].Points.Count > 1000)
-                        {
-                            chartArea.AxisX.ScaleView.Size = 1000;
-                        }
-                        */
 
                         if (lossChartMouseClick == false)
                         {
                             chartArea.AxisX.Maximum = LossChart.Series["Loss"].Points.Count;
                             chartArea.AxisX.ScaleView.Scroll(LossChart.Series["Loss"].Points.Count);
                         }
-                        
-                        trainDataIdx++;
+
+                        loopDataIdx++;
                     }
                     else
                     {
                         epochIdx++;
-                        trainDataIdx = 0;
+                        loopDataIdx = 0;
                     }
                 }
                 else 
@@ -406,8 +434,58 @@ namespace Windows
                     outputTextBox.AppendText("Training finished\r\n");
                 }
             }
-        }
+            else
+            if (testing == true)
+            {
+                if (loopDataIdx < reader.getInputTestData()[0].Count)
+                {
+                    row.Clear();
+                    for (int j = 0; j < inputRowCnt; j++)
+                    {
+                        row.Add(reader.getInputTestData()[j][loopDataIdx]);
+                    }
+                    List<double> refScaled = network.scaleInput(row);
+                    network.feedForward(refScaled);
 
+                    if (reader.getNumClassifiers() > 1)
+                    {
+                        for (int i = 0; i < refOutput.Count; i++)
+                        {
+                            if (i == (int)reader.getOutputTestData(loopDataIdx))
+                            {
+                                refOutput[i] = 1.0;
+                            }
+                            else
+                            {
+                                refOutput[i] = 0.0;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        refOutput[0] = reader.getOutputTestData(loopDataIdx);
+                    }
+
+                    double losses = network.loss(refOutput);
+                    LossChart.Series["Loss"].Points.Add(losses);
+
+                    var chartArea = LossChart.ChartAreas[LossChart.Series["Loss"].ChartArea];
+
+                    if (lossChartMouseClick == false)
+                    {
+                        chartArea.AxisX.Maximum = LossChart.Series["Loss"].Points.Count;
+                        chartArea.AxisX.ScaleView.Scroll(LossChart.Series["Loss"].Points.Count);
+                    }
+
+                    loopDataIdx++;
+                }
+                else
+                {
+                    testing = false;
+                    outputTextBox.AppendText("Testing finished\r\n");
+                }
+            }
+        }
         private void stopTraining_Click(object sender, EventArgs e)
         {
             training = false;

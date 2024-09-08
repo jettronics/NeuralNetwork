@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title4 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.LossChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.openTrainingDataCSVFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -55,29 +55,29 @@
             // 
             // LossChart
             // 
-            chartArea1.AxisX.MajorGrid.Enabled = false;
-            chartArea1.AxisX2.MajorGrid.Enabled = false;
-            chartArea1.AxisY.MajorGrid.Enabled = false;
-            chartArea1.AxisY2.MajorGrid.Enabled = false;
-            chartArea1.Name = "ChartArea1";
-            this.LossChart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.LossChart.Legends.Add(legend1);
+            chartArea4.AxisX.MajorGrid.Enabled = false;
+            chartArea4.AxisX2.MajorGrid.Enabled = false;
+            chartArea4.AxisY.MajorGrid.Enabled = false;
+            chartArea4.AxisY2.MajorGrid.Enabled = false;
+            chartArea4.Name = "ChartArea1";
+            this.LossChart.ChartAreas.Add(chartArea4);
+            legend4.Name = "Legend1";
+            this.LossChart.Legends.Add(legend4);
             this.LossChart.Location = new System.Drawing.Point(321, 40);
             this.LossChart.Name = "LossChart";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.IsVisibleInLegend = false;
-            series1.Legend = "Legend1";
-            series1.Name = "Loss";
-            series1.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            this.LossChart.Series.Add(series1);
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series4.IsVisibleInLegend = false;
+            series4.Legend = "Legend1";
+            series4.Name = "Loss";
+            series4.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+            this.LossChart.Series.Add(series4);
             this.LossChart.Size = new System.Drawing.Size(482, 382);
             this.LossChart.TabIndex = 0;
             this.LossChart.Text = "Loss";
-            title1.Name = "Loss";
-            title1.Text = "Loss";
-            this.LossChart.Titles.Add(title1);
+            title4.Name = "Loss";
+            title4.Text = "Loss";
+            this.LossChart.Titles.Add(title4);
             this.LossChart.MouseClick += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseClick);
             this.LossChart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseDown);
             this.LossChart.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseUp);
@@ -139,9 +139,9 @@
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(293, 23);
             this.button3.TabIndex = 5;
-            this.button3.Text = "Test Data CSV File";
+            this.button3.Text = "Test Neural Net";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.openTestDataFile_Click);
+            this.button3.Click += new System.EventHandler(this.testNeuralNet_Click);
             // 
             // button4
             // 
@@ -221,11 +221,11 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(52, 235);
+            this.label2.Location = new System.Drawing.Point(12, 235);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(120, 13);
+            this.label2.Size = new System.Drawing.Size(160, 13);
             this.label2.TabIndex = 16;
-            this.label2.Text = "Limit Training Data in %:";
+            this.label2.Text = "Limit Training/Testing Data in %:";
             // 
             // NeuralNetwork
             // 

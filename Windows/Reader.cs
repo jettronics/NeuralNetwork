@@ -14,8 +14,8 @@ using Microsoft.VisualBasic.FileIO;
 public class Reader
 {
     protected String inputFile;
-    protected List<List<double>> inputData, inputDataLowered;
-    protected List<double> outputData, outputDataLowered;
+    protected List<List<double>> inputData, inputDataLowered, inputTestData;
+    protected List<double> outputData, outputDataLowered, outputTestData;
     protected List<String[]> inputString;
     protected int numOutputClassifiers;
     protected int numInputNodes;
@@ -27,16 +27,22 @@ public class Reader
     public String[] getColumnNames() { return inputString.ElementAt(0); }
     public String[] getClassifiers() { return classifiers.ToArray(); }
     public int getNumTotalData() { return inputString.Count()-1; }
-    public ref List<List<double>> getInputData() { return ref inputDataLowered; }
-    public double getOutputData(int index) { return outputDataLowered[index]; }
+    public ref List<List<double>> getInputData() { return ref inputData; }
+    public double getOutputData(int index) { return outputData[index]; }
+    public ref List<List<double>> getInputTrainData() { return ref inputDataLowered; }
+    public double getOutputTrainData(int index) { return outputDataLowered[index]; }
+    public ref List<List<double>> getInputTestData() { return ref inputTestData; }
+    public double getOutputTestData(int index) { return outputTestData[index]; }
 
     public Reader()
 	{
         inputFile = null;
         inputData = new List<List<double>>();
         inputDataLowered = new List<List<double>>();
+        inputTestData = new List<List<double>>();
         outputData = new List<double>();
         outputDataLowered = new List<double>();
+        outputTestData = new List<double>();
         inputString = new List<String[]>();
         numOutputClassifiers = 0;
         numInputNodes = 0;
@@ -48,8 +54,10 @@ public class Reader
         inputFile = dataFile;
         inputData = new List<List<double>>();
         inputDataLowered = new List<List<double>>();
+        inputTestData = new List<List<double>>();
         outputData = new List<double>();
         outputDataLowered = new List<double>();
+        outputTestData = new List<double>();
         inputString = new List<String[]>();
         numOutputClassifiers = 0;   
         numInputNodes = 0;
@@ -138,17 +146,23 @@ public class Reader
         }
 
         inputDataLowered.Clear();
+        inputTestData.Clear();
         for ( int i = 0; i < inputData.Count; i++ )
         {
             List<double> columnLowered = new List<double>();
+            List<double> columnTest = new List<double>();
             for (int j = 0; j < inputData[i].Count; j++)
             {
                 columnLowered.Add(inputData[i][j]);
+                columnTest.Add(inputData[i][j]);
             }
             inputDataLowered.Add(columnLowered);
+            inputTestData.Add(columnTest);
         }
         outputDataLowered.Clear();
+        outputTestData.Clear();
         outputDataLowered.AddRange(outputData);
+        outputTestData.AddRange(outputData);
     }
 
     public void LimitData( int percentageLimit )
@@ -181,6 +195,39 @@ public class Reader
                 inputDataLowered[i].RemoveAt(randIdx);
             }
             outputDataLowered.RemoveAt(randIdx);
+        }
+    }
+
+    public void TestData(int percentageLimit)
+    {
+        inputTestData.Clear();
+        for (int i = 0; i < inputData.Count; i++)
+        {
+            List<double> columnTest = new List<double>();
+            for (int j = 0; j < inputData[i].Count; j++)
+            {
+                columnTest.Add(inputData[i][j]);
+            }
+            inputTestData.Add(columnTest);
+        }
+        outputTestData.Clear();
+        outputTestData.AddRange(outputData);
+
+        double toRemovePer = (100.0 - (double)percentageLimit) * 0.01;
+        int toRemoveNum = (int)(toRemovePer * (double)getNumTotalData());
+
+        var random = new Random(Guid.NewGuid().GetHashCode());
+
+        for (int j = 0; j < toRemoveNum; j++)
+        {
+            // Random Index
+            int randIdx = random.Next(outputTestData.Count);
+            // For all columns
+            for (int i = 0; i < inputTestData.Count(); i++)
+            {
+                inputTestData[i].RemoveAt(randIdx);
+            }
+            outputTestData.RemoveAt(randIdx);
         }
     }
 }
