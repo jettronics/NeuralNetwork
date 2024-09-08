@@ -35,6 +35,7 @@ namespace Windows
         protected int epochIdx, epochMax;
         protected List<double> refOutput;
         protected int scrollBarWheelTurns;
+        protected bool lossChartMouseClick;
 
         public NeuralNetwork()
         {
@@ -50,6 +51,7 @@ namespace Windows
             epochIdx = 0;
             epochMax = 10;
             scrollBarWheelTurns = 0;
+            lossChartMouseClick = false;
 
             /*
             The number of neurons in the input layer is equal to the number of features in the data and in very rare cases, 
@@ -288,9 +290,10 @@ namespace Windows
             trainDataIdx = 0;
 
             scrollBarWheelTurns = 0;
+            lossChartMouseClick = false;
             LossChart.Series["Loss"].Points.Clear();
             LossChart.MouseWheel += LossChart_MouseWheel;
-                        
+                                    
             training = true;
         }
 
@@ -321,6 +324,18 @@ namespace Windows
                 }
             }
             
+        }
+        private void LossChart_MouseClick(object sender, MouseEventArgs e)
+        {
+            
+        }
+        private void LossChart_MouseDown(object sender, MouseEventArgs e)
+        {
+            lossChartMouseClick = true;
+        }
+        private void LossChart_MouseUp(object sender, MouseEventArgs e)
+        {
+            lossChartMouseClick = false;
         }
 
         private void Timer_Loop(object sender, EventArgs e)
@@ -371,8 +386,11 @@ namespace Windows
                         }
                         */
 
-                        chartArea.AxisX.Maximum = LossChart.Series["Loss"].Points.Count;
-                        chartArea.AxisX.ScaleView.Scroll(LossChart.Series["Loss"].Points.Count);
+                        if (lossChartMouseClick == false)
+                        {
+                            chartArea.AxisX.Maximum = LossChart.Series["Loss"].Points.Count;
+                            chartArea.AxisX.ScaleView.Scroll(LossChart.Series["Loss"].Points.Count);
+                        }
                         
                         trainDataIdx++;
                     }

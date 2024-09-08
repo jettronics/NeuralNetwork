@@ -78,6 +78,9 @@
             title1.Name = "Loss";
             title1.Text = "Loss";
             this.LossChart.Titles.Add(title1);
+            this.LossChart.MouseClick += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseClick);
+            this.LossChart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseDown);
+            this.LossChart.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseUp);
             // 
             // timer1
             // 
