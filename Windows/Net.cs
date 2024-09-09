@@ -24,6 +24,7 @@ public class Net
         weightsFileArg = "";
         tplgy = new List<int>();
         actFct = new List<ActFctType>();
+        linearNet = true;
         
         //layers = new List<List<Neuron>>();
 
@@ -43,6 +44,8 @@ public class Net
     {
         tplgy = topology;
         actFct = actuatFct;
+
+        linearNet = true;
 
         int numLayers = topology.Count;
         layers = new List<List<Neuron>>();
@@ -71,6 +74,11 @@ public class Net
 
             for (int neuronNum = 0; neuronNum < topology.ElementAt(layerNum); neuronNum++)
             {
+                if ((actFct.ElementAt(layerNum) == Net.ActFctType.Sigmoid) ||
+                    (actFct.ElementAt(layerNum) == Net.ActFctType.PieceWiseLinear))
+                {
+                    linearNet = false;
+                }
                 Neuron neuron = new Neuron(0, actFct.ElementAt(layerNum), lastLayer);
                 if (layerNum == 0)
                 {
@@ -104,6 +112,8 @@ public class Net
         weightsFileArg = weightsFile;
         tplgy.Clear();
         actFct.Clear();
+
+        linearNet = true;
 
         layers = new List<List<Neuron>>();
         List<double> weights = new List<double>();
@@ -159,6 +169,11 @@ public class Net
 
             for (int neuronNum = 0; neuronNum < tplgy.ElementAt(layerNum); neuronNum++)
             {
+                if ((actFct.ElementAt(layerNum) == Net.ActFctType.Sigmoid) ||
+                    (actFct.ElementAt(layerNum) == Net.ActFctType.PieceWiseLinear))
+                {
+                    linearNet = false;
+                }
                 Neuron neuron = new Neuron(0, actFct.ElementAt(layerNum), lastLayer);
                 if (layerNum == 0)
                 {
@@ -354,11 +369,23 @@ public class Net
     {
         inputScaled.Clear();
 
-        for (int n = 0; n < input.Count; n++)
+        if (linearNet == false)
         {
-            double m = (Neuron.Sigmoid.MinMaxAbs - (-Neuron.Sigmoid.MinMaxAbs)) / (inputMax.ElementAt(n) - inputMin.ElementAt(n));
-            double normed = (m * (input.ElementAt(n) - inputMin.ElementAt(n))) + (-Neuron.Sigmoid.MinMaxAbs);
-            inputScaled.Add(normed);
+            for (int n = 0; n < input.Count; n++)
+            {
+                double m = (Neuron.Param.MinMaxAbs - (-Neuron.Param.MinMaxAbs)) / (inputMax.ElementAt(n) - inputMin.ElementAt(n));
+                double normed = (m * (input.ElementAt(n) - inputMin.ElementAt(n))) + (-Neuron.Param.MinMaxAbs);
+                inputScaled.Add(normed);
+            }
+        }
+        else
+        {
+            for (int n = 0; n < input.Count; n++)
+            {
+                double m = 1.0 / (inputMax.ElementAt(n) - inputMin.ElementAt(n));
+                double normed = m * (input.ElementAt(n) - inputMin.ElementAt(n));
+                inputScaled.Add(normed);
+            }
         }
         return ref inputScaled;
     }
@@ -372,4 +399,5 @@ public class Net
     protected List<int> tplgy;
     protected List<ActFctType> actFct;
     protected String weightsFileArg;
+    protected bool linearNet;
 }

@@ -5,7 +5,7 @@ using System.Linq;
 
 public class Neuron
 {
-    public struct Sigmoid { public const double MinMaxAbs = 1.7; public const double Grad = 0.294;  public const double T = 0.5; };
+    public struct Param { public const double MinMaxAbs = 1.7; public const double Grad = 0.294;  public const double T = 0.5; };
 
 	public Neuron()
 	{
@@ -136,23 +136,23 @@ public class Neuron
 
         if (actFctSelect == Net.ActFctType.Sigmoid)
         {
-            ret = (1.0 / (1.0 + Math.Exp(-inp / Sigmoid.T)));
+            ret = (1.0 / (1.0 + Math.Exp(-inp / Param.T)));
         }
         else
         if (actFctSelect == Net.ActFctType.PieceWiseLinear)
         {
-            if (inp >= Sigmoid.MinMaxAbs)
+            if (inp >= Param.MinMaxAbs)
             {
                 ret = 1.0;
             }
             else
-            if (inp <= (-Sigmoid.MinMaxAbs))
+            if (inp <= (-Param.MinMaxAbs))
             {
                 ret = 0.0;
             }
             else
             {
-                ret = (Sigmoid.Grad * inp) + 0.5;
+                ret = (Param.Grad * inp) + 0.5;
             }
         }
         else
@@ -198,18 +198,18 @@ public class Neuron
         else
         if (actFctSelect == Net.ActFctType.PieceWiseLinear)
         {
-            if (inp >= Sigmoid.MinMaxAbs)
+            if (inp >= Param.MinMaxAbs)
             {
                 ret = 0.0;
             }
             else
-            if (inp <= (-Sigmoid.MinMaxAbs))
+            if (inp <= (-Param.MinMaxAbs))
             {
                 ret = 0.0;
             }
             else
             {
-                ret = Sigmoid.Grad;
+                ret = Param.Grad;
             }
         }
         else
