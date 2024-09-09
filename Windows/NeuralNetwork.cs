@@ -285,14 +285,21 @@ namespace Windows
             outputTextBox.AppendText("Number of taining data limited randomly to: " + reader.getInputTrainData()[0].Count + "\r\n");
 
             loopDataIdx = 0;
+            epochIdx = 0;
 
             scrollBarWheelTurns = 0;
             lossChartMouseClick = false;
             LossChart.Series["Loss"].Points.Clear();
-                                                
+
+            var chartArea = LossChart.ChartAreas[LossChart.Series["Loss"].ChartArea];
+            chartArea.AxisX.Maximum = LossChart.Series["Loss"].Points.Count;
+            chartArea.AxisX.ScaleView.Scroll(LossChart.Series["Loss"].Points.Count);
+            chartArea.AxisX.ScaleView.ZoomReset();
+
             training = true;
             testing = false;
         }
+
         private void testNeuralNet_Click(object sender, EventArgs e)
         {
             if (topology.Count == 0)
@@ -327,7 +334,12 @@ namespace Windows
             scrollBarWheelTurns = 0;
             lossChartMouseClick = false;
             LossChart.Series["Loss"].Points.Clear();
-            
+
+            var chartArea = LossChart.ChartAreas[LossChart.Series["Loss"].ChartArea];
+            chartArea.AxisX.Maximum = LossChart.Series["Loss"].Points.Count;
+            chartArea.AxisX.ScaleView.Scroll(LossChart.Series["Loss"].Points.Count);
+            chartArea.AxisX.ScaleView.ZoomReset();
+
             training = false;
             testing = true;
         }
@@ -486,6 +498,13 @@ namespace Windows
                 }
             }
         }
+
+        private void stopTesting_Click(object sender, EventArgs e)
+        {
+            testing = false;
+            outputTextBox.AppendText("Testing aborted by user\r\n");
+        }
+
         private void stopTraining_Click(object sender, EventArgs e)
         {
             training = false;
