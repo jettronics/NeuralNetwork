@@ -295,6 +295,7 @@ namespace Windows
             chartArea.AxisX.Maximum = LossChart.Series["Loss"].Points.Count;
             chartArea.AxisX.ScaleView.Scroll(LossChart.Series["Loss"].Points.Count);
             chartArea.AxisX.ScaleView.ZoomReset();
+            chartArea.AxisY2.Maximum = Double.NaN;
 
             training = true;
             testing = false;
@@ -339,6 +340,7 @@ namespace Windows
             chartArea.AxisX.Maximum = LossChart.Series["Loss"].Points.Count;
             chartArea.AxisX.ScaleView.Scroll(LossChart.Series["Loss"].Points.Count);
             chartArea.AxisX.ScaleView.ZoomReset();
+            chartArea.AxisY2.Maximum = Double.NaN;
 
             training = false;
             testing = true;
@@ -348,13 +350,14 @@ namespace Windows
         {
             var chart = (Chart)sender;
             var xAxis = chart.ChartAreas[0].AxisX;
-            var yAxis = chart.ChartAreas[0].AxisY;
+            var yAxis = chart.ChartAreas[0].AxisY2;
 
             scrollBarWheelTurns += e.Delta;
 
             if (scrollBarWheelTurns <= 0)
             {
                 xAxis.ScaleView.ZoomReset();
+                yAxis.Maximum = Double.NaN;
             }
             else
             if (scrollBarWheelTurns > 0)
@@ -368,6 +371,16 @@ namespace Windows
                         xMinZoomPos = LossChart.Series["Loss"].Points.Count - 10;
                     }
                     xAxis.ScaleView.Zoom(xMinZoomPos, LossChart.Series["Loss"].Points.Count);
+
+                    double maxVal = -1000.0;
+                    for ( int i = xMinZoomPos; i < LossChart.Series["Loss"].Points.Count; i++ )
+                    {
+                        if (LossChart.Series["Loss"].Points.ElementAt(i).YValues[0] > maxVal)
+                        {
+                            maxVal = LossChart.Series["Loss"].Points.ElementAt(i).YValues[0];
+                        }
+                    }
+                    yAxis.Maximum = maxVal;
                 }
             }
             

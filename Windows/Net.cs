@@ -61,6 +61,12 @@ public class Net
             inputMin.Add(1000000.0);
         }
 
+        if ((actFct.ElementAt(0) == Net.ActFctType.Sigmoid) ||
+            (actFct.ElementAt(0) == Net.ActFctType.PieceWiseLinear))
+        {
+            linearNet = false;
+        }
+
         int numEntries = 0;
         for (int layerNum = 0; layerNum < numLayers; layerNum++)
         {
@@ -74,11 +80,6 @@ public class Net
 
             for (int neuronNum = 0; neuronNum < topology.ElementAt(layerNum); neuronNum++)
             {
-                if ((actFct.ElementAt(layerNum) == Net.ActFctType.Sigmoid) ||
-                    (actFct.ElementAt(layerNum) == Net.ActFctType.PieceWiseLinear))
-                {
-                    linearNet = false;
-                }
                 Neuron neuron = new Neuron(0, actFct.ElementAt(layerNum), lastLayer);
                 if (layerNum == 0)
                 {
@@ -156,6 +157,12 @@ public class Net
 
         int numLayers = tplgy.Count;
 
+        if ((actFct.ElementAt(0) == Net.ActFctType.Sigmoid) ||
+            (actFct.ElementAt(0) == Net.ActFctType.PieceWiseLinear))
+        {
+            linearNet = false;
+        }
+
         int numEntries = 0;
         for (int layerNum = 0; layerNum < numLayers; layerNum++)
         {
@@ -169,11 +176,6 @@ public class Net
 
             for (int neuronNum = 0; neuronNum < tplgy.ElementAt(layerNum); neuronNum++)
             {
-                if ((actFct.ElementAt(layerNum) == Net.ActFctType.Sigmoid) ||
-                    (actFct.ElementAt(layerNum) == Net.ActFctType.PieceWiseLinear))
-                {
-                    linearNet = false;
-                }
                 Neuron neuron = new Neuron(0, actFct.ElementAt(layerNum), lastLayer);
                 if (layerNum == 0)
                 {
