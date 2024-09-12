@@ -54,6 +54,7 @@ namespace Windows
             epochMax = 10;
             scrollBarWheelTurns = 0;
             lossChartMouseClick = false;
+            refOutput = new List<double>();
 
             /*
             The number of neurons in the input layer is equal to the number of features in the data and in very rare cases, 
@@ -109,7 +110,6 @@ namespace Windows
 
             network = new Net();
             LossChart.MouseWheel += LossChart_MouseWheel;
-
         }
 
         private void LossChart_Load(object sender, EventArgs e)
@@ -266,10 +266,14 @@ namespace Windows
                 }
             }
 
-            refOutput = new List<double>();
+            refOutput.Clear();
             for (int i = 0; i < reader.getNumClassifiers(); i++)
             {
                 refOutput.Add(0.0);
+            }
+            for (int i = 1; i < LossChart.Series.Count; i++)
+            {
+                LossChart.Series.RemoveAt(i);
             }
 
             Double.TryParse(learningRateTextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out learningRate);
@@ -318,10 +322,12 @@ namespace Windows
                 }
             }
 
-            refOutput = new List<double>();
-            for (int i = 0; i < reader.getNumClassifiers(); i++)
+            refOutput.Clear();
+            for (int i = 0; i < reader.getNumClassifiers()-1; i++)
             {
                 refOutput.Add(0.0);
+                Series yValSeries = new Series();
+                LossChart.Series.Add(yValSeries);
             }
 
             int limitData = Convert.ToUInt16(limitTrainDataTextBox.Text);
@@ -491,8 +497,14 @@ namespace Windows
                         refOutput[0] = reader.getOutputTestData(loopDataIdx);
                     }
 
-                    double losses = network.loss(refOutput);
-                    LossChart.Series["Loss"].Points.Add(losses);
+                    
+                    List<double> netOutput = network.getOutput();
+                    LossChart.Series[0].Points.Add(netOutput[0]);
+                    LossChart.Series[1].Points.Add(netOutput[1]);
+
+                    /*double losses = network.loss(refOutput);
+                    LossChart.Series["Loss"].Points.Add(losses);*/
+
 
                     var chartArea = LossChart.ChartAreas[LossChart.Series["Loss"].ChartArea];
 
