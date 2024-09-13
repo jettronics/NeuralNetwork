@@ -17,6 +17,7 @@ using System.Globalization;
 using System.Xml.Linq;
 using System.Diagnostics.Eventing.Reader;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Windows.Forms.VisualStyles;
 
 namespace Windows
 {
@@ -109,7 +110,7 @@ namespace Windows
             //String weightsFile = Path.GetFullPath("weights.txt");
 
             network = new Net();
-            LossChart.MouseWheel += LossChart_MouseWheel;
+            AnalysisChart.MouseWheel += LossChart_MouseWheel;
         }
 
         private void LossChart_Load(object sender, EventArgs e)
@@ -140,16 +141,42 @@ namespace Windows
             outputTextBox.AppendText("Output Name:\r\n");
             outputTextBox.AppendText("   " + colNames.Last() + "\r\n");
             outputTextBox.AppendText("Number of Classifiers: " + reader.getNumClassifiers() + "\r\n");
+            for (int i = 1; i < AnalysisChart.Series.Count; i++)
+            {
+                AnalysisChart.Series.RemoveAt(i);
+            }
+            refOutput.Clear();
             if (reader.getNumClassifiers() > 1)
             {
                 for (int i = 0; i < reader.getNumClassifiers(); i++)
                 {
                     outputTextBox.AppendText("   " + reader.getClassifiers()[i] + "\r\n");
+                    refOutput.Add(0.0);
+                    Series yValSeriesRef = new Series();
+                    yValSeriesRef.ChartType = SeriesChartType.Point;
+                    yValSeriesRef.IsVisibleInLegend = false;
+                    yValSeriesRef.Name = reader.getClassifiers()[i] + " ref";
+                    AnalysisChart.Series.Add(yValSeriesRef);
+                    Series yValSeriesNet = new Series();
+                    yValSeriesNet.ChartType = SeriesChartType.Line;
+                    yValSeriesNet.IsVisibleInLegend = false;
+                    yValSeriesNet.Name = reader.getClassifiers()[i] + " net";
+                    AnalysisChart.Series.Add(yValSeriesNet);
+
                 }
             }
             else
             {
                 outputTextBox.AppendText("   " + "Range 0...1\r\n");
+                refOutput.Add(0.0);
+                Series yValSeriesRef = new Series();
+                yValSeriesRef.ChartType = SeriesChartType.Point;
+                yValSeriesRef.Name = "ref";
+                AnalysisChart.Series.Add(yValSeriesRef);
+                Series yValSeriesNet = new Series();
+                yValSeriesNet.ChartType = SeriesChartType.Line;
+                yValSeriesNet.Name = "net";
+                AnalysisChart.Series.Add(yValSeriesNet);
             }
             outputTextBox.AppendText("Total Data number: " + reader.getNumTotalData() + "\r\n");
             outputTextBox.AppendText("----------------------------------------------\r\n");
@@ -266,16 +293,6 @@ namespace Windows
                 }
             }
 
-            refOutput.Clear();
-            for (int i = 0; i < reader.getNumClassifiers(); i++)
-            {
-                refOutput.Add(0.0);
-            }
-            for (int i = 1; i < LossChart.Series.Count; i++)
-            {
-                LossChart.Series.RemoveAt(i);
-            }
-
             Double.TryParse(learningRateTextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out learningRate);
             outputTextBox.AppendText("Learning rate set to: " + learningRate + "\r\n");
 
@@ -293,11 +310,17 @@ namespace Windows
 
             scrollBarWheelTurns = 0;
             lossChartMouseClick = false;
-            LossChart.Series["Loss"].Points.Clear();
+            AnalysisChart.Series[0].Points.Clear();
+            AnalysisChart.Series[0].IsVisibleInLegend = true;
+            for (int i = 1; i < AnalysisChart.Series.Count; i++)
+            {
+                AnalysisChart.Series[i].Points.Clear();
+                AnalysisChart.Series[i].IsVisibleInLegend = false;
+            }
 
-            var chartArea = LossChart.ChartAreas[LossChart.Series["Loss"].ChartArea];
-            chartArea.AxisX.Maximum = LossChart.Series["Loss"].Points.Count;
-            chartArea.AxisX.ScaleView.Scroll(LossChart.Series["Loss"].Points.Count);
+            var chartArea = AnalysisChart.ChartAreas[AnalysisChart.Series[0].ChartArea];
+            chartArea.AxisX.Maximum = AnalysisChart.Series[0].Points.Count;
+            chartArea.AxisX.ScaleView.Scroll(AnalysisChart.Series[0].Points.Count);
             chartArea.AxisX.ScaleView.ZoomReset();
             chartArea.AxisY2.Maximum = Double.NaN;
 
@@ -322,14 +345,6 @@ namespace Windows
                 }
             }
 
-            refOutput.Clear();
-            for (int i = 0; i < reader.getNumClassifiers()-1; i++)
-            {
-                refOutput.Add(0.0);
-                Series yValSeries = new Series();
-                LossChart.Series.Add(yValSeries);
-            }
-
             int limitData = Convert.ToUInt16(limitTrainDataTextBox.Text);
             outputTextBox.AppendText("Limit Test Data to : " + limitData + "%\r\n");
 
@@ -340,13 +355,20 @@ namespace Windows
 
             scrollBarWheelTurns = 0;
             lossChartMouseClick = false;
-            LossChart.Series["Loss"].Points.Clear();
+            AnalysisChart.Series[0].Points.Clear();
+            AnalysisChart.Series[0].IsVisibleInLegend = false;
+            for (int i = 1; i < AnalysisChart.Series.Count; i++)
+            {
+                AnalysisChart.Series[i].Points.Clear();
+                AnalysisChart.Series[i].IsVisibleInLegend = true;
+            }
 
-            var chartArea = LossChart.ChartAreas[LossChart.Series["Loss"].ChartArea];
-            chartArea.AxisX.Maximum = LossChart.Series["Loss"].Points.Count;
-            chartArea.AxisX.ScaleView.Scroll(LossChart.Series["Loss"].Points.Count);
+            var chartArea = AnalysisChart.ChartAreas[AnalysisChart.Series[0].ChartArea];
+            chartArea.AxisX.Maximum = AnalysisChart.Series[0].Points.Count;
+            chartArea.AxisX.ScaleView.Scroll(AnalysisChart.Series[0].Points.Count);
             chartArea.AxisX.ScaleView.ZoomReset();
-            chartArea.AxisY2.Maximum = Double.NaN;
+            chartArea.AxisY.Maximum = Double.NaN;
+            chartArea.AxisY.Minimum = -0.1;
 
             training = false;
             testing = true;
@@ -357,7 +379,7 @@ namespace Windows
             var chart = (Chart)sender;
             var xAxis = chart.ChartAreas[0].AxisX;
             var yAxis = chart.ChartAreas[0].AxisY2;
-
+            
             scrollBarWheelTurns += e.Delta;
 
             if (scrollBarWheelTurns <= 0)
@@ -368,25 +390,34 @@ namespace Windows
             else
             if (scrollBarWheelTurns > 0)
             {
-                if (LossChart.Series["Loss"].Points.Count > 10)
+                int seriesIndex = 0;
+                if(AnalysisChart.Series[1].Points.Count > AnalysisChart.Series[0].Points.Count)
+                {
+                    seriesIndex = 1;
+                }
+                
+                if (AnalysisChart.Series[seriesIndex].Points.Count > 10)
                 {
                     int xMinZoomPos = scrollBarWheelTurns >> 2;
 
-                    if (xMinZoomPos >= LossChart.Series["Loss"].Points.Count)
+                    if (xMinZoomPos >= AnalysisChart.Series[seriesIndex].Points.Count)
                     {
-                        xMinZoomPos = LossChart.Series["Loss"].Points.Count - 10;
+                        xMinZoomPos = AnalysisChart.Series[seriesIndex].Points.Count - 10;
                     }
-                    xAxis.ScaleView.Zoom(xMinZoomPos, LossChart.Series["Loss"].Points.Count);
+                    xAxis.ScaleView.Zoom(xMinZoomPos, AnalysisChart.Series[seriesIndex].Points.Count);
 
-                    double maxVal = -1000.0;
-                    for ( int i = xMinZoomPos; i < LossChart.Series["Loss"].Points.Count; i++ )
+                    if (seriesIndex == 0)
                     {
-                        if (LossChart.Series["Loss"].Points.ElementAt(i).YValues[0] > maxVal)
+                        double maxVal = -1000.0;
+                        for (int i = xMinZoomPos; i < AnalysisChart.Series[seriesIndex].Points.Count; i++)
                         {
-                            maxVal = LossChart.Series["Loss"].Points.ElementAt(i).YValues[0];
+                            if (AnalysisChart.Series[seriesIndex].Points.ElementAt(i).YValues[0] > maxVal)
+                            {
+                                maxVal = AnalysisChart.Series[seriesIndex].Points.ElementAt(i).YValues[0];
+                            }
                         }
+                        yAxis.Maximum = maxVal;
                     }
-                    yAxis.Maximum = maxVal;
                 }
             }
             
@@ -441,14 +472,14 @@ namespace Windows
                         network.backProp(refOutput, learningRate);
                         
                         double losses = network.loss(refOutput);
-                        LossChart.Series["Loss"].Points.Add(losses);
+                        AnalysisChart.Series[0].Points.Add(losses);
                         
-                        var chartArea = LossChart.ChartAreas[LossChart.Series["Loss"].ChartArea];
+                        var chartArea = AnalysisChart.ChartAreas[AnalysisChart.Series[0].ChartArea];
 
                         if (lossChartMouseClick == false)
                         {
-                            chartArea.AxisX.Maximum = LossChart.Series["Loss"].Points.Count;
-                            chartArea.AxisX.ScaleView.Scroll(LossChart.Series["Loss"].Points.Count);
+                            chartArea.AxisX.Maximum = AnalysisChart.Series[0].Points.Count;
+                            chartArea.AxisX.ScaleView.Scroll(AnalysisChart.Series[0].Points.Count);
                         }
 
                         loopDataIdx++;
@@ -499,19 +530,22 @@ namespace Windows
 
                     
                     List<double> netOutput = network.getOutput();
-                    LossChart.Series[0].Points.Add(netOutput[0]);
-                    LossChart.Series[1].Points.Add(netOutput[1]);
-
+                    for (int i = 0; i < netOutput.Count; i++)
+                    {
+                        AnalysisChart.Series[(2*i)+1].Points.Add(refOutput[i]);
+                        AnalysisChart.Series[(2*i)+2].Points.Add(netOutput[i]);
+                    }
+                    
                     /*double losses = network.loss(refOutput);
-                    LossChart.Series["Loss"].Points.Add(losses);*/
+                    LossChart.Series[0].Points.Add(losses);*/
 
 
-                    var chartArea = LossChart.ChartAreas[LossChart.Series["Loss"].ChartArea];
+                    var chartArea = AnalysisChart.ChartAreas[AnalysisChart.Series[1].ChartArea];
 
                     if (lossChartMouseClick == false)
                     {
-                        chartArea.AxisX.Maximum = LossChart.Series["Loss"].Points.Count;
-                        chartArea.AxisX.ScaleView.Scroll(LossChart.Series["Loss"].Points.Count);
+                        chartArea.AxisX.Maximum = AnalysisChart.Series[1].Points.Count;
+                        chartArea.AxisX.ScaleView.Scroll(AnalysisChart.Series[1].Points.Count);
                     }
 
                     loopDataIdx++;

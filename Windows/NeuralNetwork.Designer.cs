@@ -33,7 +33,7 @@
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
-            this.LossChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.AnalysisChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.openTrainingDataCSVFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.button1 = new System.Windows.Forms.Button();
@@ -51,37 +51,37 @@
             this.limitTrainDataTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.LossChart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AnalysisChart)).BeginInit();
             this.SuspendLayout();
             // 
-            // LossChart
+            // AnalysisChart
             // 
             chartArea1.AxisX.MajorGrid.Enabled = false;
             chartArea1.AxisX2.MajorGrid.Enabled = false;
             chartArea1.AxisY.MajorGrid.Enabled = false;
             chartArea1.AxisY2.MajorGrid.Enabled = false;
             chartArea1.Name = "ChartArea1";
-            this.LossChart.ChartAreas.Add(chartArea1);
+            this.AnalysisChart.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
-            this.LossChart.Legends.Add(legend1);
-            this.LossChart.Location = new System.Drawing.Point(321, 40);
-            this.LossChart.Name = "LossChart";
+            this.AnalysisChart.Legends.Add(legend1);
+            this.AnalysisChart.Location = new System.Drawing.Point(321, 40);
+            this.AnalysisChart.Name = "AnalysisChart";
             series1.ChartArea = "ChartArea1";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             series1.IsVisibleInLegend = false;
             series1.Legend = "Legend1";
             series1.Name = "Loss";
             series1.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            this.LossChart.Series.Add(series1);
-            this.LossChart.Size = new System.Drawing.Size(482, 382);
-            this.LossChart.TabIndex = 0;
-            this.LossChart.Text = "Loss";
-            title1.Name = "Loss";
-            title1.Text = "Loss";
-            this.LossChart.Titles.Add(title1);
-            this.LossChart.MouseClick += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseClick);
-            this.LossChart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseDown);
-            this.LossChart.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseUp);
+            this.AnalysisChart.Series.Add(series1);
+            this.AnalysisChart.Size = new System.Drawing.Size(482, 382);
+            this.AnalysisChart.TabIndex = 0;
+            this.AnalysisChart.Text = "Analysis";
+            title1.Name = "Analysis";
+            title1.Text = "Analysis";
+            this.AnalysisChart.Titles.Add(title1);
+            this.AnalysisChart.MouseClick += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseClick);
+            this.AnalysisChart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseDown);
+            this.AnalysisChart.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseUp);
             // 
             // timer1
             // 
@@ -252,7 +252,7 @@
             this.Controls.Add(this.learningRateTextBox);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.button6);
-            this.Controls.Add(this.LossChart);
+            this.Controls.Add(this.AnalysisChart);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -262,7 +262,7 @@
             this.Name = "NeuralNetwork";
             this.Text = "Neural Network";
             this.Load += new System.EventHandler(this.LossChart_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.LossChart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AnalysisChart)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -270,7 +270,7 @@
 
         #endregion
 
-        private System.Windows.Forms.DataVisualization.Charting.Chart LossChart;
+        private System.Windows.Forms.DataVisualization.Charting.Chart AnalysisChart;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.OpenFileDialog openTrainingDataCSVFileDialog;
         private System.Windows.Forms.Button button1;
