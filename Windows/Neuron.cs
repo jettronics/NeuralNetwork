@@ -5,9 +5,18 @@ using System.Linq;
 
 public class Neuron
 {
-    public struct Param { public const double MinMaxAbs = 1.7; public const double Grad = 0.294;  public const double T = 0.5; };
+    public struct Param { public const double MinMaxAbs = 1.0;  public const double T = 0.2; };
 
-	public Neuron()
+    protected List<double> weights;
+    protected double bias;
+    protected double net;
+    protected double activation;
+    protected double gradient;
+    protected Net.ActFctType actFctSelect;
+    protected bool lastLayerNeuron;
+    protected double gradPieceWiseLinear;
+
+    public Neuron()
 	{
         bias = 0.0;
         net = 0.0;
@@ -17,6 +26,8 @@ public class Neuron
         lastLayerNeuron = false;
 
         weights = new List<double>();
+
+        gradPieceWiseLinear = fctSigmoid(0.0) * (1 - fctSigmoid(0.0));
     }
 
     public Neuron(int numConnections, Net.ActFctType actFct, bool lastNeurons)
@@ -33,17 +44,9 @@ public class Neuron
         {
             weights.Add(Net.randomWeight());
         }
-        
+
+        gradPieceWiseLinear = fctSigmoid(0.0) * (1 - fctSigmoid(0.0));
     }
-
-    protected List<double> weights;
-    protected double bias;
-    protected double net;
-    protected double activation;
-    protected double gradient;
-    protected Net.ActFctType actFctSelect;
-    protected bool lastLayerNeuron;
-
     public void setOutput(double val) 
     { 
         activation = val; 
@@ -130,29 +133,32 @@ public class Neuron
         return bias; 
     }
 
+    protected double fctSigmoid(double x)
+    {
+        return (1.0 / (1.0 + Math.Exp(-x / Param.T)));
+    }
+
 	protected double transferFct(double inp)
     {
         double ret = 0.0;
 
         if (actFctSelect == Net.ActFctType.Sigmoid)
         {
-            ret = (1.0 / (1.0 + Math.Exp(-inp / Param.T)));
+            ret = fctSigmoid(inp);
         }
         else
         if (actFctSelect == Net.ActFctType.PieceWiseLinear)
         {
-            if (inp >= Param.MinMaxAbs)
+            ret = (gradPieceWiseLinear * inp) + 0.5;
+
+            if (ret >= Param.MinMaxAbs)
             {
                 ret = 1.0;
             }
             else
-            if (inp <= (-Param.MinMaxAbs))
+            if (ret <= (-Param.MinMaxAbs))
             {
                 ret = 0.0;
-            }
-            else
-            {
-                ret = (Param.Grad * inp) + 0.5;
             }
         }
         else
@@ -198,18 +204,20 @@ public class Neuron
         else
         if (actFctSelect == Net.ActFctType.PieceWiseLinear)
         {
-            if (inp >= Param.MinMaxAbs)
+            ret = transferFct(inp);
+
+            if (ret >= Param.MinMaxAbs)
             {
                 ret = 0.0;
             }
             else
-            if (inp <= (-Param.MinMaxAbs))
+            if (ret <= (-Param.MinMaxAbs))
             {
                 ret = 0.0;
             }
             else
             {
-                ret = Param.Grad;
+                ret = gradPieceWiseLinear;
             }
         }
         else

@@ -362,6 +362,13 @@ namespace Windows
                 AnalysisChart.Series[i].Points.Clear();
                 AnalysisChart.Series[i].IsVisibleInLegend = true;
             }
+            
+            Random r = new Random();
+            for (int i = 0; i < reader.getNumClassifiers(); i++)
+            {
+                AnalysisChart.Series[(2 * i) + 1].Color = Color.FromArgb(r.Next(0, 256), r.Next(0, 256), r.Next(0, 256));
+                AnalysisChart.Series[(2 * i) + 2].Color = AnalysisChart.Series[(2 * i) + 1].Color;
+            }
 
             var chartArea = AnalysisChart.ChartAreas[AnalysisChart.Series[0].ChartArea];
             chartArea.AxisX.Maximum = AnalysisChart.Series[0].Points.Count;
