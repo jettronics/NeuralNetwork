@@ -9,8 +9,8 @@ using System.Drawing;
 
 public class Net
 {
-    public enum ActFctType { Sigmoid = 0, PieceWiseLinear, ReLu, LeakyReLu, Linear }; // Linear used for last layer in case of linear sum from previous layer
-    public static readonly String[] ActFctTypeStr = { "Sigmoid", "PieceWiseLinear", "ReLu", "LeakyReLu", "Linear" };
+    public enum ActFctType { Sigmoid = 0, PiWiLinear, ReLu, LeakyReLu, Linear }; // Linear used for last layer in case of linear sum from previous layer
+    public static readonly String[] ActFctTypeStr = { "Sigmoid", "PiWiLinear", "ReLu", "LeakyReLu", "Linear" };
 
     public static double randomWeight()
     {
@@ -62,7 +62,7 @@ public class Net
         }
 
         if ((actFct.ElementAt(0) == Net.ActFctType.Sigmoid) ||
-            (actFct.ElementAt(0) == Net.ActFctType.PieceWiseLinear))
+            (actFct.ElementAt(0) == Net.ActFctType.PiWiLinear))
         {
             linearNet = false;
         }
@@ -158,7 +158,7 @@ public class Net
         int numLayers = tplgy.Count;
 
         if ((actFct.ElementAt(0) == Net.ActFctType.Sigmoid) ||
-            (actFct.ElementAt(0) == Net.ActFctType.PieceWiseLinear))
+            (actFct.ElementAt(0) == Net.ActFctType.PiWiLinear))
         {
             linearNet = false;
         }

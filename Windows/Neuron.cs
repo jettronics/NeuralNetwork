@@ -147,7 +147,7 @@ public class Neuron
             ret = fctSigmoid(inp);
         }
         else
-        if (actFctSelect == Net.ActFctType.PieceWiseLinear)
+        if (actFctSelect == Net.ActFctType.PiWiLinear)
         {
             ret = (gradPieceWiseLinear * inp) + 0.5;
 
@@ -202,7 +202,7 @@ public class Neuron
             ret = transferFct(inp) * (1 - transferFct(inp));
         }
         else
-        if (actFctSelect == Net.ActFctType.PieceWiseLinear)
+        if (actFctSelect == Net.ActFctType.PiWiLinear)
         {
             ret = transferFct(inp);
 
