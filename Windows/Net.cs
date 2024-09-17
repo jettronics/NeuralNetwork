@@ -9,8 +9,8 @@ using System.Drawing;
 
 public class Net
 {
-    public enum ActFctType { Sigmoid = 0, PiWiLinear, ReLu, LeakyReLu, Linear }; // Linear used for last layer in case of linear sum from previous layer
-    public static readonly String[] ActFctTypeStr = { "Sigmoid", "PiWiLinear", "ReLu", "LeakyReLu", "Linear" };
+    public enum ActFctType { Sigmoid = 0, PiWiLinear, ReLu, LeakyReLu, Linear, SoftMax }; // Linear used for last layer in case of linear sum from previous layer
+    public static readonly String[] ActFctTypeStr = { "Sigmoid", "PiWiLinear", "ReLu", "LeakyReLu", "Linear", "SoftMax" };
 
     public static double randomWeight()
     {

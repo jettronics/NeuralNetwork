@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 public class Neuron
 {
@@ -27,7 +28,7 @@ public class Neuron
 
         weights = new List<double>();
 
-        gradPieceWiseLinear = fctSigmoid(0.0) * (1 - fctSigmoid(0.0));
+        gradPieceWiseLinear = (1/Param.T)* (fctSigmoid(0.0) * (1 - fctSigmoid(0.0)));
     }
 
     public Neuron(int numConnections, Net.ActFctType actFct, bool lastNeurons)
@@ -45,7 +46,7 @@ public class Neuron
             weights.Add(Net.randomWeight());
         }
 
-        gradPieceWiseLinear = fctSigmoid(0.0) * (1 - fctSigmoid(0.0));
+        gradPieceWiseLinear = (1 / Param.T) * (fctSigmoid(0.0) * (1 - fctSigmoid(0.0))); ;
     }
     public void setOutput(double val) 
     { 
@@ -59,14 +60,28 @@ public class Neuron
     {
         double sum = 0.0;
 
-        for (int n = 0; n < layer.Count; n++)
+        if (actFctSelect == Net.ActFctType.SoftMax)
         {
-            //cout << "calcOutput: " << layer->at(n).activation << ", weight: " << weights[n] << endl;
-            sum += (layer.ElementAt(n).activation * weights[n]);
-            //cout << "calcOutput: sum: " << sum << endl;
-        }
+            for (int n = 0; n < layer.Count; n++)
+            {
+                //cout << "calcOutput: " << layer->at(n).activation << ", weight: " << weights[n] << endl;
+                sum += Math.Exp(layer.ElementAt(n).activation);
+                //cout << "calcOutput: sum: " << sum << endl;
+            }
 
-        net = sum + bias;
+            net = sum;
+        }
+        else
+        { 
+            for (int n = 0; n < layer.Count; n++)
+            {
+                //cout << "calcOutput: " << layer->at(n).activation << ", weight: " << weights[n] << endl;
+                sum += (layer.ElementAt(n).activation * weights[n]);
+                //cout << "calcOutput: sum: " << sum << endl;
+            }
+
+            net = sum + bias;
+        }
 
         activation = transferFct(net);
         //cout << "calcOutput: " << activation << ", bias: " << bias << endl;
@@ -189,6 +204,11 @@ public class Neuron
         if (actFctSelect == Net.ActFctType.Linear)
         {
             ret = inp;
+        }
+        else
+        if (actFctSelect == Net.ActFctType.SoftMax)
+        {
+
         }
         //cout << "transferFct: " << in << " -> " << sigmoid << endl;
         return ret;
