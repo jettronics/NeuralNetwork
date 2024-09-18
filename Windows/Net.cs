@@ -275,7 +275,7 @@ public class Net
             for (int n = 0; n < layers[i].Count; n++)
             {
                 //cout << "feedForward: neuron " << n << endl;
-                layers[i][n].calcOutput(layers[i - 1]);
+                layers[i][n].calcOutput(layers[i - 1], n);
             }
         }
     }
@@ -314,7 +314,7 @@ public class Net
             //cout << "Layer Gradient calc: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).calcGradients(right);
+                act.ElementAt(n).calcGradients(right, n);
             }
         }
 

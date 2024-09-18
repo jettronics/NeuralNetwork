@@ -28,7 +28,7 @@ public class Neuron
 
         weights = new List<double>();
 
-        gradPieceWiseLinear = (1/Param.T)* (fctSigmoid(0.0) * (1 - fctSigmoid(0.0)));
+        gradPieceWiseLinear = (1.0 / Param.T) * (fctSigmoid(0.0) * (1 - fctSigmoid(0.0)));
     }
 
     public Neuron(int numConnections, Net.ActFctType actFct, bool lastNeurons)
@@ -43,10 +43,17 @@ public class Neuron
         weights = new List<double>();
         for (int i = 0; i < numConnections; i++)
         {
-            weights.Add(Net.randomWeight());
+            if (actFct == Net.ActFctType.SoftMax)
+            {
+                weights.Add(1.0);
+            }
+            else
+            {
+                weights.Add(Net.randomWeight());
+            }
         }
 
-        gradPieceWiseLinear = (1 / Param.T) * (fctSigmoid(0.0) * (1 - fctSigmoid(0.0))); ;
+        gradPieceWiseLinear = (1.0 / Param.T) * (fctSigmoid(0.0) * (1 - fctSigmoid(0.0))); ;
     }
     public void setOutput(double val) 
     { 
@@ -56,7 +63,7 @@ public class Neuron
     { 
         return activation; 
     }
-    public void calcOutput(List<Neuron> layer)
+    public void calcOutput(List<Neuron> layer, int prev)
     {
         double sum = 0.0;
 
@@ -69,7 +76,7 @@ public class Neuron
                 //cout << "calcOutput: sum: " << sum << endl;
             }
 
-            net = sum;
+            net = Math.Exp(layer.ElementAt(prev).activation)/sum;
         }
         else
         { 
@@ -91,18 +98,35 @@ public class Neuron
     {
         double delta = activation - target;
         gradient = delta * transferFctDeriv(net);
+        
         //gradient = transferFctDeriv(delta);
         //cout << "Gradient: " << gradient << ", Delta: " << delta << endl;
         return;
     }
-    public void calcGradients(List<Neuron> layer)
+    public void calcGradients(List<Neuron> layer, int act)
     {
         double outputSum = 0.0;
 
         for (int n = 0; n < layer.Count; n++)
         {
-            //outputSum += (layer->at(n).weights[n] * layer->at(n).gradient);
-            outputSum += (weights[n] * layer.ElementAt(n).gradient);
+            if (layer.ElementAt(n).actFctSelect == Net.ActFctType.SoftMax)
+            {
+                if (act == n)
+                {
+                    // Weights in SoftMax Neuron always 1.0
+                    outputSum = layer.ElementAt(n).gradient * (1.0 - layer.ElementAt(n).gradient);
+                }
+                else
+                {
+                    outputSum = -(layer.ElementAt(n).gradient * layer.ElementAt(act).gradient);
+                }
+            }
+            else
+            {
+                //outputSum += (layer->at(n).weights[n] * layer->at(n).gradient);
+                //outputSum += (weights[n] * layer.ElementAt(n).gradient);
+                outputSum += (layer.ElementAt(n).weights[n] * layer.ElementAt(n).gradient);
+            }
         }
 
         //gradient = transferFctDeriv(outputSum);
@@ -120,10 +144,25 @@ public class Neuron
 
             // Neuron weight same position as left neuron
             //weights[n] = weights[n] - (beta * gradient * neuron->getOutput());
-            weights[n] = weights[n] - (beta * gradient * layer.ElementAt(n).activation);
+            if(actFctSelect == Net.ActFctType.SoftMax)
+            {
+                weights[n] = 1.0;
+            }
+            else
+            {
+                weights[n] = weights[n] - (beta * gradient * layer.ElementAt(n).activation);
+            }
         }
         //double b = bias;
-        bias = bias - (beta * gradient);
+        if (actFctSelect == Net.ActFctType.SoftMax)
+        {
+            bias = 0.0;
+        }
+        else
+        {
+            bias = bias - (beta * gradient);
+        }
+            
         //cout << "bias new: " << bias << ", old: " << b << endl;
 
         return;
@@ -208,7 +247,7 @@ public class Neuron
         else
         if (actFctSelect == Net.ActFctType.SoftMax)
         {
-
+            ret = inp;
         }
         //cout << "transferFct: " << in << " -> " << sigmoid << endl;
         return ret;
@@ -219,7 +258,7 @@ public class Neuron
 
         if (actFctSelect == Net.ActFctType.Sigmoid)
         {
-            ret = transferFct(inp) * (1 - transferFct(inp));
+            ret = (1.0 / Param.T) * (transferFct(inp) * (1 - transferFct(inp)));
         }
         else
         if (actFctSelect == Net.ActFctType.PiWiLinear)
@@ -267,6 +306,11 @@ public class Neuron
         }
         else
         if (actFctSelect == Net.ActFctType.Linear)
+        {
+            ret = 1.0;
+        }
+        else
+        if (actFctSelect == Net.ActFctType.SoftMax)
         {
             ret = 1.0;
         }
