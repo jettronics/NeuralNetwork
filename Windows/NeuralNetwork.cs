@@ -181,7 +181,8 @@ namespace Windows
             outputTextBox.AppendText("Total Data number: " + reader.getNumTotalData() + "\r\n");
             outputTextBox.AppendText("----------------------------------------------\r\n");
             outputTextBox.AppendText("Define in following text box the inputs, outputs, layers and activation functions of the neural network.\r\n");
-            outputTextBox.AppendText("Syntax: n th line number of inputs, n+1 th line activation function\r\n");
+            outputTextBox.AppendText("Syntax: 1st (Input Layer), 2nd (First hidden Layer), 4th, 6th, ... line - number of inputs, 3rd, 5th, ... line - activation function\r\n");
+
             outputTextBox.AppendText("Selection of activation functions: " + string.Join(", ", Net.ActFctTypeStr) + "\r\n");
         }
 
@@ -192,36 +193,44 @@ namespace Windows
             String netParams = netPropertyTextBox.Text;
             String netParamsReplaced = netParams.Replace("\r\n", ",");
             String[] netParamsSplitted = netParamsReplaced.Split(',');
-            int len = netParamsSplitted.Length >> 1;
+            int len = netParamsSplitted.Length;
             bool errorOccurred = false;
+            
             for (int i = 0; i < len; i++)
             {
-                int topologyVal = Convert.ToUInt16(netParamsSplitted[i * 2]);
-
                 bool found = false;
-                Net.ActFctType actFctLoc = ActFctType.Sigmoid;
-                String actFctString = netParamsSplitted[(i * 2) + 1];
-                for ( int j = 0; j < Net.ActFctTypeStr.Length; j++ )
+                int topologyVal = 0;
+                bool canConvert = int.TryParse(netParamsSplitted[i], out topologyVal);
+                if( canConvert == true )
                 {
-                    if (Net.ActFctTypeStr.ElementAt(j) == actFctString)
-                    {
-                        found = true;
-                        actFctLoc = (Net.ActFctType)j;
-                        actFctString = Net.ActFctTypeStr.ElementAt(j);
-                        break;
-                    }
-                }
-
-                if (found == true)
-                {
+                    topologyVal = Convert.ToUInt16(netParamsSplitted[i]);
                     topology.Add(topologyVal);
-                    actFct.Add(actFctLoc);
-                    outputTextBox.AppendText("Layer added with " + topologyVal + " inputs and Activation Function " + actFctString + "\r\n");
+                    outputTextBox.AppendText("Topology added with " + topologyVal + "\r\n");
                 }
                 else
                 {
-                    errorOccurred = true;
-                    outputTextBox.AppendText("Error adding Layer with " + topologyVal + " inputs and Activation Function " + actFctString + "\r\n");
+                    Net.ActFctType actFctLoc = ActFctType.Sigmoid;
+                    String actFctString = netParamsSplitted[i];
+                    for (int j = 0; j < Net.ActFctTypeStr.Length; j++)
+                    {
+                        if (Net.ActFctTypeStr.ElementAt(j) == actFctString)
+                        {
+                            found = true;
+                            actFctLoc = (Net.ActFctType)j;
+                            actFctString = Net.ActFctTypeStr.ElementAt(j);
+                            break;
+                        }
+                    }
+                    if (found == true)
+                    {
+                        actFct.Add(actFctLoc);
+                        outputTextBox.AppendText("Activation Function added" + actFctString + "\r\n");
+                    }
+                    else
+                    {
+                        errorOccurred = true;
+                        outputTextBox.AppendText("Error adding " + netParamsSplitted[i] + "\r\n");
+                    }
                 }
             }
             if (errorOccurred == false)

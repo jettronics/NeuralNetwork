@@ -61,48 +61,49 @@ public class Net
             inputMin.Add(1000000.0);
         }
 
-        if ((actFct.ElementAt(0) == Net.ActFctType.Sigmoid) ||
-            (actFct.ElementAt(0) == Net.ActFctType.PiWiLinear))
+        for (int j = 0; j < actFct.Count; j++)
         {
-            linearNet = false;
+            if ((actFct.ElementAt(j) == Net.ActFctType.Sigmoid) ||
+                (actFct.ElementAt(j) == Net.ActFctType.PiWiLinear))
+            {
+                linearNet = false;
+            }
         }
 
         int numEntries = 0;
         for (int layerNum = 0; layerNum < numLayers; layerNum++)
         {
-            bool lastLayer = false;
-            if (layerNum >= (numLayers - 1))
-            {
-                lastLayer = true;
-            }
             List<Neuron> Neurons = new List<Neuron>();
             layers.Add(Neurons);
 
             for (int neuronNum = 0; neuronNum < topology.ElementAt(layerNum); neuronNum++)
             {
-                Neuron neuron = new Neuron(0, actFct.ElementAt(layerNum), lastLayer);
+                Neuron neuron; 
+
+                double bias = 0.0;
+                numEntries++;
+                weights.Clear();
+
                 if (layerNum == 0)
                 {
-                    layers.Last().Add(neuron);
+                    neuron = new Neuron(Net.ActFctType.Linear);
+                    
+                    weights.Add(1.0);
+                    numEntries++;
                 }
                 else
                 {
-                    weights.Clear();
+                    neuron = new Neuron(actFct.ElementAt(layerNum - 1));
+
                     for (int i = 0; i < topology.ElementAt(layerNum - 1); i++)
                     {
-                        double weight = 0.0;
-                        weight = randomWeight();
-                        weights.Add(weight);
+                        weights.Add(randomWeight());
                         numEntries++;
-                        //cout << "Weight " << numEntries << ": " << weight << endl;
                     }
-                    double bias = 0.0;
-                    numEntries++;
-                    //cout << "Bias " << numEntries << ": " << bias << endl;
-                    neuron.initWeights(weights);
-                    neuron.initBias(bias);
-                    layers.Last().Add(neuron);
                 }
+                neuron.initWeights(weights);
+                neuron.initBias(bias);
+                layers.Last().Add(neuron);
             }
         }
         
@@ -157,53 +158,57 @@ public class Net
 
         int numLayers = tplgy.Count;
 
-        if ((actFct.ElementAt(0) == Net.ActFctType.Sigmoid) ||
-            (actFct.ElementAt(0) == Net.ActFctType.PiWiLinear))
+        for (int j = 0; j < actFct.Count; j++)
         {
-            linearNet = false;
+            if ((actFct.ElementAt(j) == Net.ActFctType.Sigmoid) ||
+                (actFct.ElementAt(j) == Net.ActFctType.PiWiLinear))
+            {
+                linearNet = false;
+            }
         }
 
         int numEntries = 0;
         for (int layerNum = 0; layerNum < numLayers; layerNum++)
         {
-            bool lastLayer = false;
-            if (layerNum >= (numLayers - 1))
-            {
-                lastLayer = true;
-            }
             List<Neuron> Neurons = new List<Neuron>();
             layers.Add(Neurons);
 
             for (int neuronNum = 0; neuronNum < tplgy.ElementAt(layerNum); neuronNum++)
             {
-                Neuron neuron = new Neuron(0, actFct.ElementAt(layerNum), lastLayer);
+                Neuron neuron;
+
+                double bias = 0.0;
+                numEntries++;
+                weights.Clear();
+                
                 if (layerNum == 0)
                 {
-                    layers.Last().Add(neuron);
+                    neuron = new Neuron(Net.ActFctType.Linear);
+
+                    weights.Add(1.0);
+                    numEntries++;
                 }
                 else
                 {
-                    weights.Clear();
+                    neuron = new Neuron(actFct.ElementAt(layerNum - 1));
+                    
                     for (int i = 0; i < tplgy.ElementAt(layerNum - 1); i++)
                     {
-                        double weight = 0.0;
                         line = linesRead.ReadLine();
-                        weight = Convert.ToDouble(line);
-                        
+                        double weight = Convert.ToDouble(line);
                         weights.Add(weight);
                         numEntries++;
                         //cout << "Weight " << numEntries << ": " << weight << endl;
                     }
-                    double bias = 0.0;
+                    
                     line = linesRead.ReadLine();
                     bias = Convert.ToDouble(line);
-                    
                     numEntries++;
-                    //cout << "Bias " << numEntries << ": " << bias << endl;
-                    neuron.initWeights(weights);
-                    neuron.initBias(bias);
-                    layers.Last().Add(neuron);
                 }
+                //cout << "Bias " << numEntries << ": " << bias << endl;
+                neuron.initWeights(weights);
+                neuron.initBias(bias);
+                layers.Last().Add(neuron);
             }
         }    
         linesRead.Close();
@@ -237,22 +242,19 @@ public class Net
         {
             for (int neuronNum = 0; neuronNum < tplgy.ElementAt(layerNum); neuronNum++)
             {
-                if (layerNum != 0)
-                {
-                    List<double> wghts = new List<double>();
-                    wghts = layers[layerNum].ElementAt(neuronNum).getWeights();
+                List<double> wghts = new List<double>();
+                wghts = layers[layerNum].ElementAt(neuronNum).getWeights();
                     
-                    for (int i = 0; i < wghts.Count; i++)
-                    {
-                        line = wghts.ElementAt(i).ToString();
-                        linesWrite.WriteLine(line);
-                        numEntries++;
-                    }
-                    double bias = layers[layerNum].ElementAt(neuronNum).getBias();
-                    line = bias.ToString();
+                for (int i = 0; i < wghts.Count; i++)
+                {
+                    line = wghts.ElementAt(i).ToString();
                     linesWrite.WriteLine(line);
                     numEntries++;
                 }
+                double bias = layers[layerNum].ElementAt(neuronNum).getBias();
+                line = bias.ToString();
+                linesWrite.WriteLine(line);
+                numEntries++;
             }
         }
 
@@ -266,7 +268,13 @@ public class Net
         for (int i = 0; i < feedIn.Count; i++)
         {
             //cout << "feedForward: feedIn " << i << ", val: " << feedIn->at(i) << endl;
-            layers[0][i].setOutput(feedIn.ElementAt(i));
+            layers[0][i].setInput(feedIn.ElementAt(i));
+        }
+
+        for (int n = 0; n < layers[0].Count; n++)
+        {
+            // Calculate output of input layer
+            layers[0][n].calcOutput(layers[0], n, 0);
         }
 
         for (int i = 1; i < layers.Count; i++)
@@ -275,7 +283,7 @@ public class Net
             for (int n = 0; n < layers[i].Count; n++)
             {
                 //cout << "feedForward: neuron " << n << endl;
-                layers[i][n].calcOutput(layers[i - 1], n);
+                layers[i][n].calcOutput(layers[i - 1], n, i);
             }
         }
     }
@@ -318,7 +326,7 @@ public class Net
             }
         }
 
-        for (int layerNum = layers.Count - 1; layerNum > 0; layerNum--)
+        for (int layerNum = layers.Count - 1; layerNum > 1; layerNum--)
         {
             List<Neuron> act = layers[layerNum];
             List<Neuron> left = layers[layerNum - 1];

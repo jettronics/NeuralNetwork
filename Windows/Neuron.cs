@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 public class Neuron
 {
-    public struct Param { public const double MinMaxAbs = 1.0;  public const double T = 0.2; };
+    public struct Param { public const double MinMaxAbs = 1.0;  public const double T = 2.0; /*0.2*/}; 
 
     protected List<double> weights;
     protected double bias;
@@ -14,8 +14,8 @@ public class Neuron
     protected double activation;
     protected double gradient;
     protected Net.ActFctType actFctSelect;
-    protected bool lastLayerNeuron;
     protected double gradPieceWiseLinear;
+    protected double input;
 
     public Neuron()
 	{
@@ -23,47 +23,36 @@ public class Neuron
         net = 0.0;
         activation = 0.0;
         gradient = 0.0;
+        input = 0.0;
         actFctSelect = Net.ActFctType.Linear;
-        lastLayerNeuron = false;
 
         weights = new List<double>();
 
         gradPieceWiseLinear = (1.0 / Param.T) * (fctSigmoid(0.0) * (1 - fctSigmoid(0.0)));
     }
 
-    public Neuron(int numConnections, Net.ActFctType actFct, bool lastNeurons)
+    public Neuron(Net.ActFctType actFct)
     {
         bias = 0.0;
         net = 0.0;
         activation = 0.0;
         gradient = 0.0;
+        input = 0.0;
         actFctSelect = actFct;
-        lastLayerNeuron = lastNeurons;
 
         weights = new List<double>();
-        for (int i = 0; i < numConnections; i++)
-        {
-            if (actFct == Net.ActFctType.SoftMax)
-            {
-                weights.Add(1.0);
-            }
-            else
-            {
-                weights.Add(Net.randomWeight());
-            }
-        }
-
+        
         gradPieceWiseLinear = (1.0 / Param.T) * (fctSigmoid(0.0) * (1 - fctSigmoid(0.0))); ;
     }
-    public void setOutput(double val) 
+    public void setInput(double val) 
     { 
-        activation = val; 
+        input = val; 
     }
     public double getOutput() 
     { 
         return activation; 
     }
-    public void calcOutput(List<Neuron> layer, int prev)
+    public void calcOutput(List<Neuron> layer, int actN, int actL)
     {
         double sum = 0.0;
 
@@ -76,17 +65,23 @@ public class Neuron
                 //cout << "calcOutput: sum: " << sum << endl;
             }
 
-            net = Math.Exp(layer.ElementAt(prev).activation)/sum;
+            net = Math.Exp(layer.ElementAt(actN).activation)/sum;
         }
         else
-        { 
-            for (int n = 0; n < layer.Count; n++)
+        {
+            if (actL == 0)
             {
-                //cout << "calcOutput: " << layer->at(n).activation << ", weight: " << weights[n] << endl;
-                sum += (layer.ElementAt(n).activation * weights[n]);
-                //cout << "calcOutput: sum: " << sum << endl;
+                sum = weights[0] * input;
             }
-
+            else
+            {
+                for (int n = 0; n < layer.Count; n++)
+                {
+                    //cout << "calcOutput: " << layer->at(n).activation << ", weight: " << weights[n] << endl;
+                    sum += (layer.ElementAt(n).activation * weights[n]);
+                    //cout << "calcOutput: sum: " << sum << endl;
+                }
+            }
             net = sum + bias;
         }
 
@@ -125,7 +120,7 @@ public class Neuron
             {
                 //outputSum += (layer->at(n).weights[n] * layer->at(n).gradient);
                 //outputSum += (weights[n] * layer.ElementAt(n).gradient);
-                outputSum += (layer.ElementAt(n).weights[n] * layer.ElementAt(n).gradient);
+                outputSum += (layer.ElementAt(n).weights[act] * layer.ElementAt(n).gradient);
             }
         }
 
