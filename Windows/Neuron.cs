@@ -3,10 +3,15 @@ using System.Numerics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography;
 
 public class Neuron
 {
-    public struct Param { public const double MinMaxAbs = 1.0;  public const double T = 2.0; /*0.2*/}; 
+    public struct Param { public const double MinMaxAbs = 1.0;  
+                          public const double T = 2.0 /*0.2*/; 
+                          public const double GradUnlim = 0.1;
+                          public const double GradZero = 1.0;
+    }; 
 
     protected List<double> weights;
     protected double bias;
@@ -14,8 +19,10 @@ public class Neuron
     protected double activation;
     protected double gradient;
     protected Net.ActFctType actFctSelect;
-    protected double gradPieceWiseLinear;
+    //protected double gradZero;
     protected double input;
+    protected double xUnlim;
+    protected double bUnlim;
 
     public Neuron()
 	{
@@ -28,7 +35,9 @@ public class Neuron
 
         weights = new List<double>();
 
-        gradPieceWiseLinear = (1.0 / Param.T) * (fctSigmoid(0.0) * (1 - fctSigmoid(0.0)));
+        //gradZero = (1.0 / Param.T) * (fctSigmoid(0.0) * (1 - fctSigmoid(0.0)));
+        xUnlim = Param.MinMaxAbs / Param.GradZero;
+        bUnlim = Param.MinMaxAbs * (1.0 - (Param.GradUnlim / Param.GradZero));
     }
 
     public Neuron(Net.ActFctType actFct)
@@ -41,8 +50,10 @@ public class Neuron
         actFctSelect = actFct;
 
         weights = new List<double>();
-        
-        gradPieceWiseLinear = (1.0 / Param.T) * (fctSigmoid(0.0) * (1 - fctSigmoid(0.0))); ;
+
+        //gradZero = (1.0 / Param.T) * (fctSigmoid(0.0) * (1 - fctSigmoid(0.0)));
+        xUnlim = Param.MinMaxAbs / Param.GradZero;
+        bUnlim = Param.MinMaxAbs * (1.0 - (Param.GradUnlim / Param.GradZero));
     }
     public void setInput(double val) 
     { 
@@ -187,6 +198,11 @@ public class Neuron
         return (1.0 / (1.0 + Math.Exp(-x / Param.T)));
     }
 
+    protected double fctPLU(double x)
+    {
+        return (Math.Sign(x) * (Math.Min(Param.GradZero * Math.Abs(x), (Param.GradUnlim * Math.Abs(x)) + bUnlim)));
+    }
+
 	protected double transferFct(double inp)
     {
         double ret = 0.0;
@@ -196,19 +212,9 @@ public class Neuron
             ret = fctSigmoid(inp);
         }
         else
-        if (actFctSelect == Net.ActFctType.PiWiLinear)
+        if (actFctSelect == Net.ActFctType.PLU)
         {
-            ret = (gradPieceWiseLinear * inp) + 0.5;
-
-            if (ret >= Param.MinMaxAbs)
-            {
-                ret = 1.0;
-            }
-            else
-            if (ret <= (-Param.MinMaxAbs))
-            {
-                ret = 0.0;
-            }
+            ret = fctPLU(inp);
         }
         else
         if (actFctSelect == Net.ActFctType.ReLu)
@@ -219,7 +225,7 @@ public class Neuron
             }
             else
             {
-                ret = inp;
+                ret = Param.GradZero * inp;
             }
         }
         else
@@ -227,11 +233,11 @@ public class Neuron
         {
             if (inp < 0.0)
             {
-                ret = 0.01 * inp;
+                ret = Param.GradUnlim * inp;
             }
             else
             {
-                ret = inp;
+                ret = Param.GradZero * inp;
             }
         }
         else
@@ -256,22 +262,15 @@ public class Neuron
             ret = (1.0 / Param.T) * (transferFct(inp) * (1 - transferFct(inp)));
         }
         else
-        if (actFctSelect == Net.ActFctType.PiWiLinear)
+        if (actFctSelect == Net.ActFctType.PLU)
         {
-            ret = transferFct(inp);
-
-            if (ret >= Param.MinMaxAbs)
+            if (Math.Abs(inp) > xUnlim)
             {
-                ret = 0.0;
-            }
-            else
-            if (ret <= (-Param.MinMaxAbs))
-            {
-                ret = 0.0;
+                ret = Param.GradUnlim;
             }
             else
             {
-                ret = gradPieceWiseLinear;
+                ret = Param.GradZero;
             }
         }
         else
@@ -284,7 +283,7 @@ public class Neuron
             }
             else
             {
-                ret = 1.0;
+                ret = Param.GradZero;
             }
         }
         else
@@ -292,11 +291,11 @@ public class Neuron
         {
             if (inp < 0.0)
             {
-                ret = 0.01;
+                ret = Param.GradUnlim;
             }
             else
             {
-                ret = 1.0;
+                ret = Param.GradZero;
             }
         }
         else

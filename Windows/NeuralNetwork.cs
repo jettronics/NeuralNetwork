@@ -211,25 +211,28 @@ namespace Windows
                 {
                     Net.ActFctType actFctLoc = ActFctType.Sigmoid;
                     String actFctString = netParamsSplitted[i];
-                    for (int j = 0; j < Net.ActFctTypeStr.Length; j++)
+                    if (actFctString != "")
                     {
-                        if (Net.ActFctTypeStr.ElementAt(j) == actFctString)
+                        for (int j = 0; j < Net.ActFctTypeStr.Length; j++)
                         {
-                            found = true;
-                            actFctLoc = (Net.ActFctType)j;
-                            actFctString = Net.ActFctTypeStr.ElementAt(j);
-                            break;
+                            if (Net.ActFctTypeStr.ElementAt(j) == actFctString)
+                            {
+                                found = true;
+                                actFctLoc = (Net.ActFctType)j;
+                                actFctString = Net.ActFctTypeStr.ElementAt(j);
+                                break;
+                            }
                         }
-                    }
-                    if (found == true)
-                    {
-                        actFct.Add(actFctLoc);
-                        outputTextBox.AppendText("Activation Function added" + actFctString + "\r\n");
-                    }
-                    else
-                    {
-                        errorOccurred = true;
-                        outputTextBox.AppendText("Error adding " + netParamsSplitted[i] + "\r\n");
+                        if (found == true)
+                        {
+                            actFct.Add(actFctLoc);
+                            outputTextBox.AppendText("Activation Function added " + actFctString + "\r\n");
+                        }
+                        else
+                        {
+                            errorOccurred = true;
+                            outputTextBox.AppendText("Error adding " + netParamsSplitted[i] + "\r\n");
+                        }
                     }
                 }
             }

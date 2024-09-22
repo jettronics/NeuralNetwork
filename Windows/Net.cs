@@ -9,8 +9,8 @@ using System.Drawing;
 
 public class Net
 {
-    public enum ActFctType { Sigmoid = 0, PiWiLinear, ReLu, LeakyReLu, Linear, SoftMax }; // Linear used for last layer in case of linear sum from previous layer
-    public static readonly String[] ActFctTypeStr = { "Sigmoid", "PiWiLinear", "ReLu", "LeakyReLu", "Linear", "SoftMax" };
+    public enum ActFctType { Sigmoid = 0, PLU, ReLu, LeakyReLu, Linear, SoftMax }; // Linear used for last layer in case of linear sum from previous layer
+    public static readonly String[] ActFctTypeStr = { "Sigmoid", "PLU", "ReLu", "LeakyReLu", "Linear", "SoftMax" };
 
     public static double randomWeight()
     {
@@ -24,7 +24,7 @@ public class Net
         weightsFileArg = "";
         tplgy = new List<int>();
         actFct = new List<ActFctType>();
-        linearNet = true;
+        symmetricRange = true;
         
         //layers = new List<List<Neuron>>();
 
@@ -45,7 +45,7 @@ public class Net
         tplgy = topology;
         actFct = actuatFct;
 
-        linearNet = true;
+        symmetricRange = true;
 
         int numLayers = topology.Count;
         layers = new List<List<Neuron>>();
@@ -61,12 +61,13 @@ public class Net
             inputMin.Add(1000000.0);
         }
 
-        for (int j = 0; j < actFct.Count; j++)
+        // Don't take output layer into account
+        for (int j = 0; j < (actFct.Count-1); j++)
         {
-            if ((actFct.ElementAt(j) == Net.ActFctType.Sigmoid) ||
-                (actFct.ElementAt(j) == Net.ActFctType.PiWiLinear))
+            if ((actFct.ElementAt(j) == Net.ActFctType.ReLu) ||
+                (actFct.ElementAt(j) == Net.ActFctType.LeakyReLu))
             {
-                linearNet = false;
+                symmetricRange = false;
             }
         }
 
@@ -115,7 +116,7 @@ public class Net
         tplgy.Clear();
         actFct.Clear();
 
-        linearNet = true;
+        symmetricRange = true;
 
         layers = new List<List<Neuron>>();
         List<double> weights = new List<double>();
@@ -158,12 +159,13 @@ public class Net
 
         int numLayers = tplgy.Count;
 
-        for (int j = 0; j < actFct.Count; j++)
+        // Don't take output layer into account
+        for (int j = 0; j < (actFct.Count - 1); j++)
         {
-            if ((actFct.ElementAt(j) == Net.ActFctType.Sigmoid) ||
-                (actFct.ElementAt(j) == Net.ActFctType.PiWiLinear))
+            if ((actFct.ElementAt(j) == Net.ActFctType.ReLu) ||
+                (actFct.ElementAt(j) == Net.ActFctType.LeakyReLu))
             {
-                linearNet = false;
+                symmetricRange = false;
             }
         }
 
@@ -379,7 +381,7 @@ public class Net
     {
         inputScaled.Clear();
 
-        if (linearNet == false)
+        if (symmetricRange == false)
         {
             for (int n = 0; n < input.Count; n++)
             {
@@ -409,5 +411,5 @@ public class Net
     protected List<int> tplgy;
     protected List<ActFctType> actFct;
     protected String weightsFileArg;
-    protected bool linearNet;
+    protected bool symmetricRange;
 }
