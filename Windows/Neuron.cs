@@ -9,7 +9,7 @@ public class Neuron
 {
     public struct Param { public const double MinMaxAbs = 1.0;  
                           public const double T = 2.0 /*0.2*/; 
-                          public const double GradUnlim = 0.1;
+                          public const double GradUnlim = 0.01;
                           public const double GradZero = 1.0;
     }; 
 

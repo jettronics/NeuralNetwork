@@ -14,7 +14,7 @@ public class Net
 
     public static double randomWeight()
     {
-        int randValI = new Random(Guid.NewGuid().GetHashCode()).Next(0, 100000);
+        int randValI = new Random(Guid.NewGuid().GetHashCode()).Next(-50000, 50000);
         double randValD = ((double)randValI) / 100000.0;
         return randValD;
     }
@@ -381,7 +381,7 @@ public class Net
     {
         inputScaled.Clear();
 
-        if (symmetricRange == false)
+        if (symmetricRange == true)
         {
             for (int n = 0; n < input.Count; n++)
             {

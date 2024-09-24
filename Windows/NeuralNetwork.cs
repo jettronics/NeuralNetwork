@@ -460,7 +460,7 @@ namespace Windows
             {
                 if (epochIdx < epochMax)
                 {
-                    if (loopDataIdx < reader.getInputTrainData()[0].Count)
+                    while (loopDataIdx < reader.getInputTrainData()[0].Count)
                     {
                         row.Clear();
                         for (int j = 0; j < inputRowCnt; j++)
@@ -503,11 +503,8 @@ namespace Windows
 
                         loopDataIdx++;
                     }
-                    else
-                    {
-                        epochIdx++;
-                        loopDataIdx = 0;
-                    }
+                    epochIdx++;
+                    loopDataIdx = 0;
                 }
                 else 
                 { 
