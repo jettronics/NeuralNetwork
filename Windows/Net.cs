@@ -98,7 +98,9 @@ public class Net
 
                     for (int i = 0; i < topology.ElementAt(layerNum - 1); i++)
                     {
-                        weights.Add(randomWeight());
+                        //weights.Add(randomWeight());
+                        //In a net with PLU don't initialize with 0 then gradients become 0
+                        weights.Add(0.1);
                         numEntries++;
                     }
                 }
@@ -328,7 +330,7 @@ public class Net
             }
         }
 
-        for (int layerNum = layers.Count - 1; layerNum > 1; layerNum--)
+        for (int layerNum = layers.Count - 1; layerNum > 0; layerNum--)
         {
             List<Neuron> act = layers[layerNum];
             List<Neuron> left = layers[layerNum - 1];

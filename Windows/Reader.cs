@@ -167,6 +167,7 @@ public class Reader
 
     public void LimitData( int percentageLimit )
     {
+#if TAKE_RANDOM_SAMPLES
         inputDataLowered.Clear();
         for (int i = 0; i < inputData.Count; i++)
         {
@@ -196,6 +197,25 @@ public class Reader
             }
             outputDataLowered.RemoveAt(randIdx);
         }
+#else
+        inputDataLowered.Clear();
+        outputDataLowered.Clear();
+
+        double toRemovePer = (100.0 - (double)percentageLimit) * 0.01;
+        int toRemoveNum = (int)(toRemovePer * (double)getNumTotalData());
+
+        var random = new Random(Guid.NewGuid().GetHashCode());
+        //int randIdx = random.Next(outputTestData.Count);
+        int randIdx = 0;
+
+        for (int i = 0; i < inputData.Count; i++)
+        {
+            List<double> columnLowered = new List<double>();
+            columnLowered.Add(inputData[i][randIdx]);
+            inputDataLowered.Add(columnLowered);
+        }
+        outputDataLowered.Add(outputData[randIdx]);
+#endif
     }
 
     public void TestData(int percentageLimit)
