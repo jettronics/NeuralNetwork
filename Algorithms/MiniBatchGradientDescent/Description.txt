@@ -1,0 +1,11 @@
+Mini Batch Gradient Descent
+
+We have seen the Batch Gradient Descent. We have also seen the Stochastic Gradient Descent. Batch Gradient Descent can be used for smoother curves. SGD can be used when the dataset is large. Batch Gradient Descent converges directly to minima. SGD converges faster for larger datasets. But, since in SGD we use only one example at a time, we cannot implement the vectorized implementation on it. This can slow down the computations. To tackle this problem, a mixture of Batch Gradient Descent and SGD is used.
+
+Neither we use all the dataset all at once nor we use the single example at a time. We use a batch of a fixed number of training examples which is less than the actual dataset and call it a mini-batch. Doing this helps us achieve the advantages of both the former variants we saw. So, after creating the mini-batches of fixed size, we do the following steps in one epoch:
+
+1. Pick a mini-batch
+2. Feed it to Neural Network
+3. Calculate the mean gradient of the mini-batch
+4. Use the mean gradient we calculated in step 3 to update the weights
+5. Repeat steps 1–4 for the mini-batches we created

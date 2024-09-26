@@ -98,9 +98,9 @@ public class Net
 
                     for (int i = 0; i < topology.ElementAt(layerNum - 1); i++)
                     {
-                        //weights.Add(randomWeight());
                         //In a net with PLU don't initialize with 0 then gradients become 0
-                        weights.Add(0.1);
+                        weights.Add(randomWeight());
+                        //weights.Add(0.1);
                         numEntries++;
                     }
                 }
