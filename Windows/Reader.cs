@@ -201,20 +201,25 @@ public class Reader
         inputDataLowered.Clear();
         outputDataLowered.Clear();
 
-        double toRemovePer = (100.0 - (double)percentageLimit) * 0.01;
-        int toRemoveNum = (int)(toRemovePer * (double)getNumTotalData());
+        //double toRemovePer = (100.0 - (double)percentageLimit) * 0.01;
+        //int toRemoveNum = (int)(toRemovePer * (double)getNumTotalData());
 
-        var random = new Random(Guid.NewGuid().GetHashCode());
+        //var random = new Random(Guid.NewGuid().GetHashCode());
         //int randIdx = random.Next(outputTestData.Count);
-        int randIdx = 0;
-
+        int numOfBatch = 2;
         for (int i = 0; i < inputData.Count; i++)
         {
             List<double> columnLowered = new List<double>();
-            columnLowered.Add(inputData[i][randIdx]);
+            for (int j = 0; j < numOfBatch; j++)
+            {
+                columnLowered.Add(inputData[i][j]);
+            }
             inputDataLowered.Add(columnLowered);
         }
-        outputDataLowered.Add(outputData[randIdx]);
+        for (int j = 0; j < numOfBatch; j++)
+        {
+            outputDataLowered.Add(outputData[j]);
+        }
 #endif
     }
 

@@ -49,10 +49,10 @@ namespace Windows
             training = false;
             testing = false;
             loopDataIdx = 0;
-            learningRate = 0.001;
+            learningRate = 0.1;
             numOutputColumns = 1;
             epochIdx = 0;
-            epochMax = 10;
+            epochMax = 100;
             scrollBarWheelTurns = 0;
             lossChartMouseClick = false;
             refOutput = new List<double>();
@@ -111,6 +111,8 @@ namespace Windows
 
             network = new Net();
             AnalysisChart.MouseWheel += LossChart_MouseWheel;
+            epochMaxTextBox.Text = epochMax.ToString();
+            learningRateTextBox.Text = learningRate.ToString().Replace(",",".");
         }
 
         private void LossChart_Load(object sender, EventArgs e)
@@ -460,7 +462,8 @@ namespace Windows
             {
                 if (epochIdx < epochMax)
                 {
-                    while (loopDataIdx < reader.getInputTrainData()[0].Count)
+                    int batch = reader.getInputTrainData()[0].Count;
+                    while (loopDataIdx < batch)
                     {
                         row.Clear();
                         for (int j = 0; j < inputRowCnt; j++)
@@ -488,8 +491,9 @@ namespace Windows
                         {
                             refOutput[0] = reader.getOutputTrainData(loopDataIdx);
                         }
-                        network.backProp(refOutput, learningRate);
-                        
+                        //network.backProp(refOutput, learningRate);
+                        network.batchGradientDescent(refOutput);
+                                                
                         double losses = network.loss(refOutput);
                         AnalysisChart.Series[0].Points.Add(losses);
                         
@@ -503,6 +507,11 @@ namespace Windows
 
                         loopDataIdx++;
                     }
+                    
+                    // refOutput not used internally
+                    network.batchGradientAverage(refOutput);
+                    network.updateWeights(learningRate);
+
                     epochIdx++;
                     loopDataIdx = 0;
                 }

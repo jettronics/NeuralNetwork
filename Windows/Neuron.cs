@@ -13,6 +13,8 @@ public class Neuron
                           public const double GradZero = 1.0;
     }; 
 
+    public enum GradCalc { Direct = 0, Sum, Mean };
+
     protected List<double> weights;
     protected double bias;
     protected double net;
@@ -23,6 +25,7 @@ public class Neuron
     protected double input;
     protected double xUnlim;
     protected double bUnlim;
+    protected int gradientCalls;
 
     public Neuron()
 	{
@@ -38,6 +41,8 @@ public class Neuron
         //gradZero = (1.0 / Param.T) * (fctSigmoid(0.0) * (1 - fctSigmoid(0.0)));
         xUnlim = Param.MinMaxAbs / Param.GradZero;
         bUnlim = Param.MinMaxAbs * (1.0 - (Param.GradUnlim / Param.GradZero));
+
+        gradientCalls = 0;
     }
 
     public Neuron(Net.ActFctType actFct)
@@ -54,6 +59,8 @@ public class Neuron
         //gradZero = (1.0 / Param.T) * (fctSigmoid(0.0) * (1 - fctSigmoid(0.0)));
         xUnlim = Param.MinMaxAbs / Param.GradZero;
         bUnlim = Param.MinMaxAbs * (1.0 - (Param.GradUnlim / Param.GradZero));
+
+        gradientCalls = 0;
     }
     public void setInput(double val) 
     { 
@@ -100,16 +107,31 @@ public class Neuron
         //cout << "calcOutput: " << activation << ", bias: " << bias << endl;
         return;
     }
-    public void calcGradients(double target)
+    
+    public void calcGradients(double target, GradCalc grad)
     {
         double delta = activation - target;
-        gradient = delta * transferFctDeriv(net);
+        if (grad == GradCalc.Sum)
+        {
+            gradient += (delta * transferFctDeriv(net));
+            gradientCalls++;
+        }
+        else
+        if (grad == GradCalc.Direct)
+        {
+            gradient = delta * transferFctDeriv(net);
+        }
+        else
+        {
+            gradient /= (double)gradientCalls;
+        }
         
         //gradient = transferFctDeriv(delta);
         //cout << "Gradient: " << gradient << ", Delta: " << delta << endl;
         return;
     }
-    public void calcGradients(List<Neuron> layer, int act)
+
+    public void calcGradients(List<Neuron> layer, int act, GradCalc grad)
     {
         double outputSum = 0.0;
 
@@ -135,11 +157,25 @@ public class Neuron
             }
         }
 
-        //gradient = transferFctDeriv(outputSum);
-        gradient = outputSum * transferFctDeriv(net);
+        if (grad == GradCalc.Sum)
+        {
+            gradient += (outputSum * transferFctDeriv(net));
+            gradientCalls++;
+        }
+        else
+        if (grad == GradCalc.Direct)
+        {
+            gradient = outputSum * transferFctDeriv(net);
+        }
+        else
+        {
+            gradient /= (double)gradientCalls;
+        }
+        
         //cout << "Gradient: " << gradient << ", Sum: " << outputSum << endl;
         return;
     }
+
     public void updateWeights(List<Neuron> layer, double beta)
     {
         //cout << "layer->size(): " << layer->size() << " , weights.size(): " << weights.size() << endl;

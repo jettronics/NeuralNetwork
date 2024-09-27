@@ -309,13 +309,11 @@ public class Net
         return mse;
     }
 
-    public void backProp(List<double> targetOut, double beta)
+    public void batchGradientDescent(List<double> targetOut)
     {
-        //cout << "Back Prop Squared Error: " << error << endl;
-
         for (int n = 0; n < layers.Last().Count; n++)
         {
-            layers.Last()[n].calcGradients(targetOut.ElementAt(n));
+            layers.Last()[n].calcGradients(targetOut.ElementAt(n), Neuron.GradCalc.Sum);
         }
 
         for (int layerNum = layers.Count - 2; layerNum > 0; layerNum--)
@@ -326,7 +324,64 @@ public class Net
             //cout << "Layer Gradient calc: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).calcGradients(right, n);
+                act.ElementAt(n).calcGradients(right, n, Neuron.GradCalc.Sum);
+            }
+        }
+    }
+
+    public void batchGradientAverage(List<double> targetOut)
+    {
+        for (int n = 0; n < layers.Last().Count; n++)
+        {
+            layers.Last()[n].calcGradients(targetOut.ElementAt(n), Neuron.GradCalc.Mean);
+        }
+
+        for (int layerNum = layers.Count - 2; layerNum > 0; layerNum--)
+        {
+            List<Neuron> act = layers[layerNum];
+            List<Neuron> right = layers[layerNum + 1];
+
+            //cout << "Layer Gradient calc: " << layerNum << endl;
+            for (int n = 0; n < act.Count; n++)
+            {
+                act.ElementAt(n).calcGradients(right, n, Neuron.GradCalc.Mean);
+            }
+        }
+    }
+
+    public void updateWeights(double beta)
+    {
+        for (int layerNum = layers.Count - 1; layerNum > 0; layerNum--)
+        {
+            List<Neuron> act = layers[layerNum];
+            List<Neuron> left = layers[layerNum - 1];
+
+            //cout << "Layer Weights update: " << layerNum << endl;
+            for (int n = 0; n < act.Count; n++)
+            {
+                act.ElementAt(n).updateWeights(left, beta);
+            }
+        }
+    }
+
+    public void backProp(List<double> targetOut, double beta)
+    {
+        //cout << "Back Prop Squared Error: " << error << endl;
+
+        for (int n = 0; n < layers.Last().Count; n++)
+        {
+            layers.Last()[n].calcGradients(targetOut.ElementAt(n), Neuron.GradCalc.Direct);
+        }
+
+        for (int layerNum = layers.Count - 2; layerNum > 0; layerNum--)
+        {
+            List<Neuron> act = layers[layerNum];
+            List<Neuron> right = layers[layerNum + 1];
+
+            //cout << "Layer Gradient calc: " << layerNum << endl;
+            for (int n = 0; n < act.Count; n++)
+            {
+                act.ElementAt(n).calcGradients(right, n, Neuron.GradCalc.Direct);
             }
         }
 
