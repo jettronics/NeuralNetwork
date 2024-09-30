@@ -14,7 +14,14 @@ public class Net
 
     public static double randomWeight()
     {
-        int randValI = new Random(Guid.NewGuid().GetHashCode()).Next(-50000, 50000);
+
+        int randValI = 0;
+        do
+        {
+            randValI = new Random(Guid.NewGuid().GetHashCode()).Next(-50000, 50000);
+            //randValI = new Random(Guid.NewGuid().GetHashCode()).Next(-70000, 70000);
+        }
+        while (Math.Abs(randValI) < 500);
         double randValD = ((double)randValI) / 100000.0;
         return randValD;
     }

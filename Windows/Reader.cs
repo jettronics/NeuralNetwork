@@ -1,4 +1,7 @@
-﻿using System;
+﻿
+#define TAKE_RANDOM_SAMPLES
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -9,7 +12,6 @@ using Microsoft.VisualBasic.Devices;
 using Microsoft.VisualBasic.FileIO;
 
 // Important Note: Reader supports one column for output only
-
 
 public class Reader
 {
@@ -165,7 +167,9 @@ public class Reader
         outputTestData.AddRange(outputData);
     }
 
-    public void LimitData( int percentageLimit )
+
+
+    public void LimitData( double percentageLimit )
     {
 #if TAKE_RANDOM_SAMPLES
         inputDataLowered.Clear();
@@ -181,7 +185,7 @@ public class Reader
         outputDataLowered.Clear();
         outputDataLowered.AddRange(outputData);
 
-        double toRemovePer = (100.0 - (double)percentageLimit) * 0.01;
+        double toRemovePer = (100.0 - percentageLimit) * 0.01;
         int toRemoveNum = (int)(toRemovePer * (double)getNumTotalData());
 
         var random = new Random(Guid.NewGuid().GetHashCode());
@@ -193,6 +197,10 @@ public class Reader
             // For all columns
             for (int i = 0; i < inputDataLowered.Count(); i++)
             {
+                if(inputDataLowered[i].Count < randIdx)
+                {
+                    randIdx = inputDataLowered[i].Count-1;
+                }
                 inputDataLowered[i].RemoveAt(randIdx);
             }
             outputDataLowered.RemoveAt(randIdx);
@@ -206,7 +214,7 @@ public class Reader
 
         //var random = new Random(Guid.NewGuid().GetHashCode());
         //int randIdx = random.Next(outputTestData.Count);
-        int numOfBatch = 2;
+        int numOfBatch = 4;
         for (int i = 0; i < inputData.Count; i++)
         {
             List<double> columnLowered = new List<double>();
@@ -223,7 +231,7 @@ public class Reader
 #endif
     }
 
-    public void TestData(int percentageLimit)
+    public void TestData(double percentageLimit)
     {
         inputTestData.Clear();
         for (int i = 0; i < inputData.Count; i++)
@@ -238,7 +246,7 @@ public class Reader
         outputTestData.Clear();
         outputTestData.AddRange(outputData);
 
-        double toRemovePer = (100.0 - (double)percentageLimit) * 0.01;
+        double toRemovePer = (100.0 - percentageLimit) * 0.01;
         int toRemoveNum = (int)(toRemovePer * (double)getNumTotalData());
 
         var random = new Random(Guid.NewGuid().GetHashCode());
@@ -250,6 +258,10 @@ public class Reader
             // For all columns
             for (int i = 0; i < inputTestData.Count(); i++)
             {
+                if (inputTestData[i].Count < randIdx)
+                {
+                    randIdx = inputTestData[i].Count - 1;
+                }
                 inputTestData[i].RemoveAt(randIdx);
             }
             outputTestData.RemoveAt(randIdx);

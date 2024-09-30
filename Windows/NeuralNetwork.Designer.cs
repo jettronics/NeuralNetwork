@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title3 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.AnalysisChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.openTrainingDataCSVFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -51,34 +51,36 @@
             this.limitTrainDataTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
+            this.methodGradientDescent = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.AnalysisChart)).BeginInit();
             this.SuspendLayout();
             // 
             // AnalysisChart
             // 
-            chartArea1.AxisX.MajorGrid.Enabled = false;
-            chartArea1.AxisX2.MajorGrid.Enabled = false;
-            chartArea1.AxisY.MajorGrid.Enabled = false;
-            chartArea1.AxisY2.MajorGrid.Enabled = false;
-            chartArea1.Name = "ChartArea1";
-            this.AnalysisChart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.AnalysisChart.Legends.Add(legend1);
+            chartArea3.AxisX.MajorGrid.Enabled = false;
+            chartArea3.AxisX2.MajorGrid.Enabled = false;
+            chartArea3.AxisY.MajorGrid.Enabled = false;
+            chartArea3.AxisY2.MajorGrid.Enabled = false;
+            chartArea3.Name = "ChartArea1";
+            this.AnalysisChart.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.AnalysisChart.Legends.Add(legend3);
             this.AnalysisChart.Location = new System.Drawing.Point(321, 40);
             this.AnalysisChart.Name = "AnalysisChart";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.IsVisibleInLegend = false;
-            series1.Legend = "Legend1";
-            series1.Name = "Loss";
-            series1.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            this.AnalysisChart.Series.Add(series1);
-            this.AnalysisChart.Size = new System.Drawing.Size(482, 382);
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.IsVisibleInLegend = false;
+            series3.Legend = "Legend1";
+            series3.Name = "Loss";
+            series3.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+            this.AnalysisChart.Series.Add(series3);
+            this.AnalysisChart.Size = new System.Drawing.Size(482, 387);
             this.AnalysisChart.TabIndex = 0;
             this.AnalysisChart.Text = "Analysis";
-            title1.Name = "Analysis";
-            title1.Text = "Analysis";
-            this.AnalysisChart.Titles.Add(title1);
+            title3.Name = "Analysis";
+            title3.Text = "Analysis";
+            this.AnalysisChart.Titles.Add(title3);
             this.AnalysisChart.MouseClick += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseClick);
             this.AnalysisChart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseDown);
             this.AnalysisChart.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseUp);
@@ -106,7 +108,7 @@
             // 
             // outputTextBox
             // 
-            this.outputTextBox.Location = new System.Drawing.Point(12, 440);
+            this.outputTextBox.Location = new System.Drawing.Point(12, 433);
             this.outputTextBox.Multiline = true;
             this.outputTextBox.Name = "outputTextBox";
             this.outputTextBox.ReadOnly = true;
@@ -136,7 +138,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(12, 319);
+            this.button3.Location = new System.Drawing.Point(12, 346);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(293, 23);
             this.button3.TabIndex = 5;
@@ -146,7 +148,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(12, 377);
+            this.button4.Location = new System.Drawing.Point(12, 404);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(293, 23);
             this.button4.TabIndex = 6;
@@ -156,7 +158,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(12, 261);
+            this.button6.Location = new System.Drawing.Point(12, 288);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(293, 23);
             this.button6.TabIndex = 8;
@@ -166,7 +168,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(12, 290);
+            this.button7.Location = new System.Drawing.Point(12, 317);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(293, 23);
             this.button7.TabIndex = 9;
@@ -230,7 +232,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(12, 348);
+            this.button5.Location = new System.Drawing.Point(12, 375);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(293, 23);
             this.button5.TabIndex = 17;
@@ -238,11 +240,35 @@
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.stopTesting_Click);
             // 
+            // methodGradientDescent
+            // 
+            this.methodGradientDescent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.methodGradientDescent.FormattingEnabled = true;
+            this.methodGradientDescent.Items.AddRange(new object[] {
+            "Stochastic",
+            "Batch"});
+            this.methodGradientDescent.Location = new System.Drawing.Point(178, 261);
+            this.methodGradientDescent.Name = "methodGradientDescent";
+            this.methodGradientDescent.Size = new System.Drawing.Size(127, 21);
+            this.methodGradientDescent.TabIndex = 18;
+            this.methodGradientDescent.SelectedValueChanged += new System.EventHandler(this.methodGradientDescent_SelectedValueChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(40, 261);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(132, 13);
+            this.label3.TabIndex = 19;
+            this.label3.Text = "Gradient Descent Method:";
+            // 
             // NeuralNetwork
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(833, 584);
+            this.ClientSize = new System.Drawing.Size(833, 601);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.methodGradientDescent);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.limitTrainDataTextBox);
@@ -288,6 +314,8 @@
         private System.Windows.Forms.TextBox limitTrainDataTextBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.ComboBox methodGradientDescent;
+        private System.Windows.Forms.Label label3;
     }
 }
 

@@ -113,6 +113,7 @@ namespace Windows
             AnalysisChart.MouseWheel += LossChart_MouseWheel;
             epochMaxTextBox.Text = epochMax.ToString();
             learningRateTextBox.Text = learningRate.ToString().Replace(",",".");
+            methodGradientDescent.SelectedItem = "Stochastic";
         }
 
         private void LossChart_Load(object sender, EventArgs e)
@@ -313,7 +314,7 @@ namespace Windows
             epochMax = Convert.ToUInt16(epochMaxTextBox.Text);
             outputTextBox.AppendText("Number of Epochs: " + epochMax + "\r\n");
 
-            int limitData = Convert.ToUInt16(limitTrainDataTextBox.Text);
+            double limitData = Convert.ToDouble(limitTrainDataTextBox.Text, CultureInfo.InvariantCulture);
             outputTextBox.AppendText("Limit Train Data to : " + limitData + "%\r\n");
 
             reader.LimitData(limitData);
@@ -359,7 +360,7 @@ namespace Windows
                 }
             }
 
-            int limitData = Convert.ToUInt16(limitTrainDataTextBox.Text);
+            double limitData = Convert.ToDouble(limitTrainDataTextBox.Text, CultureInfo.InvariantCulture);
             outputTextBox.AppendText("Limit Test Data to : " + limitData + "%\r\n");
 
             reader.TestData(limitData);
@@ -491,9 +492,16 @@ namespace Windows
                         {
                             refOutput[0] = reader.getOutputTrainData(loopDataIdx);
                         }
-                        //network.backProp(refOutput, learningRate);
-                        network.batchGradientDescent(refOutput);
-                                                
+
+                        if ((String)methodGradientDescent.SelectedItem == "Stochastic")
+                        {
+                            network.backProp(refOutput, learningRate);
+                        }
+                        else
+                        {
+                            network.batchGradientDescent(refOutput);
+                        }
+                                                                        
                         double losses = network.loss(refOutput);
                         AnalysisChart.Series[0].Points.Add(losses);
                         
@@ -507,10 +515,13 @@ namespace Windows
 
                         loopDataIdx++;
                     }
-                    
-                    // refOutput not used internally
-                    network.batchGradientAverage(refOutput);
-                    network.updateWeights(learningRate);
+
+                    if ((String)methodGradientDescent.SelectedItem == "Batch")
+                    {
+                        // refOutput not used internally
+                        network.batchGradientAverage(refOutput);
+                        network.updateWeights(learningRate);
+                    }
 
                     epochIdx++;
                     loopDataIdx = 0;
@@ -587,6 +598,11 @@ namespace Windows
         {
             testing = false;
             outputTextBox.AppendText("Testing aborted by user\r\n");
+        }
+
+        private void methodGradientDescent_SelectedValueChanged(object sender, EventArgs e)
+        {
+            
         }
 
         private void stopTraining_Click(object sender, EventArgs e)
