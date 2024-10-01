@@ -38,6 +38,9 @@ namespace Windows
         protected List<double> refOutput;
         protected int scrollBarWheelTurns;
         protected bool lossChartMouseClick;
+        protected int totalTrainingData;
+        protected int totalTestingData;
+        protected Random random;
 
         public NeuralNetwork()
         {
@@ -114,6 +117,8 @@ namespace Windows
             epochMaxTextBox.Text = epochMax.ToString();
             learningRateTextBox.Text = learningRate.ToString().Replace(",",".");
             methodGradientDescent.SelectedItem = "Stochastic";
+            totalTrainingData = 0;
+            totalTestingData = 0;
         }
 
         private void LossChart_Load(object sender, EventArgs e)
@@ -316,9 +321,13 @@ namespace Windows
 
             double limitData = Convert.ToDouble(limitTrainDataTextBox.Text, CultureInfo.InvariantCulture);
             outputTextBox.AppendText("Limit Train Data to : " + limitData + "%\r\n");
+            totalTrainingData = (int)((limitData * 0.01) * reader.getNumTotalData());
 
-            reader.LimitData(limitData);
-            outputTextBox.AppendText("Number of taining data limited randomly to: " + reader.getInputTrainData()[0].Count + "\r\n");
+            //reader.LimitData(limitData);
+            //outputTextBox.AppendText("Number of taining data limited randomly to: " + reader.getInputTrainData()[0].Count + "\r\n");
+            outputTextBox.AppendText("Number of taining data limited randomly to: " + totalTrainingData + "\r\n");
+
+            random = new Random(Guid.NewGuid().GetHashCode());
 
             loopDataIdx = 0;
             epochIdx = 0;
@@ -363,7 +372,7 @@ namespace Windows
             double limitData = Convert.ToDouble(limitTrainDataTextBox.Text, CultureInfo.InvariantCulture);
             outputTextBox.AppendText("Limit Test Data to : " + limitData + "%\r\n");
 
-            reader.TestData(limitData);
+            //reader.TestData(limitData);
             outputTextBox.AppendText("Number of testing data limited randomly to: " + reader.getInputTestData()[0].Count + "\r\n");
 
             loopDataIdx = 0;
@@ -463,13 +472,20 @@ namespace Windows
             {
                 if (epochIdx < epochMax)
                 {
-                    int batch = reader.getInputTrainData()[0].Count;
+                    //int batch = reader.getInputTrainData()[0].Count;
+                    int batch = 1;
+                    if ((String)methodGradientDescent.SelectedItem == "Batch")
+                    {
+                        batch = 10;
+                    }
                     while (loopDataIdx < batch)
                     {
+                        int randIdx = random.Next(totalTrainingData);
+
                         row.Clear();
                         for (int j = 0; j < inputRowCnt; j++)
                         {
-                            row.Add(reader.getInputTrainData()[j][loopDataIdx]);
+                            row.Add(reader.getInputTrainData()[j][randIdx]);
                         }
                         List<double> refScaled = network.scaleInput(row);
                         network.feedForward(refScaled);
@@ -478,7 +494,7 @@ namespace Windows
                         {
                             for (int i = 0; i < refOutput.Count; i++)
                             {
-                                if (i == (int)reader.getOutputTrainData(loopDataIdx))
+                                if (i == (int)reader.getOutputTrainData(randIdx))
                                 {
                                     refOutput[i] = 1.0;
                                 }
@@ -490,7 +506,7 @@ namespace Windows
                         }
                         else
                         {
-                            refOutput[0] = reader.getOutputTrainData(loopDataIdx);
+                            refOutput[0] = reader.getOutputTrainData(randIdx);
                         }
 
                         if ((String)methodGradientDescent.SelectedItem == "Stochastic")
