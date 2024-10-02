@@ -237,11 +237,14 @@ public class Net
 
         String line;
 
-        for (int i = 0; i < numLayers; i++)
+        line = tplgy.ElementAt(0).ToString();
+        linesWrite.WriteLine(line);
+
+        for (int i = 1; i < numLayers; i++)
         {
             line = tplgy.ElementAt(i).ToString();
             linesWrite.WriteLine(line);
-            int actInd = (int)actFct.ElementAt(i);
+            int actInd = (int)actFct.ElementAt(i-1);
             line = Net.ActFctTypeStr.ElementAt(actInd);
             linesWrite.WriteLine(line);
         }

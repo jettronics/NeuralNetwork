@@ -51,8 +51,8 @@
             this.limitTrainDataTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
-            this.methodGradientDescent = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.batchSizeTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.AnalysisChart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -183,7 +183,7 @@
             this.learningRateTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.learningRateTextBox.Size = new System.Drawing.Size(127, 20);
             this.learningRateTextBox.TabIndex = 10;
-            this.learningRateTextBox.Text = "0.001";
+            this.learningRateTextBox.Text = "0.1";
             // 
             // label1
             // 
@@ -201,7 +201,7 @@
             this.epochMaxTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.epochMaxTextBox.Size = new System.Drawing.Size(127, 20);
             this.epochMaxTextBox.TabIndex = 12;
-            this.epochMaxTextBox.Text = "10";
+            this.epochMaxTextBox.Text = "1000";
             // 
             // Epochs
             // 
@@ -240,35 +240,31 @@
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.stopTesting_Click);
             // 
-            // methodGradientDescent
-            // 
-            this.methodGradientDescent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.methodGradientDescent.FormattingEnabled = true;
-            this.methodGradientDescent.Items.AddRange(new object[] {
-            "Stochastic",
-            "Batch"});
-            this.methodGradientDescent.Location = new System.Drawing.Point(178, 261);
-            this.methodGradientDescent.Name = "methodGradientDescent";
-            this.methodGradientDescent.Size = new System.Drawing.Size(127, 21);
-            this.methodGradientDescent.TabIndex = 18;
-            this.methodGradientDescent.SelectedValueChanged += new System.EventHandler(this.methodGradientDescent_SelectedValueChanged);
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(40, 261);
+            this.label3.Location = new System.Drawing.Point(113, 261);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(132, 13);
+            this.label3.Size = new System.Drawing.Size(59, 13);
             this.label3.TabIndex = 19;
-            this.label3.Text = "Gradient Descent Method:";
+            this.label3.Text = "Batch size:";
+            // 
+            // batchSizeTextBox
+            // 
+            this.batchSizeTextBox.Location = new System.Drawing.Point(178, 261);
+            this.batchSizeTextBox.Name = "batchSizeTextBox";
+            this.batchSizeTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.batchSizeTextBox.Size = new System.Drawing.Size(127, 20);
+            this.batchSizeTextBox.TabIndex = 20;
+            this.batchSizeTextBox.Text = "1";
             // 
             // NeuralNetwork
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(833, 601);
+            this.Controls.Add(this.batchSizeTextBox);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.methodGradientDescent);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.limitTrainDataTextBox);
@@ -314,8 +310,8 @@
         private System.Windows.Forms.TextBox limitTrainDataTextBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.ComboBox methodGradientDescent;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox batchSizeTextBox;
     }
 }
 
