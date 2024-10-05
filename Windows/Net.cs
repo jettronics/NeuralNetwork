@@ -369,7 +369,7 @@ public class Net
             //cout << "Layer Weights update: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).updateWeights(left, beta);
+                act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalc.Mean);
             }
         }
     }
@@ -403,7 +403,7 @@ public class Net
             //cout << "Layer Weights update: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).updateWeights(left, beta);
+                act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalc.Direct);
             }
 
         }

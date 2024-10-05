@@ -124,6 +124,7 @@ public class Neuron
         else
         {
             gradient /= (double)gradientCalls;
+            gradientCalls = 0;
         }
         
         //gradient = transferFctDeriv(delta);
@@ -170,13 +171,14 @@ public class Neuron
         else
         {
             gradient /= (double)gradientCalls;
+            gradientCalls = 0;
         }
         
         //cout << "Gradient: " << gradient << ", Sum: " << outputSum << endl;
         return;
     }
 
-    public void updateWeights(List<Neuron> layer, double beta)
+    public void updateWeights(List<Neuron> layer, double beta, GradCalc grad)
     {
         //cout << "layer->size(): " << layer->size() << " , weights.size(): " << weights.size() << endl;
         for (int n = 0; n < layer.Count; n++)
@@ -204,8 +206,11 @@ public class Neuron
         {
             bias = bias - (beta * gradient);
         }
-            
-        //cout << "bias new: " << bias << ", old: " << b << endl;
+
+        if (grad == GradCalc.Mean)
+        {
+            gradient = 0.0;
+        }
 
         return;
     }
