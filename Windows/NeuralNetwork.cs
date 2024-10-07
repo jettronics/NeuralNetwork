@@ -19,6 +19,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Windows.Forms.VisualStyles;
 
+
 namespace Windows
 {
     public partial class NeuralNetwork : Form
@@ -320,7 +321,7 @@ namespace Windows
             Double.TryParse(learningRateTextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out learningRate);
             outputTextBox.AppendText("Learning rate set to: " + learningRate + "\r\n");
 
-            epochMax = Convert.ToUInt16(epochMaxTextBox.Text);
+            epochMax = Convert.ToInt32(epochMaxTextBox.Text);
             outputTextBox.AppendText("Number of Epochs: " + epochMax + "\r\n");
 
             double limitData = Convert.ToDouble(limitTrainDataTextBox.Text, CultureInfo.InvariantCulture);
@@ -420,78 +421,84 @@ namespace Windows
         {
             if (training == true)
             {
-                if (epochIdx < epochMax)
+                int diagramUpdateCnt = 0;
+                while (diagramUpdateCnt < 500)
                 {
-                    //int batch = reader.getInputTrainData()[0].Count;
-                    
-                    while (loopDataIdx < batchSize)
+                    if (epochIdx < epochMax)
                     {
-                        int randIdx = random.Next(totalTrainingData) + offsetTrainingData;
+                        //int batch = reader.getInputTrainData()[0].Count;
 
-                        row.Clear();
-                        for (int j = 0; j < inputRowCnt; j++)
+                        while (loopDataIdx < batchSize)
                         {
-                            row.Add(reader.getInputData()[j][randIdx]);
-                        }
-                        List<double> refScaled = network.scaleInput(row);
-                        network.feedForward(refScaled);
+                            int randIdx = random.Next(totalTrainingData) + offsetTrainingData;
 
-                        if (reader.getNumClassifiers() > 1)
-                        {
-                            for (int i = 0; i < refOutput.Count; i++)
+                            row.Clear();
+                            for (int j = 0; j < inputRowCnt; j++)
                             {
-                                if (i == (int)reader.getOutputData(randIdx))
+                                row.Add(reader.getInputData()[j][randIdx]);
+                            }
+                            List<double> refScaled = network.scaleInput(row);
+                            network.feedForward(refScaled);
+
+                            if (reader.getNumClassifiers() > 1)
+                            {
+                                for (int i = 0; i < refOutput.Count; i++)
                                 {
-                                    refOutput[i] = 1.0;
-                                }
-                                else
-                                {
-                                    refOutput[i] = 0.0;
+                                    if (i == (int)reader.getOutputData(randIdx))
+                                    {
+                                        refOutput[i] = 1.0;
+                                    }
+                                    else
+                                    {
+                                        refOutput[i] = 0.0;
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            refOutput[0] = reader.getOutputData(randIdx);
+                            else
+                            {
+                                refOutput[0] = reader.getOutputData(randIdx);
+                            }
+
+                            if (batchSize <= 1)
+                            {
+                                network.backProp(refOutput, learningRate);
+                            }
+                            else
+                            {
+                                network.batchGradientDescent(refOutput);
+                            }
+
+                            double losses = network.loss(refOutput);
+                            AnalysisChart.Series[0].Points.Add(losses);
+
+                            var chartArea = AnalysisChart.ChartAreas[AnalysisChart.Series[0].ChartArea];
+
+                            if (lossChartMouseClick == false)
+                            {
+                                chartArea.AxisX.Maximum = AnalysisChart.Series[0].Points.Count;
+                                chartArea.AxisX.ScaleView.Scroll(AnalysisChart.Series[0].Points.Count);
+                            }
+
+                            loopDataIdx++;
+                            diagramUpdateCnt++;
+                            epochIdx++;
                         }
 
-                        if (batchSize <= 1)
+                        if (batchSize > 1)
                         {
-                            network.backProp(refOutput, learningRate);
+                            // refOutput not used internally
+                            network.batchGradientAverage(refOutput);
+                            network.updateWeights(learningRate);
                         }
-                        else
-                        {
-                            network.batchGradientDescent(refOutput);
-                        }
-                                                                        
-                        double losses = network.loss(refOutput);
-                        AnalysisChart.Series[0].Points.Add(losses);
-                        
-                        var chartArea = AnalysisChart.ChartAreas[AnalysisChart.Series[0].ChartArea];
-
-                        if (lossChartMouseClick == false)
-                        {
-                            chartArea.AxisX.Maximum = AnalysisChart.Series[0].Points.Count;
-                            chartArea.AxisX.ScaleView.Scroll(AnalysisChart.Series[0].Points.Count);
-                        }
-
-                        loopDataIdx++;
+                                                
+                        loopDataIdx = 0;
                     }
-
-                    if (batchSize > 1)
+                    else
                     {
-                        // refOutput not used internally
-                        network.batchGradientAverage(refOutput);
-                        network.updateWeights(learningRate);
+                        training = false;
+                        outputTextBox.AppendText("Training finished\r\n");
+                        diagramUpdateCnt = 500;
                     }
-
-                    epochIdx++;
-                    loopDataIdx = 0;
-                }
-                else 
-                { 
-                    training = false;
-                    outputTextBox.AppendText("Training finished\r\n");
                 }
             }
             else
