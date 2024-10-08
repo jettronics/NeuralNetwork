@@ -101,13 +101,20 @@ public class Net
                 }
                 else
                 {
-                    neuron = new Neuron(actFct.ElementAt(layerNum - 1));
+                    Net.ActFctType actFctLoc = actFct.ElementAt(layerNum - 1);
+                    neuron = new Neuron(actFctLoc);
 
                     for (int i = 0; i < topology.ElementAt(layerNum - 1); i++)
                     {
                         //In a net with PLU don't initialize with 0 then gradients become 0
-                        weights.Add(randomWeight());
-                        //weights.Add(0.1);
+                        if (actFctLoc == Net.ActFctType.SoftMax)
+                        {
+                            weights.Add(1.0);
+                        }
+                        else
+                        {
+                            weights.Add(randomWeight());
+                        }
                         numEntries++;
                     }
                 }
