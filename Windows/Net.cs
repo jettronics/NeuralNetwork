@@ -101,20 +101,12 @@ public class Net
                 }
                 else
                 {
-                    Net.ActFctType actFctLoc = actFct.ElementAt(layerNum - 1);
-                    neuron = new Neuron(actFctLoc);
+                    neuron = new Neuron(actFct.ElementAt(layerNum - 1));
 
                     for (int i = 0; i < topology.ElementAt(layerNum - 1); i++)
                     {
                         //In a net with PLU don't initialize with 0 then gradients become 0
-                        if (actFctLoc == Net.ActFctType.SoftMax)
-                        {
-                            weights.Add(1.0);
-                        }
-                        else
-                        {
-                            weights.Add(randomWeight());
-                        }
+                        weights.Add(randomWeight());
                         numEntries++;
                     }
                 }
@@ -295,7 +287,7 @@ public class Net
         for (int n = 0; n < layers[0].Count; n++)
         {
             // Calculate output of input layer
-            layers[0][n].calcOutput(layers[0], n, 0);
+            layers[0][n].calcOutput(layers[0], 0);
         }
 
         for (int i = 1; i < layers.Count; i++)
@@ -304,8 +296,13 @@ public class Net
             for (int n = 0; n < layers[i].Count; n++)
             {
                 //cout << "feedForward: neuron " << n << endl;
-                layers[i][n].calcOutput(layers[i - 1], n, i);
+                layers[i][n].calcOutput(layers[i - 1], i);
             }
+        }
+
+        for (int n = 0; n < layers.Last().Count; n++)
+        {
+            layers.Last()[n].calcSoftMaxOutput(layers.Last(), n);
         }
     }
 
@@ -316,12 +313,16 @@ public class Net
 
         for (int n = 0; n < layers.Last().Count; n++)
         {
-            //cout << "Target val: " << targetOut->at(n) << ", Output val: " << layers.back()[n].getOutput() << endl;
-            double delta = targetOut.ElementAt(n) - layers.Last()[n].getOutput();
-            mse += (delta * delta);
+            if (layers.Last()[n].getActivationFct() == Net.ActFctType.SoftMax)
+            {
+                mse += ((-targetOut.ElementAt(n)) * Math.Log(layers.Last()[n].getOutput()));
+            }
+            else
+            {
+                double delta = targetOut.ElementAt(n) - layers.Last()[n].getOutput();
+                mse += ((delta * delta) / (double)layers.Last().Count);
+            }
         }
-        //mse = Math.Sqrt(mse / ((double)layers.Last().Count));
-        mse /= ((double)layers.Last().Count);
 
         return mse;
     }
@@ -330,7 +331,7 @@ public class Net
     {
         for (int n = 0; n < layers.Last().Count; n++)
         {
-            layers.Last()[n].calcGradients(targetOut.ElementAt(n), Neuron.GradCalc.Sum);
+            layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.Sum);
         }
 
         for (int layerNum = layers.Count - 2; layerNum > 0; layerNum--)
@@ -341,7 +342,7 @@ public class Net
             //cout << "Layer Gradient calc: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).calcGradients(right, n, Neuron.GradCalc.Sum);
+                act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.Sum);
             }
         }
     }
@@ -350,7 +351,7 @@ public class Net
     {
         for (int n = 0; n < layers.Last().Count; n++)
         {
-            layers.Last()[n].calcGradients(targetOut.ElementAt(n), Neuron.GradCalc.Mean);
+            layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.Mean);
         }
 
         for (int layerNum = layers.Count - 2; layerNum > 0; layerNum--)
@@ -361,7 +362,7 @@ public class Net
             //cout << "Layer Gradient calc: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).calcGradients(right, n, Neuron.GradCalc.Mean);
+                act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.Mean);
             }
         }
     }
@@ -376,7 +377,7 @@ public class Net
             //cout << "Layer Weights update: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalc.Mean);
+                act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalcMethod.Mean);
             }
         }
     }
@@ -387,7 +388,7 @@ public class Net
 
         for (int n = 0; n < layers.Last().Count; n++)
         {
-            layers.Last()[n].calcGradients(targetOut.ElementAt(n), Neuron.GradCalc.Direct);
+            layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.Direct);
         }
 
         for (int layerNum = layers.Count - 2; layerNum > 0; layerNum--)
@@ -398,7 +399,7 @@ public class Net
             //cout << "Layer Gradient calc: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).calcGradients(right, n, Neuron.GradCalc.Direct);
+                act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.Direct);
             }
         }
 
@@ -410,7 +411,7 @@ public class Net
             //cout << "Layer Weights update: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalc.Direct);
+                act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalcMethod.Direct);
             }
 
         }

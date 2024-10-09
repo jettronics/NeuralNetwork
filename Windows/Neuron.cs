@@ -13,12 +13,13 @@ public class Neuron
                           public const double GradZero = 1.0;
     }; 
 
-    public enum GradCalc { Direct = 0, Sum, Mean };
+    public enum GradCalcMethod { Direct = 0, Sum, Mean };
 
     protected List<double> weights;
     protected double bias;
     protected double net;
     protected double activation;
+    protected double prediction;
     protected double gradient;
     protected Net.ActFctType actFctSelect;
     //protected double gradZero;
@@ -32,6 +33,7 @@ public class Neuron
         bias = 0.0;
         net = 0.0;
         activation = 0.0;
+        prediction = 0.0;
         gradient = 0.0;
         input = 0.0;
         actFctSelect = Net.ActFctType.Linear;
@@ -50,6 +52,7 @@ public class Neuron
         bias = 0.0;
         net = 0.0;
         activation = 0.0;
+        prediction = 0.0;
         gradient = 0.0;
         input = 0.0;
         actFctSelect = actFct;
@@ -62,15 +65,51 @@ public class Neuron
 
         gradientCalls = 0;
     }
+    
     public void setInput(double val) 
     { 
         input = val; 
     }
+
     public double getOutput() 
     { 
-        return activation; 
+        return prediction; 
     }
-    public void calcOutput(List<Neuron> layer, int actN, int actL)
+
+    public Net.ActFctType getActivationFct()
+    {
+        return actFctSelect;
+    }
+    
+    public void calcOutput(List<Neuron> layer, int actL)
+    {
+        double sum = 0.0;
+                
+        if (actL == 0)
+        {
+            sum = weights[0] * input;
+        }
+        else
+        {
+            for (int n = 0; n < layer.Count; n++)
+            {
+                //cout << "calcOutput: " << layer->at(n).activation << ", weight: " << weights[n] << endl;
+                sum += (layer.ElementAt(n).prediction * weights[n]);
+                //cout << "calcOutput: sum: " << sum << endl;
+            }
+        }
+        net = sum + bias;
+        
+        activation = transferFct(net);
+        if(actFctSelect != Net.ActFctType.SoftMax)
+        {
+            prediction = activation;
+        }
+        //cout << "calcOutput: " << activation << ", bias: " << bias << endl;
+        return;
+    }
+
+    public void calcSoftMaxOutput(List<Neuron> layer, int actN)
     {
         double sum = 0.0;
 
@@ -83,43 +122,48 @@ public class Neuron
                 //cout << "calcOutput: sum: " << sum << endl;
             }
 
-            net = Math.Exp(layer.ElementAt(actN).activation)/sum;
-        }
-        else
-        {
-            if (actL == 0)
+            if(sum < 0.01)
             {
-                sum = weights[0] * input;
+                sum = 0.01;
+            }
+            prediction = Math.Exp(layer.ElementAt(actN).activation) / sum;
+            if( prediction > 1.0 )
+            {
+                prediction = 1.0;
+            }
+        }
+
+        return;
+    }
+
+    public void calcGradient(List<double> target, int act, GradCalcMethod grad)
+    {
+        double delta = prediction - target.ElementAt(act);
+        if (grad == GradCalcMethod.Sum)
+        {
+            if (actFctSelect == Net.ActFctType.SoftMax)
+            {
+                double sumTarget = target.Sum();
+                gradient += ((-target.ElementAt(act)) + (prediction * sumTarget));
             }
             else
             {
-                for (int n = 0; n < layer.Count; n++)
-                {
-                    //cout << "calcOutput: " << layer->at(n).activation << ", weight: " << weights[n] << endl;
-                    sum += (layer.ElementAt(n).activation * weights[n]);
-                    //cout << "calcOutput: sum: " << sum << endl;
-                }
+                gradient += (delta * transferFctDeriv(net));
             }
-            net = sum + bias;
-        }
-
-        activation = transferFct(net);
-        //cout << "calcOutput: " << activation << ", bias: " << bias << endl;
-        return;
-    }
-    
-    public void calcGradients(double target, GradCalc grad)
-    {
-        double delta = activation - target;
-        if (grad == GradCalc.Sum)
-        {
-            gradient += (delta * transferFctDeriv(net));
             gradientCalls++;
         }
         else
-        if (grad == GradCalc.Direct)
+        if (grad == GradCalcMethod.Direct)
         {
-            gradient = delta * transferFctDeriv(net);
+            if (actFctSelect == Net.ActFctType.SoftMax)
+            {
+                double sumTarget = target.Sum();
+                gradient = ((-target.ElementAt(act)) + (prediction * sumTarget));
+            }
+            else
+            {
+                gradient = delta * transferFctDeriv(net);
+            }
         }
         else
         {
@@ -132,39 +176,24 @@ public class Neuron
         return;
     }
 
-    public void calcGradients(List<Neuron> layer, int act, GradCalc grad)
+    public void calcGradient(List<Neuron> layer, int act, GradCalcMethod grad)
     {
         double outputSum = 0.0;
 
         for (int n = 0; n < layer.Count; n++)
         {
-            if (layer.ElementAt(n).actFctSelect == Net.ActFctType.SoftMax)
-            {
-                if (act == n)
-                {
-                    // Weights in SoftMax Neuron always 1.0
-                    outputSum = layer.ElementAt(n).gradient * (1.0 - layer.ElementAt(n).gradient);
-                }
-                else
-                {
-                    outputSum = -(layer.ElementAt(n).gradient * layer.ElementAt(act).gradient);
-                }
-            }
-            else
-            {
-                //outputSum += (layer->at(n).weights[n] * layer->at(n).gradient);
-                //outputSum += (weights[n] * layer.ElementAt(n).gradient);
-                outputSum += (layer.ElementAt(n).weights[act] * layer.ElementAt(n).gradient);
-            }
+            //outputSum += (layer->at(n).weights[n] * layer->at(n).gradient);
+            //outputSum += (weights[n] * layer.ElementAt(n).gradient);
+            outputSum += (layer.ElementAt(n).weights[act] * layer.ElementAt(n).gradient);
         }
 
-        if (grad == GradCalc.Sum)
+        if (grad == GradCalcMethod.Sum)
         {
             gradient += (outputSum * transferFctDeriv(net));
             gradientCalls++;
         }
         else
-        if (grad == GradCalc.Direct)
+        if (grad == GradCalcMethod.Direct)
         {
             gradient = outputSum * transferFctDeriv(net);
         }
@@ -178,7 +207,7 @@ public class Neuron
         return;
     }
 
-    public void updateWeights(List<Neuron> layer, double beta, GradCalc grad)
+    public void updateWeights(List<Neuron> layer, double beta, GradCalcMethod grad)
     {
         //cout << "layer->size(): " << layer->size() << " , weights.size(): " << weights.size() << endl;
         for (int n = 0; n < layer.Count; n++)
@@ -188,26 +217,12 @@ public class Neuron
 
             // Neuron weight same position as left neuron
             //weights[n] = weights[n] - (beta * gradient * neuron->getOutput());
-            if(actFctSelect == Net.ActFctType.SoftMax)
-            {
-                weights[n] = 1.0;
-            }
-            else
-            {
-                weights[n] = weights[n] - (beta * gradient * layer.ElementAt(n).activation);
-            }
+            weights[n] = weights[n] - (beta * gradient * layer.ElementAt(n).prediction);
         }
         //double b = bias;
-        if (actFctSelect == Net.ActFctType.SoftMax)
-        {
-            bias = 0.0;
-        }
-        else
-        {
-            bias = bias - (beta * gradient);
-        }
-
-        if (grad == GradCalc.Mean)
+        bias = bias - (beta * gradient);
+        
+        if (grad == GradCalcMethod.Mean)
         {
             gradient = 0.0;
         }
