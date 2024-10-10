@@ -276,7 +276,7 @@ public class Neuron
         else
         if (actFctSelect == Net.ActFctType.ReLu)
         {
-            if (inp < 0.0)
+            if (inp <= 0.0)
             {
                 ret = 0.0;
             }
@@ -286,9 +286,9 @@ public class Neuron
             }
         }
         else
-        if (actFctSelect == Net.ActFctType.LeakyReLu)
+        if (actFctSelect == Net.ActFctType.LeReLu)
         {
-            if (inp < 0.0)
+            if (inp <= 0.0)
             {
                 ret = Param.GradUnlim * inp;
             }
@@ -334,7 +334,7 @@ public class Neuron
         if (actFctSelect == Net.ActFctType.ReLu)
         {
             //ReLU
-            if (inp < 0.0)
+            if (inp <= 0.0)
             {
                 ret = 0.0;
             }
@@ -344,9 +344,9 @@ public class Neuron
             }
         }
         else
-        if (actFctSelect == Net.ActFctType.LeakyReLu)
+        if (actFctSelect == Net.ActFctType.LeReLu)
         {
-            if (inp < 0.0)
+            if (inp <= 0.0)
             {
                 ret = Param.GradUnlim;
             }

@@ -30,6 +30,7 @@ public class Reader
     public String[] getClassifiers() { return classifiers.ToArray(); }
     public int getNumTotalData() { return inputString.Count()-1; }
     public ref List<List<double>> getInputData() { return ref inputData; }
+    public ref List<double> getOutputData() { return ref outputData; }
     public double getOutputData(int index) { return outputData[index]; }
     public ref List<List<double>> getInputTrainData() { return ref inputDataLowered; }
     public double getOutputTrainData(int index) { return outputDataLowered[index]; }

@@ -9,8 +9,8 @@ using System.Drawing;
 
 public class Net
 {
-    public enum ActFctType { Sigmoid = 0, PLU, ReLu, LeakyReLu, Linear, SoftMax }; // Linear used for last layer in case of linear sum from previous layer
-    public static readonly String[] ActFctTypeStr = { "Sigmoid", "PLU", "ReLu", "LeakyReLu", "Linear", "SoftMax" };
+    public enum ActFctType { Sigmoid = 0, PLU, ReLu, LeReLu, Linear, SoftMax }; // Linear used for last layer in case of linear sum from previous layer
+    public static readonly String[] ActFctTypeStr = { "Sigmoid", "PLU", "ReLu", "LeReLu", "Linear", "SoftMax" };
 
     public static double randomWeight()
     {
@@ -72,7 +72,7 @@ public class Net
         for (int j = 0; j < (actFct.Count-1); j++)
         {
             if ((actFct.ElementAt(j) == Net.ActFctType.ReLu) ||
-                (actFct.ElementAt(j) == Net.ActFctType.LeakyReLu))
+                (actFct.ElementAt(j) == Net.ActFctType.LeReLu))
             {
                 symmetricRange = false;
             }
@@ -171,7 +171,7 @@ public class Net
         for (int j = 0; j < (actFct.Count - 1); j++)
         {
             if ((actFct.ElementAt(j) == Net.ActFctType.ReLu) ||
-                (actFct.ElementAt(j) == Net.ActFctType.LeakyReLu))
+                (actFct.ElementAt(j) == Net.ActFctType.LeReLu))
             {
                 symmetricRange = false;
             }

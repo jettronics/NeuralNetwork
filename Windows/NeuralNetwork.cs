@@ -40,10 +40,10 @@ namespace Windows
         protected int scrollBarWheelTurns;
         protected bool lossChartMouseClick;
         protected int totalTrainingData;
-        protected int offsetTrainingData;
         protected int totalTestingData;
         protected Random random;
         protected int batchSize;
+        protected List<int> trainingDataIndices;
 
         public NeuralNetwork()
         {
@@ -64,8 +64,8 @@ namespace Windows
             refOutput = new List<double>();
             totalTrainingData = 0;
             totalTestingData = 0;
-            offsetTrainingData = 0;
             batchSize = 1;
+            trainingDataIndices = new List<int>();
 
             /*
             The number of neurons in the input layer is equal to the number of features in the data and in very rare cases, 
@@ -335,7 +335,12 @@ namespace Windows
             batchSize = Convert.ToUInt16(batchSizeTextBox.Text);
 
             random = new Random(Guid.NewGuid().GetHashCode());
-            offsetTrainingData = random.Next(reader.getNumTotalData() - totalTrainingData);
+
+            trainingDataIndices.Clear();
+            for (int i = 0; i < totalTrainingData; i++)
+            {
+                trainingDataIndices.Add(random.Next(totalTrainingData));
+            }
             
             loopDataIdx = 0;
             epochIdx = 0;
@@ -430,7 +435,8 @@ namespace Windows
 
                         while (loopDataIdx < batchSize)
                         {
-                            int randIdx = random.Next(totalTrainingData) + offsetTrainingData;
+                            int randIndIdx = random.Next(trainingDataIndices.Count());
+                            int randIdx = trainingDataIndices.ElementAt(randIndIdx);
 
                             row.Clear();
                             for (int j = 0; j < inputRowCnt; j++)
@@ -595,16 +601,29 @@ namespace Windows
             var xAxis = chart.ChartAreas[0].AxisX;
             var yAxis = chart.ChartAreas[0].AxisY2;
 
-            scrollBarWheelTurns += e.Delta;
+            if (e.Delta >= 0)
+            {
+                scrollBarWheelTurns += 1;
+            }
+            else
+            {
+                scrollBarWheelTurns -= 1;
+            }
 
             if (scrollBarWheelTurns <= 0)
             {
                 xAxis.ScaleView.ZoomReset();
                 yAxis.Maximum = Double.NaN;
+                scrollBarWheelTurns = 0;
             }
             else
             if (scrollBarWheelTurns > 0)
             {
+                if (scrollBarWheelTurns >= 10)
+                {
+                    scrollBarWheelTurns = 10;
+                }
+
                 int seriesIndex = 0;
                 if (AnalysisChart.Series[1].Points.Count > AnalysisChart.Series[0].Points.Count)
                 {
@@ -613,7 +632,7 @@ namespace Windows
 
                 if (AnalysisChart.Series[seriesIndex].Points.Count > 0)
                 {
-                    int xMinZoomPos = scrollBarWheelTurns >> 2;
+                    int xMinZoomPos = (int)((((double)scrollBarWheelTurns) / 10.0) * ((double)AnalysisChart.Series[seriesIndex].Points.Count));
 
                     if (xMinZoomPos >= AnalysisChart.Series[seriesIndex].Points.Count)
                     {
@@ -623,7 +642,7 @@ namespace Windows
 
                     if (seriesIndex == 0)
                     {
-                        double maxVal = -1000.0;
+                        double maxVal = 0.0;
                         for (int i = xMinZoomPos; i < AnalysisChart.Series[seriesIndex].Points.Count; i++)
                         {
                             if (AnalysisChart.Series[seriesIndex].Points.ElementAt(i).YValues[0] > maxVal)
