@@ -13,7 +13,7 @@ public class Neuron
                           public const double GradZero = 1.0;
     }; 
 
-    public enum GradCalcMethod { Direct = 0, Sum, Mean };
+    public enum GradCalcMethod { Direct = 0, SumUp, SumApply };
 
     protected List<double> weights;
     protected double bias;
@@ -139,7 +139,7 @@ public class Neuron
     public void calcGradient(List<double> target, int act, GradCalcMethod grad)
     {
         double delta = prediction - target.ElementAt(act);
-        if (grad == GradCalcMethod.Sum)
+        if (grad == GradCalcMethod.SumUp)
         {
             if (actFctSelect == Net.ActFctType.SoftMax)
             {
@@ -167,7 +167,7 @@ public class Neuron
         }
         else
         {
-            gradient /= (double)gradientCalls;
+            //gradient /= (double)gradientCalls;
             gradientCalls = 0;
         }
         
@@ -187,7 +187,7 @@ public class Neuron
             outputSum += (layer.ElementAt(n).weights[act] * layer.ElementAt(n).gradient);
         }
 
-        if (grad == GradCalcMethod.Sum)
+        if (grad == GradCalcMethod.SumUp)
         {
             gradient += (outputSum * transferFctDeriv(net));
             gradientCalls++;
@@ -199,7 +199,7 @@ public class Neuron
         }
         else
         {
-            gradient /= (double)gradientCalls;
+            //gradient /= (double)gradientCalls;
             gradientCalls = 0;
         }
         
@@ -222,7 +222,7 @@ public class Neuron
         //double b = bias;
         bias = bias - (beta * gradient);
         
-        if (grad == GradCalcMethod.Mean)
+        if (grad == GradCalcMethod.SumApply)
         {
             gradient = 0.0;
         }

@@ -323,7 +323,6 @@ public class Net
                 mse += ((delta * delta) / (double)layers.Last().Count);
             }
         }
-
         return mse;
     }
 
@@ -331,7 +330,7 @@ public class Net
     {
         for (int n = 0; n < layers.Last().Count; n++)
         {
-            layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.Sum);
+            layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.SumUp);
         }
 
         for (int layerNum = layers.Count - 2; layerNum > 0; layerNum--)
@@ -342,7 +341,7 @@ public class Net
             //cout << "Layer Gradient calc: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.Sum);
+                act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.SumUp);
             }
         }
     }
@@ -351,7 +350,7 @@ public class Net
     {
         for (int n = 0; n < layers.Last().Count; n++)
         {
-            layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.Mean);
+            layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.SumApply);
         }
 
         for (int layerNum = layers.Count - 2; layerNum > 0; layerNum--)
@@ -362,7 +361,7 @@ public class Net
             //cout << "Layer Gradient calc: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.Mean);
+                act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.SumApply);
             }
         }
     }
@@ -377,7 +376,7 @@ public class Net
             //cout << "Layer Weights update: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalcMethod.Mean);
+                act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalcMethod.SumApply);
             }
         }
     }

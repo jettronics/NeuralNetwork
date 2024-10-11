@@ -44,6 +44,7 @@ namespace Windows
         protected Random random;
         protected int batchSize;
         protected List<int> trainingDataIndices;
+        protected int batchCounter;
 
         public NeuralNetwork()
         {
@@ -66,6 +67,7 @@ namespace Windows
             totalTestingData = 0;
             batchSize = 1;
             trainingDataIndices = new List<int>();
+            batchCounter = 0;
 
             /*
             The number of neurons in the input layer is equal to the number of features in the data and in very rare cases, 
@@ -363,6 +365,7 @@ namespace Windows
 
             training = true;
             testing = false;
+            batchCounter = 0;
         }
 
         private void testNeuralNet_Click(object sender, EventArgs e)
@@ -435,13 +438,26 @@ namespace Windows
 
                         while (loopDataIdx < batchSize)
                         {
-                            int randIndIdx = random.Next(trainingDataIndices.Count());
-                            int randIdx = trainingDataIndices.ElementAt(randIndIdx);
+                            int nextIdx = 0;
+                            if (batchSize <= 1)
+                            {
+                                int randIdx = random.Next(trainingDataIndices.Count());
+                                nextIdx = trainingDataIndices.ElementAt(randIdx);
+                            }
+                            else
+                            {
+                                nextIdx = trainingDataIndices.ElementAt(batchCounter);
+                                batchCounter++;
+                                if (batchCounter >= trainingDataIndices.Count())
+                                {
+                                    batchCounter = 0;
+                                }
+                            }
 
                             row.Clear();
                             for (int j = 0; j < inputRowCnt; j++)
                             {
-                                row.Add(reader.getInputData()[j][randIdx]);
+                                row.Add(reader.getInputData()[j][nextIdx]);
                             }
                             List<double> refScaled = network.scaleInput(row);
                             network.feedForward(refScaled);
@@ -450,7 +466,7 @@ namespace Windows
                             {
                                 for (int i = 0; i < refOutput.Count; i++)
                                 {
-                                    if (i == (int)reader.getOutputData(randIdx))
+                                    if (i == (int)reader.getOutputData(nextIdx))
                                     {
                                         refOutput[i] = 1.0;
                                     }
@@ -462,7 +478,7 @@ namespace Windows
                             }
                             else
                             {
-                                refOutput[0] = reader.getOutputData(randIdx);
+                                refOutput[0] = reader.getOutputData(nextIdx);
                             }
 
                             if (batchSize <= 1)
@@ -493,7 +509,7 @@ namespace Windows
                         if (batchSize > 1)
                         {
                             // refOutput not used internally
-                            network.batchGradientAverage(refOutput);
+                            //network.batchGradientAverage(refOutput);
                             network.updateWeights(learningRate);
                         }
                                                 
