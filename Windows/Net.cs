@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Drawing.Drawing2D;
 using System.Drawing;
+using System.Security.Cryptography;
 
 public class Net
 {
@@ -111,6 +112,13 @@ public class Net
                     }
                 }
                 neuron.initWeights(weights);
+                if ((layerNum == (numLayers - 1)) &&
+                    (symmetricRange == false) &&
+                    (actFct.ElementAt(layerNum - 1) == Net.ActFctType.Sigmoid))
+                {
+                    bias = -0.5;
+                    neuron.setParamT(0.5);
+                }
                 neuron.initBias(bias);
                 layers.Last().Add(neuron);
             }
@@ -217,6 +225,12 @@ public class Net
                 }
                 //cout << "Bias " << numEntries << ": " << bias << endl;
                 neuron.initWeights(weights);
+                if ((layerNum == (numLayers - 1)) &&
+                    (symmetricRange == false) &&
+                    (actFct.ElementAt(layerNum - 1) == Net.ActFctType.Sigmoid))
+                {
+                    neuron.setParamT(0.5);
+                }
                 neuron.initBias(bias);
                 layers.Last().Add(neuron);
             }
@@ -315,7 +329,12 @@ public class Net
         {
             if (layers.Last()[n].getActivationFct() == Net.ActFctType.SoftMax)
             {
-                mse += ((-targetOut.ElementAt(n)) * Math.Log(layers.Last()[n].getOutput()));
+                double output = layers.Last()[n].getOutput();
+                if (output < 0.000000001)
+                {
+                    output = 0.000000001;
+                }
+                mse += ((-targetOut.ElementAt(n)) * Math.Log(output));
             }
             else
             {
@@ -330,7 +349,8 @@ public class Net
     {
         for (int n = 0; n < layers.Last().Count; n++)
         {
-            layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.SumUp);
+            //layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.SumUp);
+            layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.Direct);
         }
 
         for (int layerNum = layers.Count - 2; layerNum > 0; layerNum--)
@@ -341,7 +361,8 @@ public class Net
             //cout << "Layer Gradient calc: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.SumUp);
+                //act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.SumUp);
+                layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.Direct);
             }
         }
     }
@@ -376,7 +397,8 @@ public class Net
             //cout << "Layer Weights update: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalcMethod.SumApply);
+                //act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalcMethod.SumApply);
+                act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalcMethod.Direct);
             }
         }
     }

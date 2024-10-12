@@ -8,7 +8,6 @@ using System.Security.Cryptography;
 public class Neuron
 {
     public struct Param { public const double MinMaxAbs = 1.0;  
-                          public const double T = 1.0 /*0.2*/; 
                           public const double GradUnlim = 0.01;
                           public const double GradZero = 1.0;
     }; 
@@ -27,6 +26,7 @@ public class Neuron
     protected double xUnlim;
     protected double bUnlim;
     protected int gradientCalls;
+    protected double T;
 
     public Neuron()
 	{
@@ -37,6 +37,7 @@ public class Neuron
         gradient = 0.0;
         input = 0.0;
         actFctSelect = Net.ActFctType.Linear;
+        T = 1.0;
 
         weights = new List<double>();
 
@@ -56,6 +57,7 @@ public class Neuron
         gradient = 0.0;
         input = 0.0;
         actFctSelect = actFct;
+        T = 1.0;
 
         weights = new List<double>();
 
@@ -65,10 +67,15 @@ public class Neuron
 
         gradientCalls = 0;
     }
-    
+
     public void setInput(double val) 
     { 
         input = val; 
+    }
+
+    public void setParamT(double param)
+    {
+        T = param;
     }
 
     public double getOutput() 
@@ -251,7 +258,7 @@ public class Neuron
 
     protected double fctSigmoid(double x)
     {
-        double ret = 1.0 / (1.0 + Math.Exp(-x / Param.T));
+        double ret = 1.0 / (1.0 + Math.Exp(-x / T));
         return ret;
     }
 
@@ -316,7 +323,7 @@ public class Neuron
 
         if (actFctSelect == Net.ActFctType.Sigmoid)
         {
-            ret = (1.0 / Param.T) * (transferFct(inp) * (1 - transferFct(inp)));
+            ret = (1.0 / T) * (transferFct(inp) * (1 - transferFct(inp)));
         }
         else
         if (actFctSelect == Net.ActFctType.PLU)
