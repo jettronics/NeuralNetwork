@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title3 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.AnalysisChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.openTrainingDataCSVFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -53,34 +53,36 @@
             this.button5 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.batchSizeTextBox = new System.Windows.Forms.TextBox();
+            this.limitTestDataTextBox = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.AnalysisChart)).BeginInit();
             this.SuspendLayout();
             // 
             // AnalysisChart
             // 
-            chartArea3.AxisX.MajorGrid.Enabled = false;
-            chartArea3.AxisX2.MajorGrid.Enabled = false;
-            chartArea3.AxisY.MajorGrid.Enabled = false;
-            chartArea3.AxisY2.MajorGrid.Enabled = false;
-            chartArea3.Name = "ChartArea1";
-            this.AnalysisChart.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.AnalysisChart.Legends.Add(legend3);
+            chartArea1.AxisX.MajorGrid.Enabled = false;
+            chartArea1.AxisX2.MajorGrid.Enabled = false;
+            chartArea1.AxisY.MajorGrid.Enabled = false;
+            chartArea1.AxisY2.MajorGrid.Enabled = false;
+            chartArea1.Name = "ChartArea1";
+            this.AnalysisChart.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.AnalysisChart.Legends.Add(legend1);
             this.AnalysisChart.Location = new System.Drawing.Point(321, 40);
             this.AnalysisChart.Name = "AnalysisChart";
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series3.IsVisibleInLegend = false;
-            series3.Legend = "Legend1";
-            series3.Name = "Loss";
-            series3.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            this.AnalysisChart.Series.Add(series3);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.IsVisibleInLegend = false;
+            series1.Legend = "Legend1";
+            series1.Name = "Loss";
+            series1.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+            this.AnalysisChart.Series.Add(series1);
             this.AnalysisChart.Size = new System.Drawing.Size(482, 387);
             this.AnalysisChart.TabIndex = 0;
             this.AnalysisChart.Text = "Analysis";
-            title3.Name = "Analysis";
-            title3.Text = "Analysis";
-            this.AnalysisChart.Titles.Add(title3);
+            title1.Name = "Analysis";
+            title1.Text = "Analysis";
+            this.AnalysisChart.Titles.Add(title1);
             this.AnalysisChart.MouseClick += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseClick);
             this.AnalysisChart.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseDown);
             this.AnalysisChart.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LossChart_MouseUp);
@@ -108,7 +110,7 @@
             // 
             // outputTextBox
             // 
-            this.outputTextBox.Location = new System.Drawing.Point(12, 433);
+            this.outputTextBox.Location = new System.Drawing.Point(12, 458);
             this.outputTextBox.Multiline = true;
             this.outputTextBox.Name = "outputTextBox";
             this.outputTextBox.ReadOnly = true;
@@ -138,7 +140,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(12, 346);
+            this.button3.Location = new System.Drawing.Point(12, 371);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(293, 23);
             this.button3.TabIndex = 5;
@@ -148,7 +150,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(12, 404);
+            this.button4.Location = new System.Drawing.Point(12, 429);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(293, 23);
             this.button4.TabIndex = 6;
@@ -158,7 +160,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(12, 288);
+            this.button6.Location = new System.Drawing.Point(12, 313);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(293, 23);
             this.button6.TabIndex = 8;
@@ -168,7 +170,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(12, 317);
+            this.button7.Location = new System.Drawing.Point(12, 342);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(293, 23);
             this.button7.TabIndex = 9;
@@ -201,7 +203,7 @@
             this.epochMaxTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.epochMaxTextBox.Size = new System.Drawing.Size(127, 20);
             this.epochMaxTextBox.TabIndex = 12;
-            this.epochMaxTextBox.Text = "1000";
+            this.epochMaxTextBox.Text = "100000";
             // 
             // Epochs
             // 
@@ -219,20 +221,20 @@
             this.limitTrainDataTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.limitTrainDataTextBox.Size = new System.Drawing.Size(127, 20);
             this.limitTrainDataTextBox.TabIndex = 15;
-            this.limitTrainDataTextBox.Text = "25";
+            this.limitTrainDataTextBox.Text = "100";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 235);
+            this.label2.Location = new System.Drawing.Point(46, 235);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(160, 13);
+            this.label2.Size = new System.Drawing.Size(126, 13);
             this.label2.TabIndex = 16;
-            this.label2.Text = "Limit Training/Testing Data in %:";
+            this.label2.Text = "Number of Training Data:";
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(12, 375);
+            this.button5.Location = new System.Drawing.Point(12, 400);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(293, 23);
             this.button5.TabIndex = 17;
@@ -243,7 +245,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(113, 261);
+            this.label3.Location = new System.Drawing.Point(113, 287);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(59, 13);
             this.label3.TabIndex = 19;
@@ -251,18 +253,38 @@
             // 
             // batchSizeTextBox
             // 
-            this.batchSizeTextBox.Location = new System.Drawing.Point(178, 261);
+            this.batchSizeTextBox.Location = new System.Drawing.Point(178, 287);
             this.batchSizeTextBox.Name = "batchSizeTextBox";
             this.batchSizeTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.batchSizeTextBox.Size = new System.Drawing.Size(127, 20);
             this.batchSizeTextBox.TabIndex = 20;
             this.batchSizeTextBox.Text = "1";
             // 
+            // limitTestDataTextBox
+            // 
+            this.limitTestDataTextBox.Location = new System.Drawing.Point(178, 261);
+            this.limitTestDataTextBox.Name = "limitTestDataTextBox";
+            this.limitTestDataTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.limitTestDataTextBox.Size = new System.Drawing.Size(127, 20);
+            this.limitTestDataTextBox.TabIndex = 21;
+            this.limitTestDataTextBox.Text = "10";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(49, 261);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(123, 13);
+            this.label4.TabIndex = 22;
+            this.label4.Text = "Number of Testing Data:";
+            // 
             // NeuralNetwork
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(833, 601);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.limitTestDataTextBox);
             this.Controls.Add(this.batchSizeTextBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button5);
@@ -312,6 +334,8 @@
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox batchSizeTextBox;
+        private System.Windows.Forms.TextBox limitTestDataTextBox;
+        private System.Windows.Forms.Label label4;
     }
 }
 

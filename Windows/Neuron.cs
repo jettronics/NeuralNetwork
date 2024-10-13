@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
+using System.Diagnostics;
 
 public class Neuron
 {
@@ -152,6 +153,10 @@ public class Neuron
             {
                 double sumTarget = target.Sum();
                 gradient += ((-target.ElementAt(act)) + (prediction * sumTarget));
+                if (act == 0)
+                {
+                    Debug.Print("Gradient sum: " + gradient);
+                }
             }
             else
             {
@@ -166,6 +171,10 @@ public class Neuron
             {
                 double sumTarget = target.Sum();
                 gradient = ((-target.ElementAt(act)) + (prediction * sumTarget));
+                if (act == 0)
+                {
+                    Debug.Print("Gradient direct: " + gradient);
+                }
             }
             else
             {

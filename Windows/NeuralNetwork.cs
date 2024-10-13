@@ -59,7 +59,7 @@ namespace Windows
             learningRate = 0.1;
             numOutputColumns = 1;
             epochIdx = 0;
-            epochMax = 100;
+            epochMax = 100000;
             scrollBarWheelTurns = 0;
             lossChartMouseClick = false;
             refOutput = new List<double>();
@@ -327,13 +327,19 @@ namespace Windows
             outputTextBox.AppendText("Number of Epochs: " + epochMax + "\r\n");
 
             double limitData = Convert.ToDouble(limitTrainDataTextBox.Text, CultureInfo.InvariantCulture);
-            outputTextBox.AppendText("Limit Train Data to : " + limitData + "%\r\n");
-            totalTrainingData = (int)((limitData * 0.01) * reader.getNumTotalData());
+            if (limitData > reader.getNumTotalData())
+            {
+                totalTrainingData = reader.getNumTotalData();
+            }
+            else
+            {
+                totalTrainingData = (int)limitData;
+            }
+            outputTextBox.AppendText("Number of Training Data: " + totalTrainingData + "\r\n");
 
             //reader.LimitData(limitData);
             //outputTextBox.AppendText("Number of taining data limited randomly to: " + reader.getInputTrainData()[0].Count + "\r\n");
-            outputTextBox.AppendText("Number of taining data limited randomly to: " + totalTrainingData + "\r\n");
-
+            
             batchSize = Convert.ToUInt16(batchSizeTextBox.Text);
 
             random = new Random(Guid.NewGuid().GetHashCode());
@@ -385,14 +391,20 @@ namespace Windows
                 }
             }
 
-            double limitData = Convert.ToDouble(limitTrainDataTextBox.Text, CultureInfo.InvariantCulture);
-            outputTextBox.AppendText("Limit Test Data to : " + limitData + "%\r\n");
-            totalTestingData = (int)((limitData * 0.01) * reader.getNumTotalData());
+            double limitData = Convert.ToDouble(limitTestDataTextBox.Text, CultureInfo.InvariantCulture);
+            if (limitData > reader.getNumTotalData())
+            {
+                totalTestingData = reader.getNumTotalData();
+            }
+            else
+            {
+                totalTestingData = (int)limitData;
+            }
+            outputTextBox.AppendText("Number of Testing Data: " + totalTestingData + "\r\n");
 
             //reader.TestData(limitData);
             //outputTextBox.AppendText("Number of testing data limited randomly to: " + reader.getInputTestData()[0].Count + "\r\n");
-            outputTextBox.AppendText("Number of testing data limited randomly to: " + totalTestingData + "\r\n");
-
+            
             random = new Random(Guid.NewGuid().GetHashCode());
 
             loopDataIdx = 0;
@@ -680,6 +692,7 @@ namespace Windows
         {
             lossChartMouseClick = true;
         }
+
         private void LossChart_MouseUp(object sender, MouseEventArgs e)
         {
             lossChartMouseClick = false;

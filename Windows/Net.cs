@@ -362,7 +362,7 @@ public class Net
             for (int n = 0; n < act.Count; n++)
             {
                 //act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.SumUp);
-                layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.Direct);
+                act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.Direct);
             }
         }
     }
