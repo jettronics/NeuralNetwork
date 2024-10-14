@@ -521,7 +521,7 @@ namespace Windows
                         if (batchSize > 1)
                         {
                             // refOutput not used internally
-                            //network.batchGradientAverage(refOutput);
+                            network.batchGradientAverage(refOutput);
                             network.updateWeights(learningRate);
                         }
                                                 

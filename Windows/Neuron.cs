@@ -155,7 +155,7 @@ public class Neuron
                 gradient += ((-target.ElementAt(act)) + (prediction * sumTarget));
                 if (act == 0)
                 {
-                    Debug.Print("Gradient sum: " + gradient);
+                    Debug.Print("Gradient sum: " + gradient + ", calls: " + gradientCalls);
                 }
             }
             else
@@ -183,7 +183,11 @@ public class Neuron
         }
         else
         {
-            //gradient /= (double)gradientCalls;
+            gradient /= (double)gradientCalls;
+            if (act == 0)
+            {
+                Debug.Print("Gradient ave: " + gradient + ", calls: " + gradientCalls);
+            }
             gradientCalls = 0;
         }
         
@@ -215,7 +219,7 @@ public class Neuron
         }
         else
         {
-            //gradient /= (double)gradientCalls;
+            gradient /= (double)gradientCalls;
             gradientCalls = 0;
         }
         
