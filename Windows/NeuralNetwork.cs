@@ -500,6 +500,8 @@ namespace Windows
                             else
                             {
                                 network.batchGradientDescent(refOutput);
+                                //network.batchGradientAverage(refOutput);
+                                //network.updateWeights(learningRate);
                             }
 
                             double losses = network.loss(refOutput);
