@@ -330,9 +330,9 @@ public class Net
             if (layers.Last()[n].getActivationFct() == Net.ActFctType.SoftMax)
             {
                 double output = layers.Last()[n].getOutput();
-                if (output < 0.000000001)
+                if (Math.Abs(output) < 0.000000001)
                 {
-                    output = 0.000000001;
+                    output = Math.Sign(output) * 0.000000001;
                 }
                 mse += ((-targetOut.ElementAt(n)) * Math.Log(output));
             }

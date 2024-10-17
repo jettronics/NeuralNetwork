@@ -130,9 +130,9 @@ public class Neuron
                 //cout << "calcOutput: sum: " << sum << endl;
             }
 
-            if(sum < 0.01)
+            if(Math.Abs(sum) < 0.001)
             {
-                sum = 0.01;
+                sum = Math.Sign(sum) * 0.001;
             }
             prediction = Math.Exp(layer.ElementAt(actN).activation) / sum;
             if( prediction > 1.0 )
