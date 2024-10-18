@@ -135,6 +135,10 @@ public class Neuron
                 sum = Math.Sign(sum) * 0.001;
             }
             prediction = Math.Exp(layer.ElementAt(actN).activation) / sum;
+            if( (Double.IsNaN(prediction) || Double.IsInfinity(prediction)) == true )
+            {
+                Debug.Print("Prediction value NaN or Infinity: " + prediction);
+            }
             if( prediction > 1.0 )
             {
                 prediction = 1.0;
