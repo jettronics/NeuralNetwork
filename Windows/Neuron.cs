@@ -134,6 +134,7 @@ public class Neuron
             {
                 sum = Math.Sign(sum) * 0.001;
             }
+
             prediction = Math.Exp(layer.ElementAt(actN).activation) / sum;
             if( (Double.IsNaN(prediction) || Double.IsInfinity(prediction)) == true )
             {
@@ -250,6 +251,7 @@ public class Neuron
             // Neuron weight same position as left neuron
             //weights[n] = weights[n] - (beta * gradient * neuron->getOutput());
             weights[n] = weights[n] - (beta * gradient * layer.ElementAt(n).prediction);
+            //Debug.Print("Weight: " + n + ", val: " + weights[n] + ", grad: " + gradient + ", pred: " + layer.ElementAt(n).prediction);
         }
         //double b = bias;
         bias = bias - (beta * gradient);

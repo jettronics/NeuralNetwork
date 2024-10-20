@@ -395,6 +395,7 @@ public class Net
             List<Neuron> left = layers[layerNum - 1];
 
             //cout << "Layer Weights update: " << layerNum << endl;
+            //Debug.Print("Weight Layer: " + layerNum);
             for (int n = 0; n < act.Count; n++)
             {
                 act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalcMethod.SumApply);
