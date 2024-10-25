@@ -250,7 +250,15 @@ public class Neuron
 
             // Neuron weight same position as left neuron
             //weights[n] = weights[n] - (beta * gradient * neuron->getOutput());
-            weights[n] = weights[n] - (beta * gradient * layer.ElementAt(n).prediction);
+            double weight = weights[n] - (beta * gradient * layer.ElementAt(n).prediction);
+            if(Math.Abs(weight) < 2.5)
+            {
+                weights[n] = weight;    
+            }
+            else
+            {
+                Debug.Print("Weight limited: " + n + ", val: " + weights[n] + ", grad: " + gradient + ", pred: " + layer.ElementAt(n).prediction);
+            }
             //Debug.Print("Weight: " + n + ", val: " + weights[n] + ", grad: " + gradient + ", pred: " + layer.ElementAt(n).prediction);
         }
         //double b = bias;
