@@ -345,11 +345,11 @@ public class Net
         return mse;
     }
 
-    public void batchGradientDescent(List<double> targetOut)
+    public void batchGradientDescent(List<double> targetOut, int batchSize)
     {
         for (int n = 0; n < layers.Last().Count; n++)
         {
-            layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.SumUp);
+            layers.Last()[n].calcGradient(targetOut, n, batchSize);
             //layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.Direct);
         }
 
@@ -361,33 +361,13 @@ public class Net
             //cout << "Layer Gradient calc: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.SumUp);
+                act.ElementAt(n).calcGradient(right, n, batchSize);
                 //act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.Direct);
             }
         }
     }
 
-    public void batchGradientAverage(List<double> targetOut)
-    {
-        for (int n = 0; n < layers.Last().Count; n++)
-        {
-            layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.SumApply);
-        }
-
-        for (int layerNum = layers.Count - 2; layerNum > 0; layerNum--)
-        {
-            List<Neuron> act = layers[layerNum];
-            List<Neuron> right = layers[layerNum + 1];
-
-            //cout << "Layer Gradient calc: " << layerNum << endl;
-            for (int n = 0; n < act.Count; n++)
-            {
-                act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.SumApply);
-            }
-        }
-    }
-
-    public void updateWeights(double beta)
+    public void updateWeights(double beta, double weightsLimit)
     {
         for (int layerNum = layers.Count - 1; layerNum > 0; layerNum--)
         {
@@ -398,19 +378,19 @@ public class Net
             //Debug.Print("Weight Layer: " + layerNum);
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalcMethod.SumApply);
+                act.ElementAt(n).updateWeights(left, beta, weightsLimit);
                 //act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalcMethod.Direct);
             }
         }
     }
 
-    public void backProp(List<double> targetOut, double beta)
+    public void backProp(List<double> targetOut, double beta, double weightsLimit)
     {
         //cout << "Back Prop Squared Error: " << error << endl;
 
         for (int n = 0; n < layers.Last().Count; n++)
         {
-            layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.Direct);
+            layers.Last()[n].calcGradient(targetOut, n, 1);
         }
 
         for (int layerNum = layers.Count - 2; layerNum > 0; layerNum--)
@@ -421,7 +401,7 @@ public class Net
             //cout << "Layer Gradient calc: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.Direct);
+                act.ElementAt(n).calcGradient(right, n, 1);
             }
         }
 
@@ -433,7 +413,7 @@ public class Net
             //cout << "Layer Weights update: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).updateWeights(left, beta, Neuron.GradCalcMethod.Direct);
+                act.ElementAt(n).updateWeights(left, beta, weightsLimit);
             }
 
         }

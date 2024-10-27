@@ -13,8 +13,6 @@ public class Neuron
                           public const double GradZero = 1.0;
     }; 
 
-    public enum GradCalcMethod { Direct = 0, SumUp, SumApply };
-
     protected List<double> weights;
     protected double bias;
     protected double net;
@@ -26,8 +24,8 @@ public class Neuron
     protected double input;
     protected double xUnlim;
     protected double bUnlim;
-    protected int gradientCalls;
     protected double T;
+    protected bool init;
 
     public Neuron()
 	{
@@ -46,7 +44,7 @@ public class Neuron
         xUnlim = Param.MinMaxAbs / Param.GradZero;
         bUnlim = Param.MinMaxAbs * (1.0 - (Param.GradUnlim / Param.GradZero));
 
-        gradientCalls = 0;
+        init = true;
     }
 
     public Neuron(Net.ActFctType actFct)
@@ -66,7 +64,7 @@ public class Neuron
         xUnlim = Param.MinMaxAbs / Param.GradZero;
         bUnlim = Param.MinMaxAbs * (1.0 - (Param.GradUnlim / Param.GradZero));
 
-        gradientCalls = 0;
+        init = true;
     }
 
     public void setInput(double val) 
@@ -149,67 +147,64 @@ public class Neuron
         return;
     }
 
-    public void calcGradient(List<double> target, int act, GradCalcMethod grad)
+    public void calcGradient(List<double> target, int act, int batchSize)
     {
         double delta = prediction - target.ElementAt(act);
-        if (grad == GradCalcMethod.SumUp)
+        if (actFctSelect == Net.ActFctType.SoftMax)
         {
-            if (actFctSelect == Net.ActFctType.SoftMax)
+            double sumTarget = target.Sum();
+            if (act == 0)
             {
-                double sumTarget = target.Sum();
-                if (act == 0)
-                {
-                    Debug.Print("Gradient sum: " + gradient + ", calls: " + gradientCalls);
-                }
-                gradient += ((-target.ElementAt(act)) + (prediction * sumTarget));
-                if (act == 0)
-                {
-                    Debug.Print("Gradient sum: " + gradient + ", calls: " + gradientCalls);
-                }
+                //Debug.Print("Gradient sum: " + gradient + ", calls: " + gradientCalls);
+            }
+            double deltaGrad = (-target.ElementAt(act)) + (prediction * sumTarget);
+            //gradient += deltaGrad;
+            if (init == true)
+            {
+                gradient = deltaGrad;
+                init = false;
             }
             else
             {
-                gradient += (delta * transferFctDeriv(net));
-            }
-            gradientCalls++;
-        }
-        else
-        if (grad == GradCalcMethod.Direct)
-        {
-            if (actFctSelect == Net.ActFctType.SoftMax)
-            {
-                double sumTarget = target.Sum();
-                gradient = ((-target.ElementAt(act)) + (prediction * sumTarget));
-                if (act == 0)
+                if (batchSize > 1)
                 {
-                    Debug.Print("Gradient direct: " + gradient);
+                    gradient = gradient + ((1.0 / (double)batchSize) * (deltaGrad - gradient));
                 }
-            }
-            else
-            {
-                gradient = delta * transferFctDeriv(net);
+                else
+                {
+                    gradient = deltaGrad;
+                }
             }
         }
         else
         {
-            if (act == 0)
+            double deltaGrad = delta * transferFctDeriv(net);
+            //gradient += deltaGrad;
+            if (init == true)
             {
-                Debug.Print("Gradient ave: " + gradient + ", calls: " + gradientCalls);
+                gradient = deltaGrad;
+                init = false;
             }
-            gradient /= (double)gradientCalls;
-            if (act == 0)
+            else
             {
-                Debug.Print("Gradient ave: " + gradient + ", calls: " + gradientCalls);
+                if (batchSize > 1)
+                {
+                    gradient = gradient + ((1.0 / (double)batchSize) * (deltaGrad - gradient));
+                }
+                else
+                {
+                    gradient = deltaGrad;
+                }
             }
-            gradientCalls = 0;
         }
+        
         
         //gradient = transferFctDeriv(delta);
         //cout << "Gradient: " << gradient << ", Delta: " << delta << endl;
         return;
     }
 
-    public void calcGradient(List<Neuron> layer, int act, GradCalcMethod grad)
+    public void calcGradient(List<Neuron> layer, int act, int batchSize)
     {
         double outputSum = 0.0;
 
@@ -219,28 +214,32 @@ public class Neuron
             //outputSum += (weights[n] * layer.ElementAt(n).gradient);
             outputSum += (layer.ElementAt(n).weights[act] * layer.ElementAt(n).gradient);
         }
-
-        if (grad == GradCalcMethod.SumUp)
+                
+        double deltaGrad = outputSum * transferFctDeriv(net);
+        //gradient += deltaGrad;
+        if (init == true)
         {
-            gradient += (outputSum * transferFctDeriv(net));
-            gradientCalls++;
-        }
-        else
-        if (grad == GradCalcMethod.Direct)
-        {
-            gradient = outputSum * transferFctDeriv(net);
+            gradient = deltaGrad;
+            init = false;
         }
         else
         {
-            gradient /= (double)gradientCalls;
-            gradientCalls = 0;
+            if (batchSize > 1)
+            {
+                gradient = gradient + ((1.0 / (double)batchSize) * (deltaGrad - gradient));
+            }
+            else
+            {
+                gradient = deltaGrad;
+            }
         }
+        
         
         //cout << "Gradient: " << gradient << ", Sum: " << outputSum << endl;
         return;
     }
 
-    public void updateWeights(List<Neuron> layer, double beta, GradCalcMethod grad)
+    public void updateWeights(List<Neuron> layer, double beta, double weightsLimit)
     {
         //cout << "layer->size(): " << layer->size() << " , weights.size(): " << weights.size() << endl;
         for (int n = 0; n < layer.Count; n++)
@@ -251,7 +250,7 @@ public class Neuron
             // Neuron weight same position as left neuron
             //weights[n] = weights[n] - (beta * gradient * neuron->getOutput());
             double weight = weights[n] - (beta * gradient * layer.ElementAt(n).prediction);
-            if(Math.Abs(weight) < 2.5)
+            if(Math.Abs(weight) < weightsLimit)
             {
                 weights[n] = weight;    
             }
@@ -264,11 +263,6 @@ public class Neuron
         //double b = bias;
         bias = bias - (beta * gradient);
         
-        if (grad == GradCalcMethod.SumApply)
-        {
-            gradient = 0.0;
-        }
-
         return;
     }
     public void initWeights(List<double> wghts)

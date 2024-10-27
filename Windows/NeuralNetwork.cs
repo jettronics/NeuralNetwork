@@ -45,6 +45,7 @@ namespace Windows
         protected int batchSize;
         protected List<int> trainingDataIndices;
         protected int batchCounter;
+        protected double weightsLimit;
 
         public NeuralNetwork()
         {
@@ -68,6 +69,7 @@ namespace Windows
             batchSize = 1;
             trainingDataIndices = new List<int>();
             batchCounter = 0;
+            weightsLimit = 4.0;
 
             /*
             The number of neurons in the input layer is equal to the number of features in the data and in very rare cases, 
@@ -125,6 +127,7 @@ namespace Windows
             AnalysisChart.MouseWheel += LossChart_MouseWheel;
             epochMaxTextBox.Text = epochMax.ToString();
             learningRateTextBox.Text = learningRate.ToString().Replace(",",".");
+            weightsLimitTextBox.Text = weightsLimit.ToString().Replace(",", ".");
             batchSizeTextBox.Text = batchSize.ToString();
         }
 
@@ -349,7 +352,10 @@ namespace Windows
             {
                 trainingDataIndices.Add(random.Next(totalTrainingData));
             }
-            
+
+            Double.TryParse(weightsLimitTextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out weightsLimit);
+            outputTextBox.AppendText("Weights limit set to: " + weightsLimit + "\r\n");
+
             loopDataIdx = 0;
             epochIdx = 0;
 
@@ -495,13 +501,15 @@ namespace Windows
 
                             if (batchSize <= 1)
                             {
-                                network.backProp(refOutput, learningRate);
+                                network.backProp(refOutput, learningRate, weightsLimit);
                             }
                             else
                             {
-                                network.batchGradientDescent(refOutput);
-                                //network.batchGradientAverage(refOutput);
-                                //network.updateWeights(learningRate);
+                                network.batchGradientDescent(refOutput, batchSize);
+                                if (delayedWeightsUpdateCheckBox.Checked == false)
+                                {
+                                    network.updateWeights(learningRate, weightsLimit);
+                                }
                             }
 
                             double losses = network.loss(refOutput);
@@ -522,9 +530,10 @@ namespace Windows
 
                         if (batchSize > 1)
                         {
-                            // refOutput not used internally
-                            network.batchGradientAverage(refOutput);
-                            network.updateWeights(learningRate);
+                            if (delayedWeightsUpdateCheckBox.Checked == true)
+                            {
+                                network.updateWeights(learningRate, weightsLimit);
+                            }
                         }
                                                 
                         loopDataIdx = 0;

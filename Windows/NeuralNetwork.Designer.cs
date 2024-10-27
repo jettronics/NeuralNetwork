@@ -55,6 +55,10 @@
             this.batchSizeTextBox = new System.Windows.Forms.TextBox();
             this.limitTestDataTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.weightsLimitTextBox = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.delayedWeightsUpdateCheckBox = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.AnalysisChart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -77,7 +81,7 @@
             series1.Name = "Loss";
             series1.YAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
             this.AnalysisChart.Series.Add(series1);
-            this.AnalysisChart.Size = new System.Drawing.Size(482, 387);
+            this.AnalysisChart.Size = new System.Drawing.Size(545, 458);
             this.AnalysisChart.TabIndex = 0;
             this.AnalysisChart.Text = "Analysis";
             title1.Name = "Analysis";
@@ -110,12 +114,12 @@
             // 
             // outputTextBox
             // 
-            this.outputTextBox.Location = new System.Drawing.Point(12, 458);
+            this.outputTextBox.Location = new System.Drawing.Point(12, 504);
             this.outputTextBox.Multiline = true;
             this.outputTextBox.Name = "outputTextBox";
             this.outputTextBox.ReadOnly = true;
             this.outputTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.outputTextBox.Size = new System.Drawing.Size(791, 132);
+            this.outputTextBox.Size = new System.Drawing.Size(854, 132);
             this.outputTextBox.TabIndex = 2;
             this.outputTextBox.TextChanged += new System.EventHandler(this.outputTextBox_TextChanged);
             // 
@@ -140,7 +144,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(12, 371);
+            this.button3.Location = new System.Drawing.Point(12, 417);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(293, 23);
             this.button3.TabIndex = 5;
@@ -150,7 +154,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(12, 429);
+            this.button4.Location = new System.Drawing.Point(12, 475);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(293, 23);
             this.button4.TabIndex = 6;
@@ -160,7 +164,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(12, 313);
+            this.button6.Location = new System.Drawing.Point(12, 359);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(293, 23);
             this.button6.TabIndex = 8;
@@ -170,7 +174,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(12, 342);
+            this.button7.Location = new System.Drawing.Point(12, 388);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(293, 23);
             this.button7.TabIndex = 9;
@@ -234,7 +238,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(12, 400);
+            this.button5.Location = new System.Drawing.Point(12, 446);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(293, 23);
             this.button5.TabIndex = 17;
@@ -278,11 +282,51 @@
             this.label4.TabIndex = 22;
             this.label4.Text = "Number of Testing Data:";
             // 
+            // weightsLimitTextBox
+            // 
+            this.weightsLimitTextBox.Location = new System.Drawing.Point(178, 313);
+            this.weightsLimitTextBox.Name = "weightsLimitTextBox";
+            this.weightsLimitTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.weightsLimitTextBox.Size = new System.Drawing.Size(127, 20);
+            this.weightsLimitTextBox.TabIndex = 23;
+            this.weightsLimitTextBox.Text = "4.0";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(103, 313);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(69, 13);
+            this.label5.TabIndex = 24;
+            this.label5.Text = "Weights limit:";
+            // 
+            // delayedWeightsUpdateCheckBox
+            // 
+            this.delayedWeightsUpdateCheckBox.AutoSize = true;
+            this.delayedWeightsUpdateCheckBox.Location = new System.Drawing.Point(178, 339);
+            this.delayedWeightsUpdateCheckBox.Name = "delayedWeightsUpdateCheckBox";
+            this.delayedWeightsUpdateCheckBox.Size = new System.Drawing.Size(15, 14);
+            this.delayedWeightsUpdateCheckBox.TabIndex = 25;
+            this.delayedWeightsUpdateCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(45, 339);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(127, 13);
+            this.label6.TabIndex = 26;
+            this.label6.Text = "Delayed Weights update:";
+            // 
             // NeuralNetwork
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(833, 601);
+            this.ClientSize = new System.Drawing.Size(878, 648);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.delayedWeightsUpdateCheckBox);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.weightsLimitTextBox);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.limitTestDataTextBox);
             this.Controls.Add(this.batchSizeTextBox);
@@ -336,6 +380,10 @@
         private System.Windows.Forms.TextBox batchSizeTextBox;
         private System.Windows.Forms.TextBox limitTestDataTextBox;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox weightsLimitTextBox;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckBox delayedWeightsUpdateCheckBox;
+        private System.Windows.Forms.Label label6;
     }
 }
 
