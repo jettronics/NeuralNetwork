@@ -153,10 +153,6 @@ public class Neuron
         if (actFctSelect == Net.ActFctType.SoftMax)
         {
             double sumTarget = target.Sum();
-            if (act == 0)
-            {
-                //Debug.Print("Gradient sum: " + gradient + ", calls: " + gradientCalls);
-            }
             double deltaGrad = (-target.ElementAt(act)) + (prediction * sumTarget);
             //gradient += deltaGrad;
             if (init == true)
