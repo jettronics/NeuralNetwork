@@ -24,7 +24,7 @@ public class Neuron
     protected double input;
     protected double xUnlim;
     protected double bUnlim;
-    protected double T;
+    protected double T, O;
     protected bool init;
 
     public Neuron()
@@ -37,6 +37,7 @@ public class Neuron
         input = 0.0;
         actFctSelect = Net.ActFctType.Linear;
         T = 1.0;
+        O = 0.0;
 
         weights = new List<double>();
 
@@ -57,6 +58,7 @@ public class Neuron
         input = 0.0;
         actFctSelect = actFct;
         T = 1.0;
+        O = 0.0;
 
         weights = new List<double>();
 
@@ -72,9 +74,10 @@ public class Neuron
         input = val; 
     }
 
-    public void setParamT(double param)
+    public void setParams(double paramT, double paramO)
     {
-        T = param;
+        T = paramT;
+        O = paramO;
     }
 
     public double getOutput() 
@@ -283,7 +286,7 @@ public class Neuron
 
     protected double fctSigmoid(double x)
     {
-        double ret = 1.0 / (1.0 + Math.Exp(-x / T));
+        double ret = 1.0 / (1.0 + Math.Exp(-(x + O) / T));
         return ret;
     }
 

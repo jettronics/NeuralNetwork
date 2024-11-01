@@ -116,14 +116,12 @@ public class Net
                     (symmetricRange == false) &&
                     (actFct.ElementAt(layerNum - 1) == Net.ActFctType.Sigmoid))
                 {
-                    bias = -0.5;
-                    neuron.setParamT(0.5);
+                    neuron.setParams(1.0, -2.0);
                 }
                 neuron.initBias(bias);
                 layers.Last().Add(neuron);
             }
         }
-        
     }
 
     public void loadNet(String weightsFile)
@@ -229,7 +227,7 @@ public class Net
                     (symmetricRange == false) &&
                     (actFct.ElementAt(layerNum - 1) == Net.ActFctType.Sigmoid))
                 {
-                    neuron.setParamT(0.5);
+                    neuron.setParams(1.0, -1.0);
                 }
                 neuron.initBias(bias);
                 layers.Last().Add(neuron);
