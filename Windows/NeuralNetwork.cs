@@ -506,10 +506,7 @@ namespace Windows
                             else
                             {
                                 network.batchGradientDescent(refOutput, batchSize);
-                                if (delayedWeightsUpdateCheckBox.Checked == false)
-                                {
-                                    network.updateWeights(learningRate, weightsLimit);
-                                }
+                                network.updateWeights(learningRate, weightsLimit);
                             }
 
                             double losses = network.loss(refOutput);
@@ -528,14 +525,6 @@ namespace Windows
                             epochIdx++;
                         }
 
-                        if (batchSize > 1)
-                        {
-                            if (delayedWeightsUpdateCheckBox.Checked == true)
-                            {
-                                network.updateWeights(learningRate, weightsLimit);
-                            }
-                        }
-                                                
                         loopDataIdx = 0;
                     }
                     else

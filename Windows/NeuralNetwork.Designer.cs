@@ -57,8 +57,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.weightsLimitTextBox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.delayedWeightsUpdateCheckBox = new System.Windows.Forms.CheckBox();
-            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.AnalysisChart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -300,31 +298,11 @@
             this.label5.TabIndex = 24;
             this.label5.Text = "Weights limit:";
             // 
-            // delayedWeightsUpdateCheckBox
-            // 
-            this.delayedWeightsUpdateCheckBox.AutoSize = true;
-            this.delayedWeightsUpdateCheckBox.Location = new System.Drawing.Point(178, 339);
-            this.delayedWeightsUpdateCheckBox.Name = "delayedWeightsUpdateCheckBox";
-            this.delayedWeightsUpdateCheckBox.Size = new System.Drawing.Size(15, 14);
-            this.delayedWeightsUpdateCheckBox.TabIndex = 25;
-            this.delayedWeightsUpdateCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(45, 339);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(127, 13);
-            this.label6.TabIndex = 26;
-            this.label6.Text = "Delayed Weights update:";
-            // 
             // NeuralNetwork
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(878, 648);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.delayedWeightsUpdateCheckBox);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.weightsLimitTextBox);
             this.Controls.Add(this.label4);
@@ -382,8 +360,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox weightsLimitTextBox;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.CheckBox delayedWeightsUpdateCheckBox;
-        private System.Windows.Forms.Label label6;
     }
 }
 
