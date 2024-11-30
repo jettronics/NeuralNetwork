@@ -335,6 +335,16 @@ public class Net
                 mse += ((-targetOut.ElementAt(n)) * Math.Log(output));
             }
             else
+            if (layers.Last()[n].getActivationFct() == Net.ActFctType.Sigmoid)
+            {
+                double output = layers.Last()[n].getOutput();
+                double result;
+                result = targetOut.ElementAt(n) * Math.Log(output);
+                result += (1.0 - targetOut.ElementAt(n)) * Math.Log(1.0 - output);
+                result /= (-(double)layers.Last().Count);
+                mse += result;
+            }
+            else
             {
                 double delta = targetOut.ElementAt(n) - layers.Last()[n].getOutput();
                 mse += ((delta * delta) / (double)layers.Last().Count);
