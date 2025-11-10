@@ -44,10 +44,10 @@ for epoch in range(epochs):
     print(f'Finished epoch {epoch}, latest loss {loss}')
         
 # compute accuracy (no_grad is optional)
-# with torch.no_grad():
-y_pred = model(X)
-accuracy = (y_pred.round() == y).float().mean()
-print(f"Accuracy {accuracy}")
+with torch.no_grad():
+    y_pred = model(X)
+    accuracy = (y_pred.round() == y).float().mean()
+    print(f"Accuracy {accuracy}")
 
 plt.figure(figsize=(10,7))
 plt.plot(losses)
