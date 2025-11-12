@@ -81,6 +81,8 @@ with torch.no_grad():
         preds = torch.argmax(probs, dim=1)
         total += y_batch.size(0)
         correct += (preds == y_batch).sum().item()
+        for i in preds:
+            print('%d expected %d' % (preds[i], y_batch[i]))
 
 acc = 100 * correct / total
 print(f"\n✅ Test Accuracy: {acc:.2f}%")
@@ -92,5 +94,7 @@ plt.ylabel("Loss",fontsize=22)
 
 #plt.savefig('C:\GitHub\\NeuralNetwork\Images\Weather_Prediction_PyTorch.jpg', format='jpg', dpi=200)
 plt.show()
+
+
 
 
