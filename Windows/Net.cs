@@ -353,28 +353,6 @@ public class Net
         return mse;
     }
 
-    public void batchGradientDescent(List<double> targetOut, int batchSize)
-    {
-        for (int n = 0; n < layers.Last().Count; n++)
-        {
-            layers.Last()[n].calcGradient(targetOut, n, batchSize);
-            //layers.Last()[n].calcGradient(targetOut, n, Neuron.GradCalcMethod.Direct);
-        }
-
-        for (int layerNum = layers.Count - 2; layerNum > 0; layerNum--)
-        {
-            List<Neuron> act = layers[layerNum];
-            List<Neuron> right = layers[layerNum + 1];
-
-            //cout << "Layer Gradient calc: " << layerNum << endl;
-            for (int n = 0; n < act.Count; n++)
-            {
-                act.ElementAt(n).calcGradient(right, n, batchSize);
-                //act.ElementAt(n).calcGradient(right, n, Neuron.GradCalcMethod.Direct);
-            }
-        }
-    }
-
     public void updateWeights(double beta, double weightsLimit)
     {
         for (int layerNum = layers.Count - 1; layerNum > 0; layerNum--)
@@ -394,38 +372,39 @@ public class Net
 
     public void backProp(List<double> targetOut, double beta, double weightsLimit)
     {
-        //cout << "Back Prop Squared Error: " << error << endl;
-
+        // Calc Gradients of last Layer
         for (int n = 0; n < layers.Last().Count; n++)
         {
-            layers.Last()[n].calcGradient(targetOut, n, 1);
+            layers.Last()[n].calcGradient(targetOut, n);
         }
 
+        // Calc Gradients of hidden Layers
         for (int layerNum = layers.Count - 2; layerNum > 0; layerNum--)
         {
             List<Neuron> act = layers[layerNum];
             List<Neuron> right = layers[layerNum + 1];
 
-            //cout << "Layer Gradient calc: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
-                act.ElementAt(n).calcGradient(right, n, 1);
+                act.ElementAt(n).calcGradient(right, n);
             }
         }
 
+        // Update Weights for all layers
         for (int layerNum = layers.Count - 1; layerNum > 0; layerNum--)
         {
             List<Neuron> act = layers[layerNum];
             List<Neuron> left = layers[layerNum - 1];
 
-            //cout << "Layer Weights update: " << layerNum << endl;
             for (int n = 0; n < act.Count; n++)
             {
                 act.ElementAt(n).updateWeights(left, beta, weightsLimit);
             }
-
         }
+
+        return;
     }
+
     //function to get result from the neural network
     public List<double> getOutput()
     {

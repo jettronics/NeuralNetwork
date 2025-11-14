@@ -13,7 +13,6 @@ class CSVDataset(Dataset):
         self.X = torch.tensor(X)
         self.y = torch.tensor(y)
 
-        # Wenn train=True: berechne Normalisierung
         if train:
             self.mean = self.X.mean(dim=0)
             self.std = self.X.std(dim=0)
@@ -21,7 +20,6 @@ class CSVDataset(Dataset):
             self.mean = mean
             self.std = std
 
-        # Wende Normalisierung an
         self.X = (self.X - self.mean) / self.std
 
     def __len__(self):
@@ -43,12 +41,11 @@ input_size = train_data.X.shape[1]
 num_classes = len(torch.unique(train_data.y))
     
 model = torch.nn.Sequential(
-    torch.nn.Linear(input_size, 12), #10
+    torch.nn.Linear(input_size, 12),
     torch.nn.LeakyReLU(),
     torch.nn.Linear(12, 8),
     torch.nn.LeakyReLU(),
-    torch.nn.Linear(8, num_classes)#, #4
-    #torch.nn.Softmax()
+    torch.nn.Linear(8, num_classes)
 )
 
 epochs = 50

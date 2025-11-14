@@ -3,22 +3,16 @@ import torch
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset
 
-# Tutorial:
-# https://machinelearningmastery.com/develop-your-first-neural-network-with-pytorch-step-by-step/
-
 
 class CSVDataset(Dataset):
     def __init__(self, csv_file, norm=True):
-        # load the dataset, split into input (X) and output (y) variables
         dataset = np.loadtxt(csv_file, skiprows=1, delimiter=',')
-        X = dataset[:,0:13] # every row, starting from 0, 13 values
-        y = dataset[:,13] # every row, 13th value starting from 0
+        X = dataset[:,0:13] 
+        y = dataset[:,13] 
 
-        # PyTorch is working with 32Bit
         self.X = torch.tensor(X, dtype=torch.float32)
         self.y = torch.tensor(y, dtype=torch.float32).reshape(-1, 1)
 
-        # Wenn train=True: berechne Normalisierung
         if norm:
             self.mean = self.X.mean(dim=0)
             self.std = self.X.std(dim=0)
@@ -48,11 +42,11 @@ batch = 200
 learning_rate = 1e-2
 
 losses = []
-loss_fn = torch.nn.MSELoss() # alternative: BCELoss (binary cross entropy)
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate) # alternative stochastic based: SGD
+loss_fn = torch.nn.MSELoss() 
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate) 
 
 for epoch in range(epochs):
-    for i in range(150, 1150, batch):  # len(X)
+    for i in range(150, 1150, batch):  
         Xbatch = train_data.X[i:i+batch]
         y_pred = model(Xbatch)
         ybatch = train_data.y[i:i+batch]
@@ -63,7 +57,6 @@ for epoch in range(epochs):
         optimizer.step()
     print(f'Finished epoch {epoch}, latest loss {loss}')
         
-# compute accuracy (no_grad is optional)
 with torch.no_grad():
     y_pred = model(train_data.X)
     accuracy = (y_pred.round() == train_data.y).float().mean()
@@ -74,7 +67,7 @@ plt.plot(losses)
 plt.xlabel("Epochs",fontsize=22)
 plt.ylabel("Loss",fontsize=22)
 
-plt.savefig('C:\GitHub\\NeuralNetwork\Images\Heart_Disease_Prediction_PyTorch_Norm.jpg', format='jpg', dpi=200)
+#plt.savefig('C:\GitHub\\NeuralNetwork\Images\Heart_Disease_Prediction_PyTorch_Norm.jpg', format='jpg', dpi=200)
 plt.show()
 
 predictions = (model(train_data.X) > 0.5).int()

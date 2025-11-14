@@ -66,7 +66,6 @@ namespace Windows
             refOutput = new List<double>();
             totalTrainingData = 0;
             totalTestingData = 0;
-            batchSize = 1;
             trainingDataIndices = new List<int>();
             batchCounter = 0;
             weightsLimit = 4.0;
@@ -128,7 +127,6 @@ namespace Windows
             epochMaxTextBox.Text = epochMax.ToString();
             learningRateTextBox.Text = learningRate.ToString().Replace(",",".");
             weightsLimitTextBox.Text = weightsLimit.ToString().Replace(",", ".");
-            batchSizeTextBox.Text = batchSize.ToString();
         }
 
         private void LossChart_Load(object sender, EventArgs e)
@@ -343,8 +341,6 @@ namespace Windows
             //reader.LimitData(limitData);
             //outputTextBox.AppendText("Number of taining data limited randomly to: " + reader.getInputTrainData()[0].Count + "\r\n");
             
-            batchSize = Convert.ToUInt16(batchSizeTextBox.Text);
-
             random = new Random(Guid.NewGuid().GetHashCode());
 
             trainingDataIndices.Clear();
@@ -452,78 +448,52 @@ namespace Windows
                 {
                     if (epochIdx < epochMax)
                     {
-                        //int batch = reader.getInputTrainData()[0].Count;
-
-                        while (loopDataIdx < batchSize)
+                        int nextIdx = 0;
+                        int randIdx = random.Next(trainingDataIndices.Count());
+                        nextIdx = trainingDataIndices.ElementAt(randIdx);
+                                                        
+                        row.Clear();
+                        for (int j = 0; j < inputRowCnt; j++)
                         {
-                            int nextIdx = 0;
-                            if (batchSize <= 1)
-                            {
-                                int randIdx = random.Next(trainingDataIndices.Count());
-                                nextIdx = trainingDataIndices.ElementAt(randIdx);
-                            }
-                            else
-                            {
-                                nextIdx = trainingDataIndices.ElementAt(batchCounter);
-                                batchCounter++;
-                                if (batchCounter >= trainingDataIndices.Count())
-                                {
-                                    batchCounter = 0;
-                                }
-                            }
-
-                            row.Clear();
-                            for (int j = 0; j < inputRowCnt; j++)
-                            {
-                                row.Add(reader.getInputData()[j][nextIdx]);
-                            }
-                            List<double> refScaled = network.scaleInput(row);
-                            network.feedForward(refScaled);
-
-                            if (reader.getNumClassifiers() > 1)
-                            {
-                                for (int i = 0; i < refOutput.Count; i++)
-                                {
-                                    if (i == (int)reader.getOutputData(nextIdx))
-                                    {
-                                        refOutput[i] = 1.0;
-                                    }
-                                    else
-                                    {
-                                        refOutput[i] = 0.0;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                refOutput[0] = reader.getOutputData(nextIdx);
-                            }
-
-                            if (batchSize <= 1)
-                            {
-                                network.backProp(refOutput, learningRate, weightsLimit);
-                            }
-                            else
-                            {
-                                network.batchGradientDescent(refOutput, batchSize);
-                                network.updateWeights(learningRate, weightsLimit);
-                            }
-
-                            double losses = network.loss(refOutput);
-                            AnalysisChart.Series[0].Points.Add(losses);
-
-                            var chartArea = AnalysisChart.ChartAreas[AnalysisChart.Series[0].ChartArea];
-
-                            if (lossChartMouseClick == false)
-                            {
-                                chartArea.AxisX.Maximum = AnalysisChart.Series[0].Points.Count;
-                                chartArea.AxisX.ScaleView.Scroll(AnalysisChart.Series[0].Points.Count);
-                            }
-
-                            loopDataIdx++;
-                            diagramUpdateCnt++;
-                            epochIdx++;
+                           row.Add(reader.getInputData()[j][nextIdx]);
                         }
+                        List<double> refScaled = network.scaleInput(row);
+                        network.feedForward(refScaled);
+
+                        if (reader.getNumClassifiers() > 1)
+                        {
+                           for (int i = 0; i < refOutput.Count; i++)
+                           {
+                              if (i == (int)reader.getOutputData(nextIdx))
+                              {
+                                    refOutput[i] = 1.0;
+                              }
+                              else
+                              {
+                                    refOutput[i] = 0.0;
+                              }
+                           }
+                        }
+                        else
+                        {
+                           refOutput[0] = reader.getOutputData(nextIdx);
+                        }
+
+                        network.backProp(refOutput, learningRate, weightsLimit);
+
+                        double losses = network.loss(refOutput);
+                        AnalysisChart.Series[0].Points.Add(losses);
+
+                        var chartArea = AnalysisChart.ChartAreas[AnalysisChart.Series[0].ChartArea];
+
+                        if (lossChartMouseClick == false)
+                        {
+                           chartArea.AxisX.Maximum = AnalysisChart.Series[0].Points.Count;
+                           chartArea.AxisX.ScaleView.Scroll(AnalysisChart.Series[0].Points.Count);
+                        }
+
+                        diagramUpdateCnt++;
+                        epochIdx++;
 
                         loopDataIdx = 0;
                     }

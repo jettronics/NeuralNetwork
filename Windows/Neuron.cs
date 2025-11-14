@@ -150,104 +150,43 @@ public class Neuron
         return;
     }
 
-    public void calcGradient(List<double> target, int act, int batchSize)
+    public void calcGradient(List<double> target, int act)
     {
         double delta = prediction - target.ElementAt(act);
         if (actFctSelect == Net.ActFctType.SoftMax)
         {
             double sumTarget = target.Sum();
             double deltaGrad = (-target.ElementAt(act)) + (prediction * sumTarget);
-            //gradient += deltaGrad;
-            if (init == true)
-            {
-                gradient = deltaGrad;
-                init = false;
-            }
-            else
-            {
-                if (batchSize > 1)
-                {
-                    gradient = gradient + ((1.0 / (double)batchSize) * (deltaGrad - gradient));
-                }
-                else
-                {
-                    gradient = deltaGrad;
-                }
-            }
+            gradient = deltaGrad;
         }
         else
         {
             double deltaGrad = delta * transferFctDeriv(net);
-            //gradient += deltaGrad;
-            if (init == true)
-            {
-                gradient = deltaGrad;
-                init = false;
-            }
-            else
-            {
-                if (batchSize > 1)
-                {
-                    gradient = gradient + ((1.0 / (double)batchSize) * (deltaGrad - gradient));
-                }
-                else
-                {
-                    gradient = deltaGrad;
-                }
-            }
+            gradient = deltaGrad;
         }
         
-        
-        //gradient = transferFctDeriv(delta);
-        //cout << "Gradient: " << gradient << ", Delta: " << delta << endl;
         return;
     }
 
-    public void calcGradient(List<Neuron> layer, int act, int batchSize)
+    public void calcGradient(List<Neuron> layer, int act)
     {
         double outputSum = 0.0;
 
         for (int n = 0; n < layer.Count; n++)
         {
-            //outputSum += (layer->at(n).weights[n] * layer->at(n).gradient);
-            //outputSum += (weights[n] * layer.ElementAt(n).gradient);
             outputSum += (layer.ElementAt(n).weights[act] * layer.ElementAt(n).gradient);
         }
                 
         double deltaGrad = outputSum * transferFctDeriv(net);
-        //gradient += deltaGrad;
-        if (init == true)
-        {
-            gradient = deltaGrad;
-            init = false;
-        }
-        else
-        {
-            if (batchSize > 1)
-            {
-                gradient = gradient + ((1.0 / (double)batchSize) * (deltaGrad - gradient));
-            }
-            else
-            {
-                gradient = deltaGrad;
-            }
-        }
+        gradient = deltaGrad;
         
-        
-        //cout << "Gradient: " << gradient << ", Sum: " << outputSum << endl;
         return;
     }
 
     public void updateWeights(List<Neuron> layer, double beta, double weightsLimit)
     {
-        //cout << "layer->size(): " << layer->size() << " , weights.size(): " << weights.size() << endl;
         for (int n = 0; n < layer.Count; n++)
         {
-            // Left layer
-            //Neuron *neuron = &layer->at(n);
-
-            // Neuron weight same position as left neuron
-            //weights[n] = weights[n] - (beta * gradient * neuron->getOutput());
             double weight = weights[n] - (beta * gradient * layer.ElementAt(n).prediction);
             if(Math.Abs(weight) < weightsLimit)
             {
@@ -257,9 +196,7 @@ public class Neuron
             {
                 Debug.Print("Weight limited: " + n + ", val: " + weights[n] + ", grad: " + gradient + ", pred: " + layer.ElementAt(n).prediction);
             }
-            //Debug.Print("Weight: " + n + ", val: " + weights[n] + ", grad: " + gradient + ", pred: " + layer.ElementAt(n).prediction);
         }
-        //double b = bias;
         bias = bias - (beta * gradient);
         
         return;
